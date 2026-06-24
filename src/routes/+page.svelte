@@ -12,7 +12,7 @@
 
 	function handleStart() {
 		if (data.user) {
-			// goto('/contests');
+			goto(resolve('/dashboard'));
 			return;
 		}
 
