@@ -1,0 +1,241 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ContestStatus {
+  NEW
+  SUBMISSION_OPEN
+  VOTING_OPEN
+  RESULTS_READY
+  FINISHED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Contest {
+  id String @id @default(cuid())
+
+  theme       String
+  description String?
+
+  status ContestStatus @default(NEW)
+
+  submissionInvitedAt DateTime?
+  submissionClosesAt  DateTime?
+
+  votingInvitedAt DateTime?
+  votingClosesAt  DateTime?
+
+  resultsCreatedAt DateTime?
+
+  themeProposerId String?
+  themeProposer   Competitor? @relation("ContestThemeProposer", fields: [themeProposerId], references: [id])
+
+  songs       Song[]
+  votes       Vote[]
+  competitors ContestCompetitor[]
+
+  ownerId String?
+  owner   User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Competitor {
+  id String @id @default(cuid())
+
+  name     String
+  isActive Boolean @default(true)
+  email    String?
+  country  String?
+
+  songs            Song[]
+  votes            Vote[]
+  contests         ContestCompetitor[]
+  proposedContests Contest[]           @relation("ContestThemeProposer")
+
+  ownerId String?
+  owner   User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContestCompetitor {
+  id String @id @default(cuid())
+
+  contestId String
+  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  competitorId String
+  competitor   Competitor @relation(fields: [competitorId], references: [id])
+
+  votingOrder Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([contestId, competitorId])
+  @@unique([contestId, votingOrder])
+}
+
+model Song {
+  id String @id @default(cuid())
+
+  contestId String
+  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  competitorId String
+  competitor   Competitor @relation(fields: [competitorId], references: [id])
+
+  artist         String
+  title          String
+  listeningOrder Int    @default(0)
+
+  votes Vote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([contestId, competitorId])
+}
+
+model Vote {
+  id String @id @default(cuid())
+
+  contestId String
+  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  voterId String
+  voter   Competitor @relation(fields: [voterId], references: [id])
+
+  songId String
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  rank Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([contestId, voterId, rank])
+  @@unique([contestId, voterId, songId])
+}
+
+// World Cup Special Contest
+
+model WorldCupParticipant {
+  id    String  @id @default(cuid())
+  name  String
+  email String?
+
+  bets WorldCupBet[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorldCupBet {
+  id String @id @default(cuid())
+
+  participantId String
+  participant   WorldCupParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  groupWinners    Json
+  worldChampion   String
+  runnerUp        String
+  semiFinalLosers Json
+
+  mostCards        String
+  mostGoalsFor     String
+  mostGoalsAgainst String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([participantId])
+}
+
+// Better Auth Tables
+
+model User {
+  id            String    @id
+  name          String
+  username      String?
+  displayUsername String?
+  email         String
+  role          UserRole  @default(USER)
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      Session[]
+  accounts      Account[]
+  contests      Contest[]
+  competitors   Competitor[]
+
+  @@unique([email])
+  @@unique([username])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
