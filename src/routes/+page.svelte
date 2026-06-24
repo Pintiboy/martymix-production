@@ -2,6 +2,9 @@
 	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client.js';
 	import { resolve } from '$app/paths';
+	import { tick } from 'svelte';
+
+	let usernameInput: HTMLInputElement;
 
 	let { data } = $props();
 
@@ -10,13 +13,20 @@
 	let password = $state('');
 	let error = $state('');
 
+	async function openLoginModal() {
+		isLoginModalOpen = true;
+
+		await tick();
+		usernameInput.focus();
+	}
+
 	function handleStart() {
 		if (data.user) {
 			goto(resolve('/dashboard'));
 			return;
 		}
 
-		isLoginModalOpen = true;
+		openLoginModal();
 	}
 
 	async function login() {
@@ -247,8 +257,15 @@
 					</p>
 				</div>
 
-				<div class="space-y-4">
+				<form
+					onsubmit={(e) => {
+						e.preventDefault();
+						login();
+					}}
+					class="space-y-4"
+				>
 					<input
+						bind:this={usernameInput}
 						bind:value={username}
 						type="text"
 						placeholder="Email or Username"
@@ -276,14 +293,13 @@
 						</button>
 
 						<button
-							type="button"
-							onclick={login}
+							type="submit"
 							class="rounded-full bg-white px-6 py-3 font-medium text-zinc-950 transition hover:scale-105"
 						>
 							Sign in
 						</button>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
 	{/if}
