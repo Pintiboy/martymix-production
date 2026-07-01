@@ -6,6 +6,7 @@ import { requireUser } from '$lib/server/auth-guard';
 import { prisma } from '$lib/prisma';
 import { marked } from 'marked';
 import { createSubmissionInviteEmail } from '$lib/email/submission-invite-email';
+import { PUBLIC_APP_URL } from '$env/static/public';
 
 const resend = new Resend(env.RESEND_API_KEY);
 type ResultStatus = 'Locked' | 'Preliminary' | 'Final';
@@ -239,7 +240,7 @@ export const actions = {
 		const emails = contestCompetitors
 			.filter((entry) => entry.competitor.email?.trim())
 			.map((entry) => {
-				const submitUrl = `${url.origin}/submit/${entry.id}`;
+				const submitUrl = `${PUBLIC_APP_URL}/submit/${entry.id}`;
 
 				const { subject, html } = createSubmissionInviteEmail({
 					language: user.language,
