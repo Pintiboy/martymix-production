@@ -31,16 +31,15 @@
 					</span>
 				{/if}
 
+				<a
+					href={resolve('/contributors')}
+					class="rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-white/10 hover:text-white"
+				>
+					Contributors
+				</a>
 				{#if data.user?.role === 'ADMIN'}
 					<a
-						href={resolve('/participants')}
-						class="rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-white/10 hover:text-white"
-					>
-						Participants
-					</a>
-
-					<a
-						href={resolve('/contests/new')}
+						href={resolve('/mixes/new')}
 						class="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-950 transition hover:scale-105"
 					>
 						New contest

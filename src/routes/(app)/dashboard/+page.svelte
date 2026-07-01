@@ -19,7 +19,7 @@
 		<div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
 			{#each data.contests as contest (contest.id)}
 				<a
-					href={resolve(`/contests/${contest.id}`)}
+					href={resolve(`/mixes/${contest.id}`)}
 					class="group rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-fuchsia-300/40 hover:bg-white/[0.06]"
 				>
 					<p class="mb-4 text-xs tracking-[0.25em] text-zinc-500 uppercase">

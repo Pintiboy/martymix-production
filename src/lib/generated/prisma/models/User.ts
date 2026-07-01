@@ -30,6 +30,7 @@ export type UserMinAggregateOutputType = {
   username: string | null
   displayUsername: string | null
   email: string | null
+  language: $Enums.UserLanguage | null
   role: $Enums.UserRole | null
   emailVerified: boolean | null
   image: string | null
@@ -43,6 +44,7 @@ export type UserMaxAggregateOutputType = {
   username: string | null
   displayUsername: string | null
   email: string | null
+  language: $Enums.UserLanguage | null
   role: $Enums.UserRole | null
   emailVerified: boolean | null
   image: string | null
@@ -56,6 +58,7 @@ export type UserCountAggregateOutputType = {
   username: number
   displayUsername: number
   email: number
+  language: number
   role: number
   emailVerified: number
   image: number
@@ -71,6 +74,7 @@ export type UserMinAggregateInputType = {
   username?: true
   displayUsername?: true
   email?: true
+  language?: true
   role?: true
   emailVerified?: true
   image?: true
@@ -84,6 +88,7 @@ export type UserMaxAggregateInputType = {
   username?: true
   displayUsername?: true
   email?: true
+  language?: true
   role?: true
   emailVerified?: true
   image?: true
@@ -97,6 +102,7 @@ export type UserCountAggregateInputType = {
   username?: true
   displayUsername?: true
   email?: true
+  language?: true
   role?: true
   emailVerified?: true
   image?: true
@@ -183,6 +189,7 @@ export type UserGroupByOutputType = {
   username: string | null
   displayUsername: string | null
   email: string
+  language: $Enums.UserLanguage
   role: $Enums.UserRole
   emailVerified: boolean
   image: string | null
@@ -217,6 +224,7 @@ export type UserWhereInput = {
   username?: Prisma.StringNullableFilter<"User"> | string | null
   displayUsername?: Prisma.StringNullableFilter<"User"> | string | null
   email?: Prisma.StringFilter<"User"> | string
+  language?: Prisma.EnumUserLanguageFilter<"User"> | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
   image?: Prisma.StringNullableFilter<"User"> | string | null
@@ -234,6 +242,7 @@ export type UserOrderByWithRelationInput = {
   username?: Prisma.SortOrderInput | Prisma.SortOrder
   displayUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
+  language?: Prisma.SortOrder
   role?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -254,6 +263,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   name?: Prisma.StringFilter<"User"> | string
   displayUsername?: Prisma.StringNullableFilter<"User"> | string | null
+  language?: Prisma.EnumUserLanguageFilter<"User"> | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
   image?: Prisma.StringNullableFilter<"User"> | string | null
@@ -271,6 +281,7 @@ export type UserOrderByWithAggregationInput = {
   username?: Prisma.SortOrderInput | Prisma.SortOrder
   displayUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
+  language?: Prisma.SortOrder
   role?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -290,6 +301,7 @@ export type UserScalarWhereWithAggregatesInput = {
   username?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   displayUsername?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
+  language?: Prisma.EnumUserLanguageWithAggregatesFilter<"User"> | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   emailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -303,6 +315,7 @@ export type UserCreateInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -320,6 +333,7 @@ export type UserUncheckedCreateInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -337,6 +351,7 @@ export type UserUpdateInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -354,6 +369,7 @@ export type UserUncheckedUpdateInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -371,6 +387,7 @@ export type UserCreateManyInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -384,6 +401,7 @@ export type UserUpdateManyMutationInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -397,6 +415,7 @@ export type UserUncheckedUpdateManyInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -415,6 +434,7 @@ export type UserCountOrderByAggregateInput = {
   username?: Prisma.SortOrder
   displayUsername?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  language?: Prisma.SortOrder
   role?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
@@ -428,6 +448,7 @@ export type UserMaxOrderByAggregateInput = {
   username?: Prisma.SortOrder
   displayUsername?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  language?: Prisma.SortOrder
   role?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
@@ -441,6 +462,7 @@ export type UserMinOrderByAggregateInput = {
   username?: Prisma.SortOrder
   displayUsername?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  language?: Prisma.SortOrder
   role?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
@@ -485,6 +507,10 @@ export type UserUpdateOneWithoutCompetitorsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCompetitorsInput, Prisma.UserUpdateWithoutCompetitorsInput>, Prisma.UserUncheckedUpdateWithoutCompetitorsInput>
 }
 
+export type EnumUserLanguageFieldUpdateOperationsInput = {
+  set?: $Enums.UserLanguage
+}
+
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
 }
@@ -523,6 +549,7 @@ export type UserCreateWithoutContestsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -539,6 +566,7 @@ export type UserUncheckedCreateWithoutContestsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -571,6 +599,7 @@ export type UserUpdateWithoutContestsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -587,6 +616,7 @@ export type UserUncheckedUpdateWithoutContestsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -603,6 +633,7 @@ export type UserCreateWithoutCompetitorsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -619,6 +650,7 @@ export type UserUncheckedCreateWithoutCompetitorsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -651,6 +683,7 @@ export type UserUpdateWithoutCompetitorsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -667,6 +700,7 @@ export type UserUncheckedUpdateWithoutCompetitorsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -683,6 +717,7 @@ export type UserCreateWithoutSessionsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -699,6 +734,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -731,6 +767,7 @@ export type UserUpdateWithoutSessionsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -747,6 +784,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -763,6 +801,7 @@ export type UserCreateWithoutAccountsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -779,6 +818,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   username?: string | null
   displayUsername?: string | null
   email: string
+  language?: $Enums.UserLanguage
   role?: $Enums.UserRole
   emailVerified?: boolean
   image?: string | null
@@ -811,6 +851,7 @@ export type UserUpdateWithoutAccountsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -827,6 +868,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumUserLanguageFieldUpdateOperationsInput | $Enums.UserLanguage
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -901,6 +943,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   username?: boolean
   displayUsername?: boolean
   email?: boolean
+  language?: boolean
   role?: boolean
   emailVerified?: boolean
   image?: boolean
@@ -919,6 +962,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   username?: boolean
   displayUsername?: boolean
   email?: boolean
+  language?: boolean
   role?: boolean
   emailVerified?: boolean
   image?: boolean
@@ -932,6 +976,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   username?: boolean
   displayUsername?: boolean
   email?: boolean
+  language?: boolean
   role?: boolean
   emailVerified?: boolean
   image?: boolean
@@ -945,6 +990,7 @@ export type UserSelectScalar = {
   username?: boolean
   displayUsername?: boolean
   email?: boolean
+  language?: boolean
   role?: boolean
   emailVerified?: boolean
   image?: boolean
@@ -952,7 +998,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "username" | "displayUsername" | "email" | "role" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "username" | "displayUsername" | "email" | "language" | "role" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -977,6 +1023,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     username: string | null
     displayUsername: string | null
     email: string
+    language: $Enums.UserLanguage
     role: $Enums.UserRole
     emailVerified: boolean
     image: string | null
@@ -1414,6 +1461,7 @@ export interface UserFieldRefs {
   readonly username: Prisma.FieldRef<"User", 'String'>
   readonly displayUsername: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly language: Prisma.FieldRef<"User", 'UserLanguage'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly emailVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly image: Prisma.FieldRef<"User", 'String'>

@@ -1271,6 +1271,7 @@ export const ContestScalarFieldEnum = {
   id: 'id',
   theme: 'theme',
   description: 'description',
+  instructions: 'instructions',
   status: 'status',
   submissionInvitedAt: 'submissionInvitedAt',
   submissionClosesAt: 'submissionClosesAt',
@@ -1372,6 +1373,7 @@ export const UserScalarFieldEnum = {
   username: 'username',
   displayUsername: 'displayUsername',
   email: 'email',
+  language: 'language',
   role: 'role',
   emailVerified: 'emailVerified',
   image: 'image',
@@ -1547,6 +1549,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'UserLanguage'
+ */
+export type EnumUserLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserLanguage'>
+    
+
+
+/**
+ * Reference to a field of type 'UserLanguage[]'
+ */
+export type ListEnumUserLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserLanguage[]'>
     
 
 

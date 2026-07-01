@@ -26,3 +26,11 @@ export const UserRole = {
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const UserLanguage = {
+  EN: 'EN',
+  DE: 'DE'
+} as const
+
+export type UserLanguage = (typeof UserLanguage)[keyof typeof UserLanguage]

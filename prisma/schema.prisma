@@ -25,11 +25,17 @@ enum UserRole {
   ADMIN
 }
 
+enum UserLanguage {
+  EN
+  DE
+}
+
 model Contest {
   id String @id @default(cuid())
 
   theme       String
   description String?
+  instructions String?
 
   status ContestStatus @default(NEW)
 
@@ -176,6 +182,7 @@ model User {
   username      String?
   displayUsername String?
   email         String
+  language      UserLanguage @default(EN)
   role          UserRole  @default(USER)
   emailVerified Boolean   @default(false)
   image         String?

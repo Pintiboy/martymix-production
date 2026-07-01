@@ -1,0 +1,529 @@
+<script lang="ts">
+	import { resolve } from '$app/paths';
+	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+
+	import { formatBritishDate } from '$lib/helpers.js';
+	import MixHeader from '$lib/components/mixes/MixHeader.svelte';
+	import DeadLineActionModal from '$lib/components/DeadLineActionModal.svelte';
+
+	let { data, form } = $props();
+
+	let isDeleteModalOpen = $state(false);
+	let confirmTitle = $state('');
+	const contest = $derived(data.contest);
+
+	let isActionMenuOpen = $state(false);
+
+	let isInviteModalOpen = $state(false);
+	let isVotingModalOpen = $state(false);
+	let submissionDeadline = $state('');
+
+	function dateInWeeks(weeks: number) {
+		const date = new Date();
+		date.setDate(date.getDate() + weeks * 7);
+		return date.toISOString().slice(0, 10);
+	}
+</script>
+
+<svelte:head>
+	<title>{contest.theme} | Martyn's Music Competition</title>
+</svelte:head>
+
+<main class="min-h-screen bg-zinc-950 px-6 py-10 text-white">
+	<section class="mx-auto max-w-6xl">
+		<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
+			← Back to dashboard
+		</a>
+
+		<MixHeader
+			mix={contest}
+			onOpenInviteModal={() => (isInviteModalOpen = true)}
+			onOpenVotingModal={() => (isVotingModalOpen = true)}
+		/>
+
+		<div class="mt-10 rounded-3xl border border-white/10 bg-white/3 p-8">
+			<div class="flex items-start justify-between gap-6">
+				<div>
+					<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Contest</p>
+
+					<h1 class="text-5xl font-bold tracking-tight">
+						{contest.theme}
+					</h1>
+				</div>
+
+				<div class="relative">
+					<button
+						type="button"
+						onclick={() => (isActionMenuOpen = !isActionMenuOpen)}
+						class="rounded-full border border-fuchsia-300/30 bg-fuchsia-500/10 px-5 py-3 font-medium text-fuchsia-100 transition hover:bg-fuchsia-500/20"
+					>
+						Actions ▾
+					</button>
+
+					{#if isActionMenuOpen}
+						<div
+							class="absolute right-0 z-20 mt-2 w-64 overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 shadow-2xl"
+						>
+							{#if contest.status === 'NEW'}
+								<form method="POST" action="?/sendSubmissionInvites">
+									<button class="w-full px-4 py-3 text-left text-sm hover:bg-white/10"
+										>📧&nbsp; Invite for song submissions</button
+									>
+								</form>
+							{/if}
+
+							{#if contest.status === 'SUBMISSION_OPEN'}
+								<form method="POST" action="?/sendVotingInvites">
+									<button class="w-full px-4 py-3 text-left text-sm hover:bg-white/10"
+										>🗳️ Invite for voting</button
+									>
+								</form>
+							{/if}
+
+							{#if contest.status === 'VOTING_OPEN'}
+								<a
+									href={resolve(`/mixes/${contest.id}/song-list-pdf`)}
+									class="block px-4 py-3 text-sm hover:bg-white/10"
+								>
+									📄&nbsp; Generate song list PDF
+								</a>
+							{/if}
+
+							<!-- 							<form method="POST" action="?/createResults">
+								<button class="w-full px-4 py-3 text-left text-sm hover:bg-white/10">
+									🏆 Create results
+								</button>
+							</form> -->
+						</div>
+					{/if}
+				</div>
+			</div>
+
+			{#if contest.description}
+				<p class="mt-5 max-w-3xl text-lg text-zinc-300">
+					{contest.description}
+				</p>
+			{/if}
+
+			<div class="mt-8 grid gap-4 md:grid-cols-3">
+				<div class="rounded-2xl border border-white/10 bg-zinc-900/60 p-5">
+					<p class="text-sm text-zinc-500">Songs submitted</p>
+
+					<p class="mt-2 text-3xl font-bold">
+						{data.submittedSongs}/{data.expectedSongs}
+					</p>
+
+					{#if contest.status === 'NEW'}
+						<form method="POST" action="?/sendSubmissionInvites" class="mt-3">
+							<button
+								type="button"
+								onclick={() => (isInviteModalOpen = true)}
+								class="mt-3 rounded-full border border-fuchsia-300/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-medium text-fuchsia-100 transition hover:bg-fuchsia-500/20"
+							>
+								📧&nbsp; Invite participants
+							</button>
+						</form>
+					{:else}
+						<div
+							class={`mt-2 text-sm ${data.songsComplete ? 'text-emerald-300' : 'text-amber-300'}`}
+						>
+							{#if data.songsComplete}
+								Complete
+							{:else}
+								<p class="mt-2 text-sm text-amber-300">In progress</p>
+								<p class="text-xs text-zinc-500">
+									Deadline: {formatBritishDate(contest.submissionClosesAt)}
+								</p>
+							{/if}
+						</div>
+					{/if}
+				</div>
+
+				<div class="rounded-2xl border border-white/10 bg-zinc-900/60 p-5">
+					<p class="text-sm text-zinc-500">Voting status</p>
+
+					{#if !data.songsComplete}
+						<p class="mt-2 text-3xl font-bold text-amber-200">Lines not open yet</p>
+
+						<p class="mt-2 text-sm text-zinc-500">Waiting for all songs to be submitted</p>
+					{:else if contest.status === 'SUBMISSION_OPEN'}
+						<p class="mt-2 text-3xl font-bold text-emerald-200">Ready</p>
+
+						<p class="mt-2 text-sm text-zinc-500">All songs have been submitted</p>
+
+						<button
+							type="button"
+							onclick={() => (isVotingModalOpen = true)}
+							class="mt-3 rounded-full border border-fuchsia-300/30 bg-fuchsia-500/10 px-3 py-1 text-xs font-medium text-fuchsia-100 transition hover:bg-fuchsia-500/20"
+						>
+							🎤&nbsp; Start voting now!
+						</button>
+					{:else}
+						<p class="mt-2 text-3xl font-bold">
+							{data.actualVotes}/{data.expectedVotes}
+						</p>
+
+						{#if data.votingComplete}
+							<p class="mt-2 text-sm text-emerald-300">Complete</p>
+						{:else}
+							<p class="mt-2 text-sm text-amber-300">In progress</p>
+
+							<p class="text-xs text-zinc-500">
+								Deadline: {formatBritishDate(contest.votingClosesAt)}
+							</p>
+						{/if}
+					{/if}
+				</div>
+
+				<div class="rounded-2xl border border-white/10 bg-zinc-900/60 p-5">
+					<p class="text-sm text-zinc-500">Result</p>
+
+					{#if !data.votingStarted}
+						<p class="mt-2 text-3xl font-bold text-zinc-500">Locked</p>
+
+						<p class="mt-2 text-sm text-zinc-500">Waiting for first votes</p>
+					{:else if data.votingComplete}
+						<p class="mt-2 text-3xl font-bold text-emerald-300">Final</p>
+
+						<p class="mt-2 text-sm text-emerald-300">Final result available</p>
+					{:else}
+						<p class="mt-2 text-3xl font-bold text-amber-300">Preliminary</p>
+
+						<p class="mt-2 text-sm text-amber-300">More votes expected</p>
+					{/if}
+				</div>
+			</div>
+		</div>
+
+		<div class="mt-8 grid gap-5 md:grid-cols-3">
+			<a
+				href={resolve(`/mixes/${contest.id}/songs`)}
+				class="group rounded-3xl border border-white/10 bg-white/3 p-6 transition hover:-translate-y-1 hover:border-fuchsia-300/40 hover:bg-white/6"
+			>
+				<div class="mb-4 flex items-start justify-between gap-4">
+					<h2 class="text-2xl font-semibold">Songs</h2>
+
+					<ArrowRight
+						size={20}
+						class="mt-1 text-zinc-500 transition group-hover:translate-x-1 group-hover:text-fuchsia-300"
+					/>
+				</div>
+
+				<p class="text-sm text-zinc-400">
+					{#if contest.status === 'VOTING_OPEN'}
+						View submitted songs and the final listening order.
+					{:else}
+						Add and manage submitted songs.
+					{/if}
+				</p>
+
+				{#if contest.status === 'VOTING_OPEN'}
+					<p class="mt-2 text-xs text-amber-300">
+						Voting is in progress — songs and listening order can no longer be changed.
+					</p>
+				{/if}
+			</a>
+
+			{#if data.songsComplete}
+				<a
+					href={resolve(`/mixes/${contest.id}/votes`)}
+					class="group rounded-3xl border border-white/10 bg-white/3 p-6 transition hover:-translate-y-1 hover:border-fuchsia-300/40 hover:bg-white/6"
+				>
+					<div class="mb-4 flex items-start justify-between gap-4">
+						<h2 class="text-2xl font-semibold">Votes</h2>
+
+						<ArrowRight
+							size={20}
+							class="mt-1 text-zinc-500 transition group-hover:translate-x-1 group-hover:text-fuchsia-300"
+						/>
+					</div>
+
+					<p class="text-sm text-zinc-400">Enter each competitor's Top 10.</p>
+				</a>
+			{:else}
+				<div
+					class="rounded-3xl border border-white/5 bg-white/1.5 p-6 opacity-60"
+					aria-disabled="true"
+				>
+					<div class="mb-4 flex items-start justify-between gap-4">
+						<h2 class="text-2xl font-semibold text-zinc-400">Votes</h2>
+
+						<span
+							class="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-xs text-amber-200"
+						>
+							Closed
+						</span>
+					</div>
+
+					<p class="text-sm text-zinc-500">
+						Lines not open yet — all songs must be submitted first.
+					</p>
+				</div>
+			{/if}
+
+			{#if data.votingStarted}
+				<a
+					href={resolve(`/mixes/${contest.id}/results`)}
+					class="group rounded-3xl border border-white/10 bg-white/3 p-6 transition hover:-translate-y-1 hover:border-fuchsia-300/40 hover:bg-white/6"
+				>
+					<div class="mb-4 flex items-start justify-between gap-4">
+						<h2 class="text-2xl font-semibold">Results</h2>
+
+						<ArrowRight
+							size={20}
+							class="mt-1 text-zinc-500 transition group-hover:translate-x-1 group-hover:text-fuchsia-300"
+						/>
+					</div>
+
+					<p class="text-sm text-zinc-400">Compare rankings and scoring systems.</p>
+				</a>
+			{:else}
+				<div class="rounded-3xl border border-white/5 bg-white/[0.015] p-6 opacity-60">
+					<div class="mb-4 flex items-start justify-between gap-4">
+						<h2 class="text-2xl font-semibold text-zinc-400">Results</h2>
+
+						<span class="rounded-full border border-zinc-400/20 px-3 py-1 text-xs text-zinc-400">
+							Locked
+						</span>
+					</div>
+
+					<p class="text-sm text-zinc-500">
+						Results become available after the first vote has been submitted.
+					</p>
+				</div>
+			{/if}
+		</div>
+
+		{#if data.votingComplete || contest.status === 'RESULTS_READY'}
+			<a
+				href={resolve(`/mixes/${contest.id}/scoreboard`)}
+				class="group mt-5 block rounded-3xl border border-fuchsia-300/20 bg-fuchsia-500/5 p-6 transition hover:-translate-y-1 hover:border-fuchsia-300/50 hover:bg-fuchsia-500/10"
+			>
+				<div class="mb-4 flex items-start justify-between gap-4">
+					<h2 class="text-2xl font-semibold">Scoreboard</h2>
+
+					<ArrowRight
+						size={20}
+						class="mt-1 text-zinc-500 transition group-hover:translate-x-1 group-hover:text-fuchsia-300"
+					/>
+				</div>
+
+				<p class="text-sm text-zinc-400">Run the animated jury-style vote reveal.</p>
+			</a>
+		{:else}
+			<div class="mt-5 rounded-3xl border border-white/5 bg-white/[0.015] p-6 opacity-60">
+				<div class="mb-4 flex items-start justify-between gap-4">
+					<h2 class="text-2xl font-semibold text-zinc-400">Scoreboard</h2>
+
+					<span class="rounded-full border border-zinc-400/20 px-3 py-1 text-xs text-zinc-400">
+						Locked
+					</span>
+				</div>
+
+				<p class="text-sm text-zinc-500">
+					The scoreboard becomes available when voting has finished.
+				</p>
+			</div>
+		{/if}
+
+		<div class="mt-8 rounded-3xl border border-white/10 bg-white/3 p-6">
+			<div class="mb-5 flex items-center justify-between gap-4">
+				<div>
+					<h2 class="text-2xl font-semibold">Voting order</h2>
+					<p class="mt-1 text-sm text-zinc-500">
+						Random order used for the scoreboard, the grid and the name list in the PDF.
+					</p>
+				</div>
+
+				<p class="text-sm text-zinc-500">
+					{contest.competitors.length}
+					{contest.competitors.length === 1 ? ' participant' : ' participants'}
+				</p>
+			</div>
+
+			<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{#each contest.competitors as entry (entry.id)}
+					<div
+						class="flex items-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/50 px-4 py-3"
+					>
+						<div class="w-8 text-sm font-semibold text-fuchsia-200 tabular-nums">
+							{entry.votingOrder}
+						</div>
+
+						<div class="min-w-0 flex-1">
+							<p class="truncate font-medium text-white">
+								{entry.competitor.name}
+							</p>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</div>
+
+		<div class="mt-8 rounded-3xl border border-white/10 bg-white/3 p-6">
+			<h2 class="mb-4 text-xl font-semibold">Contest timeline</h2>
+
+			<div class="space-y-2 text-sm">
+				<div class="flex justify-between">
+					<span class="text-zinc-400">Submission invites sent</span>
+					<span class={contest.submissionInvitedAt ? 'text-white' : 'text-zinc-500'}>
+						{formatBritishDate(contest.submissionInvitedAt)}
+					</span>
+				</div>
+
+				<div class="flex justify-between">
+					<span class="text-zinc-400">Submission deadline</span>
+					<span class={contest.submissionClosesAt ? 'text-white' : 'text-zinc-500'}>
+						{formatBritishDate(contest.submissionClosesAt)}
+					</span>
+				</div>
+
+				<hr class="border-zinc-700" />
+
+				<div class="flex justify-between">
+					<span class="text-zinc-400">Voting invites sent</span>
+					<span class={contest.votingInvitedAt ? 'text-white' : 'text-zinc-500'}>
+						{formatBritishDate(contest.votingInvitedAt)}
+					</span>
+				</div>
+
+				<div class="flex justify-between">
+					<span class="text-zinc-400">Voting deadline</span>
+					<span class={contest.votingClosesAt ? 'text-white' : 'text-zinc-500'}>
+						{formatBritishDate(contest.votingClosesAt)}
+					</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="mt-8 rounded-3xl border border-red-400/20 bg-red-500/5 p-6">
+			<div class="mb-5">
+				<h2 class="text-2xl font-semibold text-red-200">Danger zone</h2>
+				<p class="mt-2 text-sm text-red-200/70">
+					Delete this contest and all related songs, votes and participants assigned to it.
+				</p>
+			</div>
+
+			<button
+				type="button"
+				onclick={() => {
+					confirmTitle = '';
+					isDeleteModalOpen = true;
+				}}
+				class="w-full rounded-2xl border border-red-400/30 bg-red-500/10 px-6 py-4 font-bold text-red-200 transition hover:bg-red-500/20"
+			>
+				Delete mix
+			</button>
+		</div>
+	</section>
+	{#if isDeleteModalOpen}
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="delete-contest-title"
+		>
+			<button
+				type="button"
+				class="absolute inset-0 cursor-default"
+				aria-label="Close modal"
+				onclick={() => (isDeleteModalOpen = false)}
+			></button>
+
+			<div
+				class="relative w-full max-w-lg rounded-3xl border border-red-400/20 bg-zinc-950 p-6 shadow-2xl shadow-red-950/40"
+			>
+				<div class="mb-6">
+					<p class="mb-2 text-xs tracking-[0.3em] text-red-300 uppercase">Danger zone</p>
+
+					<h2 id="delete-mix-title" class="text-2xl font-semibold text-white">Delete mix</h2>
+
+					<p class="mt-3 text-sm leading-6 text-zinc-400">
+						This will permanently delete the mix, all submitted songs, votes and its participants.
+						This cannot be undone.
+					</p>
+				</div>
+
+				{#if form?.error && form?.action === 'deleteContest'}
+					<div
+						class="mb-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200"
+					>
+						{form.error}
+					</div>
+				{/if}
+
+				<form method="POST" action="?/deleteContest">
+					<label class="block">
+						<span class="mb-2 block text-sm font-medium text-zinc-300">
+							Type <span class="font-bold text-red-200">{contest.theme}</span> to confirm
+						</span>
+
+						<input
+							name="confirmTitle"
+							bind:value={confirmTitle}
+							autocomplete="off"
+							class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none focus:border-red-300/60"
+						/>
+					</label>
+
+					<div class="mt-8 flex justify-end gap-3">
+						<button
+							type="button"
+							onclick={() => (isDeleteModalOpen = false)}
+							class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
+						>
+							Cancel
+						</button>
+
+						<button
+							type="submit"
+							disabled={confirmTitle !== contest.theme}
+							class="rounded-full bg-red-500 px-6 py-3 font-bold text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-40"
+						>
+							Delete permanently
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	{/if}
+
+	{#if isInviteModalOpen}
+		<DeadLineActionModal
+			open={isInviteModalOpen}
+			action="?/sendSubmissionInvites"
+			kicker="Song submissions"
+			title="Invite participants"
+			description="Set the deadline for song submissions. Invitations will be marked as sent afterwards."
+			dateLabel="Submission deadline"
+			dateName="submissionClosesAt"
+			submitLabel="Send invites"
+			successMessage="Participants invited."
+			defaultDate={dateInWeeks(3)}
+			onClose={() => (isInviteModalOpen = false)}
+		/>
+	{/if}
+
+	{#if isVotingModalOpen}
+		<DeadLineActionModal
+			open={isVotingModalOpen}
+			action="?/startVoting"
+			kicker="Voting"
+			title="Start voting"
+			description="Set the deadline for voting. Voting will be opened afterwards."
+			dateLabel="Voting deadline"
+			dateName="votingClosesAt"
+			submitLabel="Start voting"
+			successMessage="Voting opened."
+			defaultDate={dateInWeeks(8)}
+			onClose={() => (isVotingModalOpen = false)}
+		/>
+	{/if}
+</main>
+
+<style>
+	input[type='date']::-webkit-calendar-picker-indicator {
+		filter: invert(1);
+		cursor: pointer;
+	}
+</style>
