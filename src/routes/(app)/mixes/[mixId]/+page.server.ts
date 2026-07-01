@@ -257,68 +257,12 @@ export const actions = {
 					subject,
 					html
 				};
-
-				return {
-					from,
-					to: [entry.competitor.email!.trim()],
-					subject: `Martymix: Submit your song for "${entry.contest.theme}"`,
-					html: `<div style="background:#09090b;padding:40px;font-family:Arial,sans-serif;">
-					<div style="max-width:600px;margin:0 auto;background:#18181b;border:1px solid #27272a;border-radius:24px;overflow:hidden;">
-					<div style="padding:40px;color:white;">
-					
-						<div style="text-align:center;padding:32px;">
-						<img
-							src="https://i.imgur.com/2mTdjYm.png"
-							alt="Martymix"
-							width="280"
-							style="display:block;margin:0 auto;"
-						/>
-
-						<h2>Hello ${entry.competitor.name.split(' ')[0]} 👋</h2>
-					</div>
-
-						<p style="color:#d4d4d8;line-height:1.7;">
-							You have been invited to participate in:
-						</p>
-
-						<div style="margin:24px 0;padding:20px;border-radius:16px;background:#27272a;">
-							<strong>${entry.contest.theme}</strong>
-						</div>
-
-						<p style="color:#d4d4d8;">
-							Use your personal submission link:
-						</p>
-
-						<div style="text-align:center;margin:32px 0;">
-							<a
-								href="${submitUrl}"
-								style="
-									display:inline-block;
-									background:#d946ef;
-									color:white;
-									padding:16px 28px;
-									border-radius:999px;
-									text-decoration:none;
-									font-weight:bold;
-								"
-							>
-								🎵 &nbsp;Submit my song
-							</a>
-						</div>
-
-						<p style="color:#71717a;font-size:14px;">
-							This link is unique to you and can be used later to update your submission.
-						</p>
-					</div>
-				</div>
-				</div>
-				`
-				};
 			});
 
 		const { error: resendError } = await resend.batch.send(emails);
 
 		if (resendError) {
+			console.error('RESEND ERROR', resendError);
 			return fail(500, {
 				error: 'Could not send invitation emails.'
 			});
