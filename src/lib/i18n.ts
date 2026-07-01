@@ -11,7 +11,13 @@ const translations = {
 		closedTitle: 'Submissions are closed',
 		closedText: 'Song submissions for this mix are no longer open.',
 		alreadySubmitted: 'You already submitted a song. Submitting again will update it.',
-		instructionsTitle: 'Instructions'
+		instructionsTitle: 'Instructions',
+		submissionClosed: 'Submission closed',
+		daysRemaining: 'days remaining',
+		dayRemaining: 'day remaining',
+		hoursRemaining: 'hours remaining',
+		hourRemaining: 'hour remaining',
+		submissionDeadline: 'Submission deadline'
 	},
 	DE: {
 		submitTitle: 'reiche hier deinen Song ein',
@@ -24,7 +30,13 @@ const translations = {
 		closedText: 'Für diesen Mix können keine Songs mehr eingereicht werden.',
 		alreadySubmitted:
 			'Du hast bereits einen Song eingereicht. Eine erneute Einreichung wird diesen aktualisieren.',
-		instructionsTitle: 'Instruktionen'
+		instructionsTitle: 'Instruktionen',
+		submissionClosed: 'Einreichung geschlossen',
+		daysRemaining: 'Tage verbleibend',
+		dayRemaining: 'Tag verbleibend',
+		hoursRemaining: 'Stunden verbleibend',
+		hourRemaining: 'Stunde verbleibend',
+		submissionDeadline: 'Einreichungsfrist'
 	}
 } as const;
 

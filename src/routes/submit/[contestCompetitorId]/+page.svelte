@@ -5,9 +5,42 @@
 
 	const t = getTranslations(data.language);
 
+	const locale = data.language === 'DE' ? 'de-DE' : 'en-GB';
+
 	const contestCompetitor = data.contestCompetitor;
 	const competitor = contestCompetitor.competitor;
 	const contest = contestCompetitor.contest;
+
+	const submissionUntil = contest.submissionClosesAt ? new Date(contest.submissionClosesAt) : null;
+
+	const deadlineText = $derived(
+		submissionUntil
+			? new Intl.DateTimeFormat(locale, {
+					weekday: 'long',
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				}).format(submissionUntil)
+			: null
+	);
+
+	const countdownText = $derived.by(() => {
+		if (!submissionUntil) return null;
+
+		const diff = submissionUntil.getTime() - Date.now();
+
+		if (diff <= 0) return t.submissionClosed;
+
+		const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+		const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+		if (days > 1) return `${days} ${t.daysRemaining}`;
+		if (days === 1) return `1 ${t.dayRemaining}`;
+		if (hours > 1) return `${hours} ${t.hoursRemaining}`;
+		if (hours === 1) return `1 ${t.hourRemaining}`;
+
+		return 'Less than 1 hour remaining';
+	});
 </script>
 
 <svelte:head>
@@ -30,6 +63,22 @@
 		<p class="mt-4 text-zinc-400">
 			Mix: <span class="text-white">{contest.theme}</span>
 		</p>
+
+		{#if deadlineText}
+			<div class="mt-6 rounded-3xl border border-fuchsia-300/25 bg-fuchsia-500/10 p-5">
+				<p class="text-sm font-semibold text-fuchsia-200">📅 {t.submissionDeadline}</p>
+
+				<p class="mt-2 text-lg font-bold text-white">
+					{deadlineText}
+				</p>
+
+				{#if countdownText}
+					<p class="mt-1 text-sm text-zinc-300">
+						⏳ {countdownText}
+					</p>
+				{/if}
+			</div>
+		{/if}
 
 		{#if data.instructionsHtml}
 			<div class="mt-8 rounded-3xl border border-fuchsia-300/20 bg-fuchsia-500/5 p-6">
