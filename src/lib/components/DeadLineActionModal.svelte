@@ -59,6 +59,7 @@
 				class="mt-6"
 				use:enhance={() => {
 					return async ({ result, update }) => {
+						console.log('form result', result);
 						await update();
 						await invalidateAll();
 
@@ -69,6 +70,15 @@
 
 						if (result.type === 'failure') {
 							toast.error('Something went wrong.');
+						}
+
+						if (result.type === 'error') {
+							console.error('FORM ERROR', result.error);
+							toast.error('Server error.');
+						}
+
+						if (result.type === 'redirect') {
+							console.log('FORM REDIRECT', result.location);
 						}
 					};
 				}}
