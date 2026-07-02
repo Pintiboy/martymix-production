@@ -1,6 +1,7 @@
 import { prisma } from '$lib/prisma';
 import { error, fail } from '@sveltejs/kit';
 import { marked } from 'marked';
+import { getTranslations } from '$lib/i18n';
 
 export const load = async ({ params }) => {
 	const contestCompetitor = await prisma.contestCompetitor.findUnique({
@@ -26,6 +27,7 @@ export const load = async ({ params }) => {
 		: null;
 
 	const language = contestCompetitor.contest.owner?.language ?? 'EN';
+	const t = getTranslations(language);
 
 	const song = await prisma.song.findUnique({
 		where: {
@@ -63,7 +65,7 @@ export const actions = {
 
 		if (!artist || !title) {
 			return fail(400, {
-				error: 'Please enter artist and song title.',
+				error: t.missingSong,
 				values: {
 					artist,
 					title
