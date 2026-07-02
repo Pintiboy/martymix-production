@@ -27,7 +27,6 @@ export const load = async ({ params }) => {
 		: null;
 
 	const language = contestCompetitor.contest.owner?.language ?? 'EN';
-	const t = getTranslations(language);
 
 	const song = await prisma.song.findUnique({
 		where: {
@@ -63,6 +62,22 @@ export const actions = {
 		const artist = String(formData.get('artist') ?? '').trim();
 		const title = String(formData.get('title') ?? '').trim();
 
+		const contestCompetitor = await prisma.contestCompetitor.findUnique({
+			where: {
+				id: params.contestCompetitorId
+			},
+			include: {
+				contest: {
+					include: {
+						owner: true
+					}
+			},
+			}
+		});
+
+		const language = contestCompetitor.contest.owner?.language ?? 'EN';
+		const t = getTranslations(language);
+		
 		if (!artist || !title) {
 			return fail(400, {
 				error: t.missingSong,
@@ -72,15 +87,6 @@ export const actions = {
 				}
 			});
 		}
-
-		const contestCompetitor = await prisma.contestCompetitor.findUnique({
-			where: {
-				id: params.contestCompetitorId
-			},
-			include: {
-				contest: true
-			}
-		});
 
 		if (!contestCompetitor) {
 			error(404, 'Submission link not found');
