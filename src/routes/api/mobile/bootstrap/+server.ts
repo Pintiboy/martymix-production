@@ -14,7 +14,7 @@ export async function GET({ request }) {
 
 	const userId = session.user.id;
 
-	const [contests, competitors] = await Promise.all([
+	const [contests, competitors, contestCompetitors, songs] = await Promise.all([
 		prisma.contest.findMany({
 			where: {
 				ownerId: userId
@@ -57,6 +57,55 @@ export async function GET({ request }) {
 				createdAt: true,
 				updatedAt: true
 			}
+		}),
+
+		prisma.contestCompetitor.findMany({
+			where: {
+				contest: {
+					ownerId: userId
+				}
+			},
+			orderBy: [
+				{
+					contestId: 'asc'
+				},
+				{
+					votingOrder: 'asc'
+				}
+			],
+			select: {
+				id: true,
+				contestId: true,
+				competitorId: true,
+				votingOrder: true,
+				createdAt: true
+			}
+		}),
+
+		prisma.song.findMany({
+			where: {
+				contest: {
+					ownerId: userId
+				}
+			},
+			orderBy: [
+				{
+					contestId: 'asc'
+				},
+				{
+					listeningOrder: 'asc'
+				}
+			],
+			select: {
+				id: true,
+				contestId: true,
+				competitorId: true,
+				artist: true,
+				title: true,
+				listeningOrder: true,
+				createdAt: true,
+				updatedAt: true
+			}
 		})
 	]);
 
@@ -69,6 +118,8 @@ export async function GET({ request }) {
 		},
 		contests,
 		competitors,
+		contestCompetitors,
+		songs,
 		generatedAt: new Date().toISOString()
 	});
 }
