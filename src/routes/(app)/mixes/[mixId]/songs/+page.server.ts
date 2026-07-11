@@ -64,14 +64,29 @@ export const load = async ({ params, locals }) => {
 			return a.competitor.name.localeCompare(b.competitor.name);
 		});
 
-	const competitors = submissionRows.filter((row) => !row.song).map((row) => row.competitor);
+	const contestCompetitorIds = contestCompetitors.map((entry) => entry.competitorId);
+
+	const songCompetitors = submissionRows.filter((row) => !row.song).map((row) => row.competitor);
+
+	const availableCompetitors = await prisma.competitor.findMany({
+		where: {
+			ownerId: user.id,
+			id: {
+				notIn: contestCompetitorIds
+			}
+		},
+		orderBy: {
+			name: 'asc'
+		}
+	});
 
 	const submittedSongs = submissionRows.filter((row) => row.song).length;
 	const expectedSongs = submissionRows.length;
 
 	return {
 		contest,
-		competitors,
+		competitors: songCompetitors,
+		availableCompetitors,
 		submissionRows,
 		submittedSongs,
 		expectedSongs
@@ -166,7 +181,8 @@ export const actions = {
 		}
 
 		return {
-			success: true
+			success: true,
+			action: 'createSong'
 		};
 	},
 	delete: async ({ params, request, locals }) => {
@@ -195,7 +211,8 @@ export const actions = {
 		});
 
 		return {
-			success: true
+			success: true,
+			action: 'deleteSong'
 		};
 	},
 
@@ -269,6 +286,117 @@ export const actions = {
 			}
 		});
 
-		return { success: true };
+		return { success: true, action: 'removeContributor' };
+	},
+
+	addParticipant: async ({ request, params, locals }) => {
+		const user = requireUser(locals);
+		const formData = await request.formData();
+
+		const competitorId = String(formData.get('competitorId') ?? '').trim();
+		const contestId = params.mixId;
+
+		if (!competitorId) {
+			return fail(400, {
+				error: 'Please select a participant.',
+				action: 'addContributor',
+				values: { competitorId }
+			});
+		}
+
+		const contest = await prisma.contest.findFirst({
+			where: {
+				id: contestId,
+				ownerId: user.id
+			},
+			select: { id: true }
+		});
+
+		if (!contest) {
+			error(404, 'Mix not found');
+		}
+
+		const competitor = await prisma.competitor.findFirst({
+			where: {
+				id: competitorId,
+				ownerId: user.id
+			},
+			select: { id: true }
+		});
+
+		if (!competitor) {
+			return fail(400, {
+				error: 'Invalid participant.',
+				action: 'addContributor',
+				values: { competitorId }
+			});
+		}
+
+		const alreadyInContest = await prisma.contestCompetitor.findFirst({
+			where: {
+				contestId,
+				competitorId
+			},
+			select: { id: true }
+		});
+
+		if (alreadyInContest) {
+			return fail(400, {
+				error: 'This participant is already part of this mix.',
+				action: 'addContributor',
+				values: { competitorId }
+			});
+		}
+
+		const count = await prisma.contestCompetitor.count({
+			where: { contestId }
+		});
+
+		const votingOrder = Math.floor(Math.random() * (count + 1)) + 1;
+
+		await prisma.$transaction([
+			// Erst weit nach hinten schieben, damit keine Unique-Kollision entsteht
+			prisma.contestCompetitor.updateMany({
+				where: {
+					contestId,
+					votingOrder: {
+						gte: votingOrder
+					}
+				},
+				data: {
+					votingOrder: {
+						increment: 1000
+					}
+				}
+			}),
+
+			prisma.contestCompetitor.create({
+				data: {
+					contestId,
+					competitorId,
+					votingOrder
+				}
+			}),
+
+			// Danach aus temporär +1000 effektiv +1 machen
+			prisma.contestCompetitor.updateMany({
+				where: {
+					contestId,
+					votingOrder: {
+						gte: votingOrder + 1000
+					}
+				},
+				data: {
+					votingOrder: {
+						decrement: 999
+					}
+				}
+			})
+		]);
+
+		return {
+			success: true,
+			action: 'addContributor'
+		};
 	}
 };

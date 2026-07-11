@@ -4,6 +4,7 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { username } from 'better-auth/plugins';
 import { getRequestEvent } from '$app/server';
 import { prisma } from './prisma';
+import { expo } from '@better-auth/expo';
 
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
@@ -13,5 +14,6 @@ export const auth = betterAuth({
 		enabled: true,
 		minPasswordLength: 4
 	},
-	plugins: [username(), sveltekitCookies(getRequestEvent)]
+	plugins: [username(), expo(), sveltekitCookies(getRequestEvent)],
+	trustedOrigins: ['martymixmobile://']
 });

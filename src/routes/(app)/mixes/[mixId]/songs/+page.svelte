@@ -7,7 +7,8 @@
 
 	let { data, form } = $props();
 
-	let isModalOpen = $state(false);
+	let isAddSongModalOpen = $state(false);
+	let isAddContributorModalOpen = $state(false);
 
 	const contest = data.contest;
 
@@ -54,12 +55,16 @@
 	} */
 
 	$effect(() => {
-		if (form?.success) {
-			isModalOpen = false;
+		if (form?.success && form.action === 'createSong') {
+			isAddSongModalOpen = false;
+		}
+
+		if (form?.success && form.action === 'addContributor') {
+			isAddContributorModalOpen = false;
 		}
 
 		if (form?.error) {
-			isModalOpen = true;
+			// optional: passendes Modal wieder öffnen
 		}
 	});
 
@@ -100,7 +105,15 @@
 
 			<button
 				type="button"
-				onclick={() => (isModalOpen = true)}
+				onclick={() => (isAddContributorModalOpen = true)}
+				class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
+			>
+				Add contributor
+			</button>
+
+			<button
+				type="button"
+				onclick={() => (isAddSongModalOpen = true)}
 				class="rounded-full cursor-pointer bg-white px-5 py-3 font-medium text-zinc-950 transition hover:scale-105"
 			>
 				Add song
@@ -304,7 +317,11 @@
 		</div>
 	</section>
 
-	<Modal open={isModalOpen} titleId="add-song-title" onClose={() => (isModalOpen = false)}>
+	<Modal
+		open={isAddSongModalOpen}
+		titleId="add-song-title"
+		onClose={() => (isAddSongModalOpen = false)}
+	>
 		{#snippet children({ close })}
 			<div
 				class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm"
@@ -316,7 +333,7 @@
 					type="button"
 					class="absolute inset-0 cursor-default"
 					aria-label="Close modal"
-					onclick={() => (isModalOpen = false)}
+					onclick={() => (isAddSongModalOpen = false)}
 				></button>
 
 				<div
@@ -342,7 +359,7 @@
 						</button>
 					</div>
 
-					{#if form?.error}
+					{#if form?.error && form.action === 'createSong'}
 						<div
 							class="mb-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200"
 						>
@@ -410,6 +427,61 @@
 					</form>
 				</div>
 			</div>
+		{/snippet}
+	</Modal>
+
+	<Modal
+		open={isAddContributorModalOpen}
+		titleId="add-contributor-title"
+		onClose={() => (isAddContributorModalOpen = false)}
+	>
+		{#snippet children({ close })}
+			<form
+				method="POST"
+				action="?/addParticipant"
+				use:enhance={() => {
+					return async ({ result, update }) => {
+						await update();
+
+						if (result.type === 'success') {
+							toast.success('Contributor added.');
+							isAddContributorModalOpen = false;
+						}
+
+						if (result.type === 'failure') {
+							isAddContributorModalOpen = true;
+							toast.error('Could not add contributor.');
+						}
+					};
+				}}
+			>
+				<h2 id="add-contributor-title" class="text-2xl font-semibold">Add contributor</h2>
+
+				{#if form?.error && form.action === 'addContributor'}
+					<div
+						class="mt-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200"
+					>
+						{form.error}
+					</div>
+				{/if}
+
+				<select
+					name="competitorId"
+					value={form?.action === 'addContributor' ? (form?.values?.competitorId ?? '') : ''}
+					class="mt-5 w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-2 text-white"
+				>
+					<option value="">Select contributor</option>
+
+					{#each data.availableCompetitors as competitor (competitor.id)}
+						<option value={competitor.id}>{competitor.name}</option>
+					{/each}
+				</select>
+
+				<div class="mt-8 flex justify-end gap-3">
+					<button type="button" onclick={close}>Cancel</button>
+					<button type="submit">Add contributor</button>
+				</div>
+			</form>
 		{/snippet}
 	</Modal>
 </main>
