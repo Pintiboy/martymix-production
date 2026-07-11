@@ -21,6 +21,22 @@ export async function GET({ request }) {
 			},
 			orderBy: {
 				createdAt: 'desc'
+			},
+			select: {
+				id: true,
+				theme: true,
+				description: true,
+				instructions: true,
+				status: true,
+				submissionInvitedAt: true,
+				submissionClosesAt: true,
+				votingInvitedAt: true,
+				votingClosesAt: true,
+				resultsCreatedAt: true,
+				themeProposerId: true,
+				ownerId: true,
+				createdAt: true,
+				updatedAt: true
 			}
 		}),
 
@@ -30,13 +46,29 @@ export async function GET({ request }) {
 			},
 			orderBy: {
 				name: 'asc'
+			},
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				country: true,
+				isActive: true,
+				ownerId: true,
+				createdAt: true,
+				updatedAt: true
 			}
 		})
 	]);
 
 	return json({
-		user: session.user,
+		user: {
+			id: session.user.id,
+			name: session.user.name,
+			email: session.user.email,
+			image: session.user.image
+		},
 		contests,
-		competitors
+		competitors,
+		generatedAt: new Date().toISOString()
 	});
 }
