@@ -88,43 +88,47 @@
 	<title>Songs | {contest.theme}</title>
 </svelte:head>
 
-<main class="min-h-screen bg-zinc-950 px-6 py-10 text-white">
+<main class="min-h-screen bg-zinc-950 px-4 py-6 sm:px-6 sm:py-10 text-white">
 	<section class="mx-auto max-w-6xl">
 		<a href={resolve(`/mixes/${contest.id}`)} class="text-sm text-zinc-400 hover:text-white">
 			← Back to mix overview
 		</a>
 
-		<div class="mt-10 mb-10 flex items-end justify-between gap-6">
+		<div
+			class="mt-6 mb-6 flex flex-col gap-4 sm:mt-10 sm:mb-10 sm:flex-row sm:items-end sm:justify-between"
+		>
 			<div>
 				<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Songs</p>
 
-				<h1 class="text-4xl font-bold tracking-tight">{contest.theme}</h1>
+				<h1 class="text-3xl sm:text-4xl font-bold tracking-tight">{contest.theme}</h1>
 
 				<p class="mt-3 max-w-2xl text-zinc-400">Manage all submitted songs for this competition.</p>
 			</div>
 
-			<button
-				type="button"
-				onclick={() => (isAddContributorModalOpen = true)}
-				class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
-			>
-				Add contributor
-			</button>
+			<div class="flex flex-col gap-2 sm:flex-row">
+				<button
+					type="button"
+					onclick={() => (isAddContributorModalOpen = true)}
+					class="rounded-full border border-white/15 px-4 py-2.5 sm:px-5 sm:py-3 font-medium text-white transition hover:bg-white/10"
+				>
+					Add contributor
+				</button>
 
-			<button
-				type="button"
-				onclick={() => (isAddSongModalOpen = true)}
-				class="rounded-full cursor-pointer bg-white px-5 py-3 font-medium text-zinc-950 transition hover:scale-105"
-			>
-				Add song
-			</button>
+				<button
+					type="button"
+					onclick={() => (isAddSongModalOpen = true)}
+					class="rounded-full cursor-pointer bg-white px-4 py-2.5 sm:px-5 sm:py-3font-medium text-zinc-950 transition hover:scale-105"
+				>
+					Add song
+				</button>
+			</div>
 		</div>
 
-		<div class="rounded-3xl border border-white/10 bg-white/3 p-6">
+		<div class="rounded-3xl border border-white/10 bg-white/3 p-4 sm:p-6">
 			<div class="mb-5 flex items-center justify-between">
 				<h2 class="text-2xl font-semibold">Submitted songs</h2>
 
-				<div class="flex items-center gap-3">
+				<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 					<p class="text-sm text-zinc-500">
 						{data.submittedSongs}/{data.expectedSongs} submitted
 					</p>
