@@ -9,11 +9,7 @@ export const load = async ({ params }) => {
 			id: params.contestCompetitorId
 		},
 		include: {
-			contest: {
-				include: {
-					owner: true
-				}
-			},
+			contest: true,
 			competitor: true
 		}
 	});
@@ -26,7 +22,7 @@ export const load = async ({ params }) => {
 		? marked.parse(contestCompetitor.contest.instructions)
 		: null;
 
-	const language = contestCompetitor.contest.owner?.language ?? 'EN';
+	const language = contestCompetitor.competitor.preferredLanguage;
 
 	const song = await prisma.song.findUnique({
 		where: {
@@ -51,7 +47,8 @@ export const load = async ({ params }) => {
 		contestCompetitor,
 		language,
 		song,
-		instructionsHtml
+		instructionsHtml,
+		submissionClosed: false
 	};
 };
 
@@ -67,17 +64,18 @@ export const actions = {
 				id: params.contestCompetitorId
 			},
 			include: {
-				contest: {
-					include: {
-						owner: true
-					}
-			},
+				contest: true,
+				competitor: true
 			}
 		});
 
-		const language = contestCompetitor.contest.owner?.language ?? 'EN';
+		if (!contestCompetitor) {
+			error(404, 'Submission link not found');
+		}
+
+		const language = contestCompetitor.competitor.preferredLanguage;
 		const t = getTranslations(language);
-		
+
 		if (!artist || !title) {
 			return fail(400, {
 				error: t.missingSong,
@@ -94,7 +92,7 @@ export const actions = {
 
 		if (contestCompetitor.contest.status !== 'SUBMISSION_OPEN') {
 			return fail(403, {
-				error: 'Song submissions are currently closed.'
+				error: t.submissionClosed
 			});
 		}
 

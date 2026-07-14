@@ -11,6 +11,21 @@
 	const competitor = contestCompetitor.competitor;
 	const contest = contestCompetitor.contest;
 
+	console.log('Submission language:', data.language);
+	console.log('Competitor:', competitor);
+
+	const brand = $derived(
+		contest.type === 'PINTYMIX'
+			? {
+					name: 'Pintymix',
+					logoUrl: '/images/pintymix-logo-farbe.png'
+				}
+			: {
+					name: 'Martymix',
+					logoUrl: '/images/martymix-logo-farbe-small.png'
+				}
+	);
+
 	const submissionUntil = contest.submissionClosesAt ? new Date(contest.submissionClosesAt) : null;
 
 	const deadlineText = $derived(
@@ -49,10 +64,10 @@
 
 <main class="min-h-screen bg-zinc-950 px-6 py-10 text-white">
 	<section class="mx-auto flex min-h-[80vh] max-w-xl flex-col justify-center">
-		<img src="/images/pintymix-logo-farbe.png" alt="Pintymix" class="mx-auto h-64 w-auto sm:h-96" />
+		<img src={brand.logoUrl} alt={brand.name} class="mx-auto h-64 w-auto sm:h-96" />
 
 		<p class="my-4 hidden text-sm tracking-[0.35em] text-fuchsia-300 uppercase sm:block">
-			Pintymix
+			{brand.name}
 		</p>
 
 		<h1 class="text-2xl font-bold tracking-tight sm:text-4xl">
