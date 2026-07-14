@@ -29,6 +29,7 @@ export type ContestMinAggregateOutputType = {
   theme: string | null
   description: string | null
   instructions: string | null
+  type: $Enums.ContestType | null
   status: $Enums.ContestStatus | null
   submissionInvitedAt: Date | null
   submissionClosesAt: Date | null
@@ -46,6 +47,7 @@ export type ContestMaxAggregateOutputType = {
   theme: string | null
   description: string | null
   instructions: string | null
+  type: $Enums.ContestType | null
   status: $Enums.ContestStatus | null
   submissionInvitedAt: Date | null
   submissionClosesAt: Date | null
@@ -63,6 +65,7 @@ export type ContestCountAggregateOutputType = {
   theme: number
   description: number
   instructions: number
+  type: number
   status: number
   submissionInvitedAt: number
   submissionClosesAt: number
@@ -82,6 +85,7 @@ export type ContestMinAggregateInputType = {
   theme?: true
   description?: true
   instructions?: true
+  type?: true
   status?: true
   submissionInvitedAt?: true
   submissionClosesAt?: true
@@ -99,6 +103,7 @@ export type ContestMaxAggregateInputType = {
   theme?: true
   description?: true
   instructions?: true
+  type?: true
   status?: true
   submissionInvitedAt?: true
   submissionClosesAt?: true
@@ -116,6 +121,7 @@ export type ContestCountAggregateInputType = {
   theme?: true
   description?: true
   instructions?: true
+  type?: true
   status?: true
   submissionInvitedAt?: true
   submissionClosesAt?: true
@@ -206,6 +212,7 @@ export type ContestGroupByOutputType = {
   theme: string
   description: string | null
   instructions: string | null
+  type: $Enums.ContestType
   status: $Enums.ContestStatus
   submissionInvitedAt: Date | null
   submissionClosesAt: Date | null
@@ -244,6 +251,7 @@ export type ContestWhereInput = {
   theme?: Prisma.StringFilter<"Contest"> | string
   description?: Prisma.StringNullableFilter<"Contest"> | string | null
   instructions?: Prisma.StringNullableFilter<"Contest"> | string | null
+  type?: Prisma.EnumContestTypeFilter<"Contest"> | $Enums.ContestType
   status?: Prisma.EnumContestStatusFilter<"Contest"> | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   submissionClosesAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
@@ -266,6 +274,7 @@ export type ContestOrderByWithRelationInput = {
   theme?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   instructions?: Prisma.SortOrderInput | Prisma.SortOrder
+  type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   submissionInvitedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   submissionClosesAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -291,6 +300,7 @@ export type ContestWhereUniqueInput = Prisma.AtLeast<{
   theme?: Prisma.StringFilter<"Contest"> | string
   description?: Prisma.StringNullableFilter<"Contest"> | string | null
   instructions?: Prisma.StringNullableFilter<"Contest"> | string | null
+  type?: Prisma.EnumContestTypeFilter<"Contest"> | $Enums.ContestType
   status?: Prisma.EnumContestStatusFilter<"Contest"> | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   submissionClosesAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
@@ -313,6 +323,7 @@ export type ContestOrderByWithAggregationInput = {
   theme?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   instructions?: Prisma.SortOrderInput | Prisma.SortOrder
+  type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   submissionInvitedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   submissionClosesAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -336,6 +347,7 @@ export type ContestScalarWhereWithAggregatesInput = {
   theme?: Prisma.StringWithAggregatesFilter<"Contest"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
   instructions?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
+  type?: Prisma.EnumContestTypeWithAggregatesFilter<"Contest"> | $Enums.ContestType
   status?: Prisma.EnumContestStatusWithAggregatesFilter<"Contest"> | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Contest"> | Date | string | null
   submissionClosesAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Contest"> | Date | string | null
@@ -353,6 +365,7 @@ export type ContestCreateInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -373,6 +386,7 @@ export type ContestUncheckedCreateInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -393,6 +407,7 @@ export type ContestUpdateInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -413,6 +428,7 @@ export type ContestUncheckedUpdateInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -433,6 +449,7 @@ export type ContestCreateManyInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -450,6 +467,7 @@ export type ContestUpdateManyMutationInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -465,6 +483,7 @@ export type ContestUncheckedUpdateManyInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -482,6 +501,7 @@ export type ContestCountOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   description?: Prisma.SortOrder
   instructions?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   submissionInvitedAt?: Prisma.SortOrder
   submissionClosesAt?: Prisma.SortOrder
@@ -499,6 +519,7 @@ export type ContestMaxOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   description?: Prisma.SortOrder
   instructions?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   submissionInvitedAt?: Prisma.SortOrder
   submissionClosesAt?: Prisma.SortOrder
@@ -516,6 +537,7 @@ export type ContestMinOrderByAggregateInput = {
   theme?: Prisma.SortOrder
   description?: Prisma.SortOrder
   instructions?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   status?: Prisma.SortOrder
   submissionInvitedAt?: Prisma.SortOrder
   submissionClosesAt?: Prisma.SortOrder
@@ -549,6 +571,10 @@ export type StringFieldUpdateOperationsInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type EnumContestTypeFieldUpdateOperationsInput = {
+  set?: $Enums.ContestType
 }
 
 export type EnumContestStatusFieldUpdateOperationsInput = {
@@ -694,6 +720,7 @@ export type ContestCreateWithoutThemeProposerInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -713,6 +740,7 @@ export type ContestUncheckedCreateWithoutThemeProposerInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -761,6 +789,7 @@ export type ContestScalarWhereInput = {
   theme?: Prisma.StringFilter<"Contest"> | string
   description?: Prisma.StringNullableFilter<"Contest"> | string | null
   instructions?: Prisma.StringNullableFilter<"Contest"> | string | null
+  type?: Prisma.EnumContestTypeFilter<"Contest"> | $Enums.ContestType
   status?: Prisma.EnumContestStatusFilter<"Contest"> | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   submissionClosesAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
@@ -778,6 +807,7 @@ export type ContestCreateWithoutCompetitorsInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -797,6 +827,7 @@ export type ContestUncheckedCreateWithoutCompetitorsInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -832,6 +863,7 @@ export type ContestUpdateWithoutCompetitorsInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -851,6 +883,7 @@ export type ContestUncheckedUpdateWithoutCompetitorsInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -870,6 +903,7 @@ export type ContestCreateWithoutSongsInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -889,6 +923,7 @@ export type ContestUncheckedCreateWithoutSongsInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -924,6 +959,7 @@ export type ContestUpdateWithoutSongsInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -943,6 +979,7 @@ export type ContestUncheckedUpdateWithoutSongsInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -962,6 +999,7 @@ export type ContestCreateWithoutVotesInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -981,6 +1019,7 @@ export type ContestUncheckedCreateWithoutVotesInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -1016,6 +1055,7 @@ export type ContestUpdateWithoutVotesInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1035,6 +1075,7 @@ export type ContestUncheckedUpdateWithoutVotesInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1054,6 +1095,7 @@ export type ContestCreateWithoutOwnerInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -1073,6 +1115,7 @@ export type ContestUncheckedCreateWithoutOwnerInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -1118,6 +1161,7 @@ export type ContestCreateManyThemeProposerInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -1134,6 +1178,7 @@ export type ContestUpdateWithoutThemeProposerInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1153,6 +1198,7 @@ export type ContestUncheckedUpdateWithoutThemeProposerInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1172,6 +1218,7 @@ export type ContestUncheckedUpdateManyWithoutThemeProposerInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1188,6 +1235,7 @@ export type ContestCreateManyOwnerInput = {
   theme: string
   description?: string | null
   instructions?: string | null
+  type?: $Enums.ContestType
   status?: $Enums.ContestStatus
   submissionInvitedAt?: Date | string | null
   submissionClosesAt?: Date | string | null
@@ -1204,6 +1252,7 @@ export type ContestUpdateWithoutOwnerInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1223,6 +1272,7 @@ export type ContestUncheckedUpdateWithoutOwnerInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1242,6 +1292,7 @@ export type ContestUncheckedUpdateManyWithoutOwnerInput = {
   theme?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumContestTypeFieldUpdateOperationsInput | $Enums.ContestType
   status?: Prisma.EnumContestStatusFieldUpdateOperationsInput | $Enums.ContestStatus
   submissionInvitedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   submissionClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1307,6 +1358,7 @@ export type ContestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   theme?: boolean
   description?: boolean
   instructions?: boolean
+  type?: boolean
   status?: boolean
   submissionInvitedAt?: boolean
   submissionClosesAt?: boolean
@@ -1330,6 +1382,7 @@ export type ContestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   theme?: boolean
   description?: boolean
   instructions?: boolean
+  type?: boolean
   status?: boolean
   submissionInvitedAt?: boolean
   submissionClosesAt?: boolean
@@ -1349,6 +1402,7 @@ export type ContestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   theme?: boolean
   description?: boolean
   instructions?: boolean
+  type?: boolean
   status?: boolean
   submissionInvitedAt?: boolean
   submissionClosesAt?: boolean
@@ -1368,6 +1422,7 @@ export type ContestSelectScalar = {
   theme?: boolean
   description?: boolean
   instructions?: boolean
+  type?: boolean
   status?: boolean
   submissionInvitedAt?: boolean
   submissionClosesAt?: boolean
@@ -1380,7 +1435,7 @@ export type ContestSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ContestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "theme" | "description" | "instructions" | "status" | "submissionInvitedAt" | "submissionClosesAt" | "votingInvitedAt" | "votingClosesAt" | "resultsCreatedAt" | "themeProposerId" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["contest"]>
+export type ContestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "theme" | "description" | "instructions" | "type" | "status" | "submissionInvitedAt" | "submissionClosesAt" | "votingInvitedAt" | "votingClosesAt" | "resultsCreatedAt" | "themeProposerId" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["contest"]>
 export type ContestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   themeProposer?: boolean | Prisma.Contest$themeProposerArgs<ExtArgs>
   songs?: boolean | Prisma.Contest$songsArgs<ExtArgs>
@@ -1412,6 +1467,7 @@ export type $ContestPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     theme: string
     description: string | null
     instructions: string | null
+    type: $Enums.ContestType
     status: $Enums.ContestStatus
     submissionInvitedAt: Date | null
     submissionClosesAt: Date | null
@@ -1854,6 +1910,7 @@ export interface ContestFieldRefs {
   readonly theme: Prisma.FieldRef<"Contest", 'String'>
   readonly description: Prisma.FieldRef<"Contest", 'String'>
   readonly instructions: Prisma.FieldRef<"Contest", 'String'>
+  readonly type: Prisma.FieldRef<"Contest", 'ContestType'>
   readonly status: Prisma.FieldRef<"Contest", 'ContestStatus'>
   readonly submissionInvitedAt: Prisma.FieldRef<"Contest", 'DateTime'>
   readonly submissionClosesAt: Prisma.FieldRef<"Contest", 'DateTime'>

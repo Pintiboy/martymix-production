@@ -1272,6 +1272,7 @@ export const ContestScalarFieldEnum = {
   theme: 'theme',
   description: 'description',
   instructions: 'instructions',
+  type: 'type',
   status: 'status',
   submissionInvitedAt: 'submissionInvitedAt',
   submissionClosesAt: 'submissionClosesAt',
@@ -1290,6 +1291,8 @@ export type ContestScalarFieldEnum = (typeof ContestScalarFieldEnum)[keyof typeo
 export const CompetitorScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  preferredName: 'preferredName',
+  preferredLanguage: 'preferredLanguage',
   isActive: 'isActive',
   email: 'email',
   country: 'country',
@@ -1490,6 +1493,20 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'ContestType'
+ */
+export type EnumContestTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContestType'>
+    
+
+
+/**
+ * Reference to a field of type 'ContestType[]'
+ */
+export type ListEnumContestTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContestType[]'>
+    
+
+
+/**
  * Reference to a field of type 'ContestStatus'
  */
 export type EnumContestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContestStatus'>
@@ -1514,6 +1531,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Language'
+ */
+export type EnumLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Language'>
+    
+
+
+/**
+ * Reference to a field of type 'Language[]'
+ */
+export type ListEnumLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Language[]'>
     
 
 
@@ -1549,20 +1580,6 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
- * Reference to a field of type 'UserLanguage'
- */
-export type EnumUserLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserLanguage'>
-    
-
-
-/**
- * Reference to a field of type 'UserLanguage[]'
- */
-export type ListEnumUserLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserLanguage[]'>
     
 
 

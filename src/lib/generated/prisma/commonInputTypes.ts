@@ -44,6 +44,13 @@ export type StringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type EnumContestTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestType | Prisma.EnumContestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestTypeFilter<$PrismaModel> | $Enums.ContestType
+}
+
 export type EnumContestStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.ContestStatus | Prisma.EnumContestStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ContestStatus[] | Prisma.ListEnumContestStatusFieldRefInput<$PrismaModel>
@@ -114,6 +121,16 @@ export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
 }
 
+export type EnumContestTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestType | Prisma.EnumContestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestTypeWithAggregatesFilter<$PrismaModel> | $Enums.ContestType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumContestTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumContestTypeFilter<$PrismaModel>
+}
+
 export type EnumContestStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.ContestStatus | Prisma.EnumContestStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ContestStatus[] | Prisma.ListEnumContestStatusFieldRefInput<$PrismaModel>
@@ -152,9 +169,26 @@ export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type EnumLanguageFilter<$PrismaModel = never> = {
+  equals?: $Enums.Language | Prisma.EnumLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLanguageFilter<$PrismaModel> | $Enums.Language
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type EnumLanguageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Language | Prisma.EnumLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLanguageWithAggregatesFilter<$PrismaModel> | $Enums.Language
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLanguageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLanguageFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -243,28 +277,11 @@ export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonFilter<$PrismaModel>
 }
 
-export type EnumUserLanguageFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserLanguage | Prisma.EnumUserLanguageFieldRefInput<$PrismaModel>
-  in?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserLanguageFilter<$PrismaModel> | $Enums.UserLanguage
-}
-
 export type EnumUserRoleFilter<$PrismaModel = never> = {
   equals?: $Enums.UserRole | Prisma.EnumUserRoleFieldRefInput<$PrismaModel>
   in?: $Enums.UserRole[] | Prisma.ListEnumUserRoleFieldRefInput<$PrismaModel>
   notIn?: $Enums.UserRole[] | Prisma.ListEnumUserRoleFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
-}
-
-export type EnumUserLanguageWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserLanguage | Prisma.EnumUserLanguageFieldRefInput<$PrismaModel>
-  in?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserLanguageWithAggregatesFilter<$PrismaModel> | $Enums.UserLanguage
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumUserLanguageFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumUserLanguageFilter<$PrismaModel>
 }
 
 export type EnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -303,6 +320,13 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
   endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
+}
+
+export type NestedEnumContestTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestType | Prisma.EnumContestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestTypeFilter<$PrismaModel> | $Enums.ContestType
 }
 
 export type NestedEnumContestStatusFilter<$PrismaModel = never> = {
@@ -390,6 +414,16 @@ export type NestedIntNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
 }
 
+export type NestedEnumContestTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContestType | Prisma.EnumContestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ContestType[] | Prisma.ListEnumContestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumContestTypeWithAggregatesFilter<$PrismaModel> | $Enums.ContestType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumContestTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumContestTypeFilter<$PrismaModel>
+}
+
 export type NestedEnumContestStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.ContestStatus | Prisma.EnumContestStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ContestStatus[] | Prisma.ListEnumContestStatusFieldRefInput<$PrismaModel>
@@ -428,9 +462,26 @@ export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type NestedEnumLanguageFilter<$PrismaModel = never> = {
+  equals?: $Enums.Language | Prisma.EnumLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLanguageFilter<$PrismaModel> | $Enums.Language
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedEnumLanguageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Language | Prisma.EnumLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Language[] | Prisma.ListEnumLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLanguageWithAggregatesFilter<$PrismaModel> | $Enums.Language
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLanguageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLanguageFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -492,28 +543,11 @@ export type NestedJsonFilterBase<$PrismaModel = never> = {
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
 }
 
-export type NestedEnumUserLanguageFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserLanguage | Prisma.EnumUserLanguageFieldRefInput<$PrismaModel>
-  in?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserLanguageFilter<$PrismaModel> | $Enums.UserLanguage
-}
-
 export type NestedEnumUserRoleFilter<$PrismaModel = never> = {
   equals?: $Enums.UserRole | Prisma.EnumUserRoleFieldRefInput<$PrismaModel>
   in?: $Enums.UserRole[] | Prisma.ListEnumUserRoleFieldRefInput<$PrismaModel>
   notIn?: $Enums.UserRole[] | Prisma.ListEnumUserRoleFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
-}
-
-export type NestedEnumUserLanguageWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.UserLanguage | Prisma.EnumUserLanguageFieldRefInput<$PrismaModel>
-  in?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.UserLanguage[] | Prisma.ListEnumUserLanguageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumUserLanguageWithAggregatesFilter<$PrismaModel> | $Enums.UserLanguage
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumUserLanguageFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumUserLanguageFilter<$PrismaModel>
 }
 
 export type NestedEnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {

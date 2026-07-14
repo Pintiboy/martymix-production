@@ -27,6 +27,8 @@ export type AggregateCompetitor = {
 export type CompetitorMinAggregateOutputType = {
   id: string | null
   name: string | null
+  preferredName: string | null
+  preferredLanguage: $Enums.Language | null
   isActive: boolean | null
   email: string | null
   country: string | null
@@ -38,6 +40,8 @@ export type CompetitorMinAggregateOutputType = {
 export type CompetitorMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  preferredName: string | null
+  preferredLanguage: $Enums.Language | null
   isActive: boolean | null
   email: string | null
   country: string | null
@@ -49,6 +53,8 @@ export type CompetitorMaxAggregateOutputType = {
 export type CompetitorCountAggregateOutputType = {
   id: number
   name: number
+  preferredName: number
+  preferredLanguage: number
   isActive: number
   email: number
   country: number
@@ -62,6 +68,8 @@ export type CompetitorCountAggregateOutputType = {
 export type CompetitorMinAggregateInputType = {
   id?: true
   name?: true
+  preferredName?: true
+  preferredLanguage?: true
   isActive?: true
   email?: true
   country?: true
@@ -73,6 +81,8 @@ export type CompetitorMinAggregateInputType = {
 export type CompetitorMaxAggregateInputType = {
   id?: true
   name?: true
+  preferredName?: true
+  preferredLanguage?: true
   isActive?: true
   email?: true
   country?: true
@@ -84,6 +94,8 @@ export type CompetitorMaxAggregateInputType = {
 export type CompetitorCountAggregateInputType = {
   id?: true
   name?: true
+  preferredName?: true
+  preferredLanguage?: true
   isActive?: true
   email?: true
   country?: true
@@ -168,6 +180,8 @@ export type CompetitorGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type CompetitorGroupByOutputType = {
   id: string
   name: string
+  preferredName: string | null
+  preferredLanguage: $Enums.Language
   isActive: boolean
   email: string | null
   country: string | null
@@ -200,6 +214,8 @@ export type CompetitorWhereInput = {
   NOT?: Prisma.CompetitorWhereInput | Prisma.CompetitorWhereInput[]
   id?: Prisma.StringFilter<"Competitor"> | string
   name?: Prisma.StringFilter<"Competitor"> | string
+  preferredName?: Prisma.StringNullableFilter<"Competitor"> | string | null
+  preferredLanguage?: Prisma.EnumLanguageFilter<"Competitor"> | $Enums.Language
   isActive?: Prisma.BoolFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableFilter<"Competitor"> | string | null
@@ -216,6 +232,8 @@ export type CompetitorWhereInput = {
 export type CompetitorOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredName?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -235,6 +253,8 @@ export type CompetitorWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.CompetitorWhereInput[]
   NOT?: Prisma.CompetitorWhereInput | Prisma.CompetitorWhereInput[]
   name?: Prisma.StringFilter<"Competitor"> | string
+  preferredName?: Prisma.StringNullableFilter<"Competitor"> | string | null
+  preferredLanguage?: Prisma.EnumLanguageFilter<"Competitor"> | $Enums.Language
   isActive?: Prisma.BoolFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableFilter<"Competitor"> | string | null
@@ -251,6 +271,8 @@ export type CompetitorWhereUniqueInput = Prisma.AtLeast<{
 export type CompetitorOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredName?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -268,6 +290,8 @@ export type CompetitorScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CompetitorScalarWhereWithAggregatesInput | Prisma.CompetitorScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Competitor"> | string
   name?: Prisma.StringWithAggregatesFilter<"Competitor"> | string
+  preferredName?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
+  preferredLanguage?: Prisma.EnumLanguageWithAggregatesFilter<"Competitor"> | $Enums.Language
   isActive?: Prisma.BoolWithAggregatesFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
@@ -279,6 +303,8 @@ export type CompetitorScalarWhereWithAggregatesInput = {
 export type CompetitorCreateInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -294,6 +320,8 @@ export type CompetitorCreateInput = {
 export type CompetitorUncheckedCreateInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -309,6 +337,8 @@ export type CompetitorUncheckedCreateInput = {
 export type CompetitorUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -324,6 +354,8 @@ export type CompetitorUpdateInput = {
 export type CompetitorUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -339,6 +371,8 @@ export type CompetitorUncheckedUpdateInput = {
 export type CompetitorCreateManyInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -350,6 +384,8 @@ export type CompetitorCreateManyInput = {
 export type CompetitorUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -360,6 +396,8 @@ export type CompetitorUpdateManyMutationInput = {
 export type CompetitorUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -376,6 +414,8 @@ export type CompetitorNullableScalarRelationFilter = {
 export type CompetitorCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredName?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrder
   country?: Prisma.SortOrder
@@ -387,6 +427,8 @@ export type CompetitorCountOrderByAggregateInput = {
 export type CompetitorMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredName?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrder
   country?: Prisma.SortOrder
@@ -398,6 +440,8 @@ export type CompetitorMaxOrderByAggregateInput = {
 export type CompetitorMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  preferredName?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrder
   country?: Prisma.SortOrder
@@ -435,6 +479,10 @@ export type CompetitorUpdateOneWithoutProposedContestsNestedInput = {
   delete?: Prisma.CompetitorWhereInput | boolean
   connect?: Prisma.CompetitorWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CompetitorUpdateToOneWithWhereWithoutProposedContestsInput, Prisma.CompetitorUpdateWithoutProposedContestsInput>, Prisma.CompetitorUncheckedUpdateWithoutProposedContestsInput>
+}
+
+export type EnumLanguageFieldUpdateOperationsInput = {
+  set?: $Enums.Language
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -528,6 +576,8 @@ export type CompetitorUncheckedUpdateManyWithoutOwnerNestedInput = {
 export type CompetitorCreateWithoutProposedContestsInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -542,6 +592,8 @@ export type CompetitorCreateWithoutProposedContestsInput = {
 export type CompetitorUncheckedCreateWithoutProposedContestsInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -572,6 +624,8 @@ export type CompetitorUpdateToOneWithWhereWithoutProposedContestsInput = {
 export type CompetitorUpdateWithoutProposedContestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -586,6 +640,8 @@ export type CompetitorUpdateWithoutProposedContestsInput = {
 export type CompetitorUncheckedUpdateWithoutProposedContestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -600,6 +656,8 @@ export type CompetitorUncheckedUpdateWithoutProposedContestsInput = {
 export type CompetitorCreateWithoutContestsInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -614,6 +672,8 @@ export type CompetitorCreateWithoutContestsInput = {
 export type CompetitorUncheckedCreateWithoutContestsInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -644,6 +704,8 @@ export type CompetitorUpdateToOneWithWhereWithoutContestsInput = {
 export type CompetitorUpdateWithoutContestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -658,6 +720,8 @@ export type CompetitorUpdateWithoutContestsInput = {
 export type CompetitorUncheckedUpdateWithoutContestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -672,6 +736,8 @@ export type CompetitorUncheckedUpdateWithoutContestsInput = {
 export type CompetitorCreateWithoutSongsInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -686,6 +752,8 @@ export type CompetitorCreateWithoutSongsInput = {
 export type CompetitorUncheckedCreateWithoutSongsInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -716,6 +784,8 @@ export type CompetitorUpdateToOneWithWhereWithoutSongsInput = {
 export type CompetitorUpdateWithoutSongsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -730,6 +800,8 @@ export type CompetitorUpdateWithoutSongsInput = {
 export type CompetitorUncheckedUpdateWithoutSongsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -744,6 +816,8 @@ export type CompetitorUncheckedUpdateWithoutSongsInput = {
 export type CompetitorCreateWithoutVotesInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -758,6 +832,8 @@ export type CompetitorCreateWithoutVotesInput = {
 export type CompetitorUncheckedCreateWithoutVotesInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -788,6 +864,8 @@ export type CompetitorUpdateToOneWithWhereWithoutVotesInput = {
 export type CompetitorUpdateWithoutVotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -802,6 +880,8 @@ export type CompetitorUpdateWithoutVotesInput = {
 export type CompetitorUncheckedUpdateWithoutVotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -816,6 +896,8 @@ export type CompetitorUncheckedUpdateWithoutVotesInput = {
 export type CompetitorCreateWithoutOwnerInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -830,6 +912,8 @@ export type CompetitorCreateWithoutOwnerInput = {
 export type CompetitorUncheckedCreateWithoutOwnerInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -873,6 +957,8 @@ export type CompetitorScalarWhereInput = {
   NOT?: Prisma.CompetitorScalarWhereInput | Prisma.CompetitorScalarWhereInput[]
   id?: Prisma.StringFilter<"Competitor"> | string
   name?: Prisma.StringFilter<"Competitor"> | string
+  preferredName?: Prisma.StringNullableFilter<"Competitor"> | string | null
+  preferredLanguage?: Prisma.EnumLanguageFilter<"Competitor"> | $Enums.Language
   isActive?: Prisma.BoolFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableFilter<"Competitor"> | string | null
@@ -884,6 +970,8 @@ export type CompetitorScalarWhereInput = {
 export type CompetitorCreateManyOwnerInput = {
   id?: string
   name: string
+  preferredName?: string | null
+  preferredLanguage?: $Enums.Language
   isActive?: boolean
   email?: string | null
   country?: string | null
@@ -894,6 +982,8 @@ export type CompetitorCreateManyOwnerInput = {
 export type CompetitorUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -908,6 +998,8 @@ export type CompetitorUpdateWithoutOwnerInput = {
 export type CompetitorUncheckedUpdateWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -922,6 +1014,8 @@ export type CompetitorUncheckedUpdateWithoutOwnerInput = {
 export type CompetitorUncheckedUpdateManyWithoutOwnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredLanguage?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -990,6 +1084,8 @@ export type CompetitorCountOutputTypeCountProposedContestsArgs<ExtArgs extends r
 export type CompetitorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  preferredName?: boolean
+  preferredLanguage?: boolean
   isActive?: boolean
   email?: boolean
   country?: boolean
@@ -1007,6 +1103,8 @@ export type CompetitorSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type CompetitorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  preferredName?: boolean
+  preferredLanguage?: boolean
   isActive?: boolean
   email?: boolean
   country?: boolean
@@ -1019,6 +1117,8 @@ export type CompetitorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type CompetitorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  preferredName?: boolean
+  preferredLanguage?: boolean
   isActive?: boolean
   email?: boolean
   country?: boolean
@@ -1031,6 +1131,8 @@ export type CompetitorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type CompetitorSelectScalar = {
   id?: boolean
   name?: boolean
+  preferredName?: boolean
+  preferredLanguage?: boolean
   isActive?: boolean
   email?: boolean
   country?: boolean
@@ -1039,7 +1141,7 @@ export type CompetitorSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CompetitorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "isActive" | "email" | "country" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["competitor"]>
+export type CompetitorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "preferredName" | "preferredLanguage" | "isActive" | "email" | "country" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["competitor"]>
 export type CompetitorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   songs?: boolean | Prisma.Competitor$songsArgs<ExtArgs>
   votes?: boolean | Prisma.Competitor$votesArgs<ExtArgs>
@@ -1067,6 +1169,8 @@ export type $CompetitorPayload<ExtArgs extends runtime.Types.Extensions.Internal
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    preferredName: string | null
+    preferredLanguage: $Enums.Language
     isActive: boolean
     email: string | null
     country: string | null
@@ -1503,6 +1607,8 @@ export interface Prisma__CompetitorClient<T, Null = never, ExtArgs extends runti
 export interface CompetitorFieldRefs {
   readonly id: Prisma.FieldRef<"Competitor", 'String'>
   readonly name: Prisma.FieldRef<"Competitor", 'String'>
+  readonly preferredName: Prisma.FieldRef<"Competitor", 'String'>
+  readonly preferredLanguage: Prisma.FieldRef<"Competitor", 'Language'>
   readonly isActive: Prisma.FieldRef<"Competitor", 'Boolean'>
   readonly email: Prisma.FieldRef<"Competitor", 'String'>
   readonly country: Prisma.FieldRef<"Competitor", 'String'>

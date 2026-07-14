@@ -85,6 +85,7 @@ export const ContestScalarFieldEnum = {
   theme: 'theme',
   description: 'description',
   instructions: 'instructions',
+  type: 'type',
   status: 'status',
   submissionInvitedAt: 'submissionInvitedAt',
   submissionClosesAt: 'submissionClosesAt',
@@ -103,6 +104,8 @@ export type ContestScalarFieldEnum = (typeof ContestScalarFieldEnum)[keyof typeo
 export const CompetitorScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  preferredName: 'preferredName',
+  preferredLanguage: 'preferredLanguage',
   isActive: 'isActive',
   email: 'email',
   country: 'country',

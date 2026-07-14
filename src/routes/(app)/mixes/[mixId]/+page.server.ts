@@ -7,9 +7,22 @@ import { prisma } from '$lib/prisma';
 import { marked } from 'marked';
 import { createSubmissionInviteEmail } from '$lib/email/submission-invite-email';
 import { PUBLIC_APP_URL } from '$env/static/public';
-
+import type { ContestType } from '$lib/generated/prisma/client';
 const resend = new Resend(env.RESEND_API_KEY);
 type ResultStatus = 'Locked' | 'Preliminary' | 'Final';
+
+function getLogoUrl(type: ContestType) {
+	switch (type) {
+		case 'MARTYMIX':
+			return `${PUBLIC_APP_URL}/images/martymix-logo-farbe-small.png`;
+
+		case 'PINTYMIX':
+			return `${PUBLIC_APP_URL}/images/pintymix-logo-farbe.png`;
+
+		default:
+			return `${PUBLIC_APP_URL}/images/martymix-logo-farbe-small.png`;
+	}
+}
 
 export const load = async ({ params, locals }) => {
 	const user = requireUser(locals);
@@ -167,7 +180,7 @@ export const actions = {
 		};
 	},
 
-	sendSubmissionInvites: async ({ params, request, url, locals }) => {
+	sendSubmissionInvites: async ({ params, request, locals }) => {
 		const user = requireUser(locals);
 
 		if (!env.RESEND_API_KEY) {
@@ -242,13 +255,16 @@ export const actions = {
 			.map((entry) => {
 				const submitUrl = `${PUBLIC_APP_URL}/submit/${entry.id}`;
 
+				const competitorName = entry.competitor.preferredName?.trim() || entry.competitor.name;
+
 				const { subject, html } = createSubmissionInviteEmail({
-					language: user.language,
-					competitorName: entry.competitor.name,
+					language: entry.competitor.preferredLanguage,
+					competitorName,
 					mixTheme: entry.contest.theme,
+					contestType: entry.contest.type,
 					submitUrl,
 					instructions: entry.contest.instructions,
-					logoUrl: `https://i.imgur.com/b3ghUdO.png`
+					logoUrl: getLogoUrl(entry.contest.type)
 				});
 
 				return {

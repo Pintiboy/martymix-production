@@ -7,7 +7,7 @@ import { prisma } from './prisma';
 import { expo } from '@better-auth/expo';
 
 export const auth = betterAuth({
-	baseURL: 'https://www.martymix.co.uk',
+	// baseURL: 'https://www.martymix.co.uk',
 	database: prismaAdapter(prisma, {
 		provider: 'postgresql'
 	}),
@@ -16,5 +16,5 @@ export const auth = betterAuth({
 		minPasswordLength: 4
 	},
 	plugins: [username(), expo(), sveltekitCookies(getRequestEvent)],
-	trustedOrigins: ['https://www.martymix.co.uk', 'martymixmobile://']
+	trustedOrigins: ['https://www.martymix.co.uk', 'martymixmobile://', 'http://localhost:5173']
 });

@@ -28,9 +28,17 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
-export const UserLanguage = {
+export const Language = {
   EN: 'EN',
   DE: 'DE'
 } as const
 
-export type UserLanguage = (typeof UserLanguage)[keyof typeof UserLanguage]
+export type Language = (typeof Language)[keyof typeof Language]
+
+
+export const ContestType = {
+  MARTYMIX: 'MARTYMIX',
+  PINTYMIX: 'PINTYMIX'
+} as const
+
+export type ContestType = (typeof ContestType)[keyof typeof ContestType]

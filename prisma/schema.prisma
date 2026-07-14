@@ -25,9 +25,14 @@ enum UserRole {
   ADMIN
 }
 
-enum UserLanguage {
+enum Language {
   EN
   DE
+}
+
+enum ContestType {
+  MARTYMIX
+  PINTYMIX
 }
 
 model Contest {
@@ -37,6 +42,7 @@ model Contest {
   description String?
   instructions String?
 
+  type ContestType @default(MARTYMIX)
   status ContestStatus @default(NEW)
 
   submissionInvitedAt DateTime?
@@ -65,6 +71,9 @@ model Competitor {
   id String @id @default(cuid())
 
   name     String
+  preferredName     String?
+  preferredLanguage Language @default(EN)
+  
   isActive Boolean @default(true)
   email    String?
   country  String?
@@ -182,7 +191,7 @@ model User {
   username      String?
   displayUsername String?
   email         String
-  language      UserLanguage @default(EN)
+  language      Language @default(EN)
   role          UserRole  @default(USER)
   emailVerified Boolean   @default(false)
   image         String?

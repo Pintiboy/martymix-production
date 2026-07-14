@@ -107,7 +107,7 @@
 			>
 				<h2 class="text-2xl font-semibold">Add contributor</h2>
 				<p class="mt-2 text-sm text-zinc-400">
-					Only the name is required. Email and country can stay private or empty.
+					Only the name is required. Preferred name, email and country are optional.
 				</p>
 
 				{#if form?.error}
@@ -138,6 +138,17 @@
 				</label>
 
 				<label class="mt-5 block">
+					<span class="mb-2 block text-sm font-medium text-zinc-300"> Preferred name </span>
+
+					<input
+						name="preferredName"
+						value={form?.values?.preferredName ?? ''}
+						placeholder="optional, used in emails"
+						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
+					/>
+				</label>
+
+				<label class="mt-5 block">
 					<span class="mb-2 block text-sm font-medium text-zinc-300">Email</span>
 					<input
 						name="email"
@@ -146,6 +157,19 @@
 						placeholder="optional"
 						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
 					/>
+				</label>
+
+				<label class="mt-5 block">
+					<span class="mb-2 block text-sm font-medium text-zinc-300"> Preferred language </span>
+
+					<select
+						name="preferredLanguage"
+						value={form?.values?.preferredLanguage ?? 'EN'}
+						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none focus:border-fuchsia-300/60"
+					>
+						<option value="EN">English</option>
+						<option value="DE">German</option>
+					</select>
 				</label>
 
 				<label class="mt-5 block">
@@ -159,7 +183,7 @@
 						<option value="" class="opacity-50">Select country (optional)</option>
 
 						<optgroup label="Frequently used">
-							{#each frequentCountries as country}
+							{#each frequentCountries as country (country.code)}
 								<option value={country.code}>
 									{country.name}
 								</option>
@@ -167,7 +191,7 @@
 						</optgroup>
 
 						<optgroup label="All countries">
-							{#each remainingCountries as country}
+							{#each remainingCountries as country (country.code)}
 								<option value={country.code}>
 									{country.name}
 								</option>
@@ -351,7 +375,7 @@
 				class="relative w-full max-w-lg rounded-3xl border border-white/10 bg-zinc-950 p-6 shadow-2xl shadow-fuchsia-950/40"
 			>
 				<div
-					class="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-fuchsia-300/60 to-transparent"
+					class="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-fuchsia-300/60 to-transparent"
 				></div>
 
 				<div class="mb-6 flex items-start justify-between gap-4">
@@ -385,6 +409,17 @@
 					</label>
 
 					<label class="mt-5 block">
+						<span class="mb-2 block text-sm font-medium text-zinc-300"> Preferred name </span>
+
+						<input
+							name="preferredName"
+							value={editingParticipant.preferredName ?? ''}
+							placeholder="optional, used in emails"
+							class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
+						/>
+					</label>
+
+					<label class="mt-5 block">
 						<span class="mb-2 block text-sm font-medium text-zinc-300">Email</span>
 						<input
 							name="email"
@@ -393,6 +428,19 @@
 							placeholder="optional"
 							class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
 						/>
+					</label>
+
+					<label class="mt-5 block">
+						<span class="mb-2 block text-sm font-medium text-zinc-300"> Preferred language </span>
+
+						<select
+							name="preferredLanguage"
+							value={editingParticipant.preferredLanguage}
+							class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none focus:border-fuchsia-300/60"
+						>
+							<option value="EN">English</option>
+							<option value="DE">German</option>
+						</select>
 					</label>
 
 					<label class="mt-5 block">
@@ -406,7 +454,7 @@
 							<option value="">Select country (optional)</option>
 
 							<optgroup label="Frequently used">
-								{#each frequentCountries as country}
+								{#each frequentCountries as country (country.code)}
 									<option value={country.code}>
 										{country.name}
 									</option>
@@ -414,7 +462,7 @@
 							</optgroup>
 
 							<optgroup label="All countries">
-								{#each remainingCountries as country}
+								{#each remainingCountries as country (country.code)}
 									<option value={country.code}>
 										{country.name}
 									</option>
