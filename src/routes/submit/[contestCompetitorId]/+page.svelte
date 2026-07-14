@@ -64,7 +64,7 @@
 
 <main class="min-h-screen bg-zinc-950 px-6 py-10 text-white">
 	<section class="mx-auto flex min-h-[80vh] max-w-xl flex-col justify-center">
-		<img src={brand.logoUrl} alt={brand.name} class="mx-auto h-64 w-auto sm:h-96" />
+		<img src={brand.logoUrl} alt={brand.name} class="mx-auto w-auto sm:h-64" />
 
 		<p class="my-4 hidden text-sm tracking-[0.35em] text-fuchsia-300 uppercase sm:block">
 			{brand.name}
