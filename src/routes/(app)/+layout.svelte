@@ -56,7 +56,9 @@
 			</div>
 		</div>
 	</header>
-	<main class="relative min-h-screen overflow-hidden bg-zinc-950 px-6 py-10 text-white">
+	<main
+		class="relative min-h-screen overflow-hidden bg-zinc-950 px-4 sm:px-6 py-4 sm:py-10 text-white"
+	>
 		<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
 			<div
 				aria-hidden="true"

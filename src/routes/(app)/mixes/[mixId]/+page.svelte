@@ -32,7 +32,7 @@
 	<title>{contest.theme} | Martyn's Music Competition</title>
 </svelte:head>
 
-<main class="min-h-screen bg-zinc-950 px-6 py-10 text-white">
+<div class="min-h-screen bg-zinc-950 px-2 sm:px-6 py-2 sm:py-10 text-white">
 	<section class="mx-auto max-w-6xl">
 		<div class="flex items-center justify-between gap-4">
 			<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
@@ -42,7 +42,7 @@
 			{#if dev}
 				<!-- Wird nur im Entwicklungsmodus angezeigt -->
 				<span
-					class="rounded-full border border-fuchsia-300/20 bg-fuchsia-500/10 px-3 py-1 text-xs font-mono text-fuchsia-200"
+					class="rounded-full border text-center border-fuchsia-300/20 bg-fuchsia-500/10 px-3 py-1 text-xs font-mono text-fuchsia-200"
 				>
 					DEV · status: {contest.status}
 				</span>
@@ -164,4 +164,4 @@
 			</form>
 		{/snippet}
 	</Modal>
-</main>
+</div>

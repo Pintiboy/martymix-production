@@ -88,7 +88,7 @@
 	<title>Songs | {contest.theme}</title>
 </svelte:head>
 
-<main class="min-h-screen bg-zinc-950 px-4 py-6 sm:px-6 sm:py-10 text-white">
+<div class="min-h-screen bg-zinc-950 px-2 py-4 sm:px-6 sm:py-10 text-white">
 	<section class="mx-auto max-w-6xl">
 		<a href={resolve(`/mixes/${contest.id}`)} class="text-sm text-zinc-400 hover:text-white">
 			← Back to mix overview
@@ -109,7 +109,7 @@
 				<button
 					type="button"
 					onclick={() => (isAddContributorModalOpen = true)}
-					class="rounded-full border border-white/15 px-4 py-2.5 sm:px-5 sm:py-3 font-medium text-white transition hover:bg-white/10"
+					class="text-nowrap rounded-full border border-white/15 px-4 py-2.5 sm:px-5 sm:py-3 font-medium text-white transition hover:bg-white/10"
 				>
 					Add contributor
 				</button>
@@ -117,7 +117,7 @@
 				<button
 					type="button"
 					onclick={() => (isAddSongModalOpen = true)}
-					class="rounded-full cursor-pointer bg-white px-4 py-2.5 sm:px-5 sm:py-3font-medium text-zinc-950 transition hover:scale-105"
+					class="text-nowrap rounded-full cursor-pointer bg-white px-4 py-2.5 sm:px-5 sm:py-3 font-medium text-zinc-950 transition hover:scale-105"
 				>
 					Add song
 				</button>
@@ -125,10 +125,10 @@
 		</div>
 
 		<div class="rounded-3xl border border-white/10 bg-white/3 p-4 sm:p-6">
-			<div class="mb-5 flex items-center justify-between">
+			<div class="mb-5 gap-2 flex flex-col sm:flex-row items-center justify-between">
 				<h2 class="text-2xl font-semibold">Submitted songs</h2>
 
-				<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+				<div class="flex flex-row sm:flex-col gap-3 items-center justify-between w-full sm:w-auto">
 					<p class="text-sm text-zinc-500">
 						{data.submittedSongs}/{data.expectedSongs} submitted
 					</p>
@@ -488,4 +488,4 @@
 			</form>
 		{/snippet}
 	</Modal>
-</main>
+</div>

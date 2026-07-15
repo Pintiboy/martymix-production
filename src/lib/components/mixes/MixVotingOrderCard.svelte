@@ -15,7 +15,7 @@
 </script>
 
 <div class="mt-8 rounded-3xl border border-white/10 bg-white/3 p-6">
-	<div class="mb-5 flex items-center justify-between gap-4">
+	<div class="mb-5 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-6">
 		<div>
 			<h2 class="text-2xl font-semibold">Voting order</h2>
 
@@ -25,7 +25,7 @@
 			</p>
 		</div>
 
-		<p class="text-sm text-zinc-500">
+		<p class="text-sm text-zinc-500 self-end text-nowrap">
 			{mix.competitors.length}
 			{mix.competitors.length === 1 ? ' contributor' : ' contributors'}
 		</p>
