@@ -20,9 +20,13 @@
 			</a>
 
 			<div class="flex items-center gap-3">
-				<span class="hidden text-sm text-zinc-500 md:inline">
+				<a
+					href={resolve('/profile')}
+					title="Open profile"
+					class="hidden rounded-full px-3 py-2 text-sm text-zinc-400 transition hover:bg-white/5 hover:text-white md:inline"
+				>
 					{data.user?.name}
-				</span>
+				</a>
 				{#if data.user?.role === 'ADMIN'}
 					<span
 						class="rounded-full bg-fuchsia-300/10 px-2 py-1 text-xs font-medium text-fuchsia-300"

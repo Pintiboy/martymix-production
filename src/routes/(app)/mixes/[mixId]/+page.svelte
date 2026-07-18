@@ -55,16 +55,6 @@
 			onOpenVotingModal={() => (isVotingModalOpen = true)}
 		/>
 
-		{#if data.instructionsHtml}
-			<div class="mt-8 rounded-3xl border border-white/10 bg-white/3 p-6">
-				<h2 class="mb-4 text-2xl font-semibold">Instructions</h2>
-
-				<div class="prose prose-invert max-w-none">
-					{@html data.instructionsHtml}
-				</div>
-			</div>
-		{/if}
-
 		<MixStatusCards
 			mix={contest}
 			submittedSongs={data.submittedSongs}
@@ -84,6 +74,16 @@
 			votingStarted={data.votingStarted}
 			votingComplete={data.votingComplete}
 		/>
+
+		{#if data.instructionsHtml}
+			<div class="mt-8 rounded-3xl border border-white/10 bg-white/3 p-6">
+				<h2 class="mb-4 text-2xl font-semibold">Instructions</h2>
+
+				<div class="prose prose-invert max-w-none">
+					{@html data.instructionsHtml}
+				</div>
+			</div>
+		{/if}
 
 		<MixVotingOrderCard mix={contest} />
 
