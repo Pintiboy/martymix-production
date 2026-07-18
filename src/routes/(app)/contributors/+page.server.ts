@@ -23,6 +23,22 @@ export const actions = {
 		const email = String(formData.get('email') ?? '').trim();
 		const country = String(formData.get('country') ?? '').trim();
 
+		const preferredName = String(formData.get('preferredName') ?? '').trim();
+		const preferredLanguage = String(formData.get('preferredLanguage') ?? 'EN').trim();
+
+		if (preferredLanguage !== 'EN' && preferredLanguage !== 'DE') {
+			return fail(400, {
+				error: 'Invalid preferred language.',
+				values: {
+					name,
+					preferredName,
+					email,
+					preferredLanguage,
+					country
+				}
+			});
+		}
+
 		if (!name) {
 			return fail(400, {
 				error: 'Name is required.',
@@ -33,6 +49,8 @@ export const actions = {
 		await prisma.competitor.create({
 			data: {
 				name,
+				preferredName: preferredName || null,
+				preferredLanguage,
 				email: email || null,
 				country: country || null,
 				ownerId: user.id
@@ -128,6 +146,15 @@ export const actions = {
 		const email = String(formData.get('email') ?? '').trim();
 		const country = String(formData.get('country') ?? '').trim();
 
+		const preferredName = String(formData.get('preferredName') ?? '').trim();
+		const preferredLanguage = String(formData.get('preferredLanguage') ?? 'EN').trim();
+
+		if (preferredLanguage !== 'EN' && preferredLanguage !== 'DE') {
+			return fail(400, {
+				error: 'Invalid preferred language.'
+			});
+		}
+
 		if (!participantId || !name) {
 			return fail(400, {
 				error: 'Name is required.'
@@ -141,6 +168,8 @@ export const actions = {
 			},
 			data: {
 				name,
+				preferredName: preferredName || null,
+				preferredLanguage,
 				email: email || null,
 				country: country || null
 			}
