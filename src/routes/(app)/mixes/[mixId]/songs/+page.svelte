@@ -4,12 +4,14 @@
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
-	import { Copy, Trash2, UserMinus, GripVertical } from '@lucide/svelte/icons';
+
+	import { Copy, Check, Trash2, UserMinus, GripVertical } from '@lucide/svelte/icons';
 
 	let { data, form } = $props();
 
 	let isAddSongModalOpen = $state(false);
 	let isAddContributorModalOpen = $state(false);
+	let copiedContestCompetitorId = $state<string | null>(null);
 
 	const contest = data.contest;
 
@@ -89,6 +91,15 @@
 
 		try {
 			await navigator.clipboard.writeText(url);
+
+			copiedContestCompetitorId = contestCompetitorId;
+
+			setTimeout(() => {
+				if (copiedContestCompetitorId === contestCompetitorId) {
+					copiedContestCompetitorId = null;
+				}
+			}, 1200);
+
 			toast.success('Submission link copied.');
 		} catch (error) {
 			console.error('Could not copy submission link:', error);
@@ -185,7 +196,6 @@
 
 			{#if data.submissionRows.length > 0}
 				<!-- Mobile Ansicht -->
-				<!-- Mobile cards -->
 				<div class="space-y-3 sm:hidden">
 					{#each submittedRows as row, index (row.id)}
 						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50">
@@ -237,9 +247,34 @@
 									title="Copy submission link"
 									aria-label={`Copy submission link for ${row.competitor.name}`}
 									onclick={() => copySubmissionLink(row.contestCompetitorId)}
-									class="flex h-10 w-10 items-center justify-center rounded-full border border-fuchsia-300/20 text-fuchsia-300 transition hover:bg-fuchsia-500/10 hover:text-fuchsia-200"
+									class={[
+										'relative flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300',
+										copiedContestCompetitorId === row.contestCompetitorId
+											? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
+											: 'border-fuchsia-300/20 text-fuchsia-300 hover:bg-fuchsia-500/10 hover:text-fuchsia-200'
+									]}
 								>
-									<Copy size={17} />
+									<span
+										class={[
+											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+											copiedContestCompetitorId === row.contestCompetitorId
+												? 'scale-50 rotate-45 opacity-0'
+												: 'scale-100 rotate-0 opacity-100'
+										]}
+									>
+										<Copy size={17} />
+									</span>
+
+									<span
+										class={[
+											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+											copiedContestCompetitorId === row.contestCompetitorId
+												? 'scale-100 rotate-0 opacity-100'
+												: 'scale-50 -rotate-45 opacity-0'
+										]}
+									>
+										<Check size={18} strokeWidth={2.5} />
+									</span>
 								</button>
 
 								<form method="POST" action="?/delete">
@@ -377,10 +412,38 @@
 									<td class="px-4 py-2 align-middle">
 										<button
 											type="button"
-											class="text-xs text-fuchsia-300 hover:text-fuchsia-200"
 											onclick={() => copySubmissionLink(row.contestCompetitorId)}
+											class={[
+												'inline-flex min-w-20 items-center justify-start gap-1.5 text-xs transition-colors duration-300',
+												copiedContestCompetitorId === row.contestCompetitorId
+													? 'text-emerald-300'
+													: 'text-fuchsia-300 hover:text-fuchsia-200'
+											]}
 										>
-											Copy link
+											<span class="relative inline-block h-4 min-w-16">
+												<span
+													class={[
+														'absolute left-0 top-0 transition-all duration-300 ease-out',
+														copiedContestCompetitorId === row.contestCompetitorId
+															? '-translate-y-1 opacity-0'
+															: 'translate-y-0 opacity-100'
+													]}
+												>
+													Copy link
+												</span>
+
+												<span
+													class={[
+														'absolute left-0 top-0 inline-flex items-center gap-1 transition-all duration-300 ease-out',
+														copiedContestCompetitorId === row.contestCompetitorId
+															? 'translate-y-0 opacity-100'
+															: 'translate-y-1 opacity-0'
+													]}
+												>
+													<Check size={13} strokeWidth={2.5} />
+													Copied
+												</span>
+											</span>
 										</button>
 									</td>
 
@@ -428,10 +491,38 @@
 									<td class="px-4 py-2 align-middle">
 										<button
 											type="button"
-											class="text-xs text-fuchsia-300 hover:text-fuchsia-200"
 											onclick={() => copySubmissionLink(row.contestCompetitorId)}
+											class={[
+												'inline-flex min-w-20 items-center justify-start gap-1.5 text-xs transition-colors duration-300',
+												copiedContestCompetitorId === row.contestCompetitorId
+													? 'text-emerald-300'
+													: 'text-fuchsia-300 hover:text-fuchsia-200'
+											]}
 										>
-											Copy link
+											<span class="relative inline-block h-4 min-w-16">
+												<span
+													class={[
+														'absolute left-0 top-0 transition-all duration-300 ease-out',
+														copiedContestCompetitorId === row.contestCompetitorId
+															? '-translate-y-1 opacity-0'
+															: 'translate-y-0 opacity-100'
+													]}
+												>
+													Copy link
+												</span>
+
+												<span
+													class={[
+														'absolute left-0 top-0 inline-flex items-center gap-1 transition-all duration-300 ease-out',
+														copiedContestCompetitorId === row.contestCompetitorId
+															? 'translate-y-0 opacity-100'
+															: 'translate-y-1 opacity-0'
+													]}
+												>
+													<Check size={13} strokeWidth={2.5} />
+													Copied
+												</span>
+											</span>
 										</button>
 									</td>
 
