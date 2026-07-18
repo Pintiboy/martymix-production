@@ -4,6 +4,7 @@
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
+	import { Copy, Trash2, UserMinus, GripVertical } from '@lucide/svelte/icons';
 
 	let { data, form } = $props();
 
@@ -82,6 +83,18 @@
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
 	});
+
+	async function copySubmissionLink(contestCompetitorId: string) {
+		const url = `${window.location.origin}/submit/${contestCompetitorId}`;
+
+		try {
+			await navigator.clipboard.writeText(url);
+			toast.success('Submission link copied.');
+		} catch (error) {
+			console.error('Could not copy submission link:', error);
+			toast.error('Could not copy submission link.');
+		}
+	}
 </script>
 
 <svelte:head>
@@ -171,7 +184,150 @@
 			</div>
 
 			{#if data.submissionRows.length > 0}
-				<div class="overflow-hidden rounded-2xl border border-white/10">
+				<!-- Mobile Ansicht -->
+				<!-- Mobile cards -->
+				<div class="space-y-3 sm:hidden">
+					{#each submittedRows as row, index (row.id)}
+						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50">
+							<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
+								<div class="flex min-w-0 items-start gap-3">
+									<div
+										class="flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm font-medium text-zinc-300 tabular-nums"
+									>
+										{String(index + 1).padStart(2, '0')}
+									</div>
+
+									<div class="min-w-0">
+										<p class="truncate font-semibold text-white">
+											{row.song.title}
+										</p>
+
+										<p class="mt-0.5 truncate text-sm text-zinc-400">
+											{row.song.artist}
+										</p>
+									</div>
+								</div>
+
+								<GripVertical size={20} class="mt-1 shrink-0 text-zinc-600" aria-hidden="true" />
+							</div>
+
+							<div class="space-y-3 p-4">
+								<div class="flex items-center justify-between gap-4">
+									<span class="text-sm text-zinc-500">Contributor</span>
+
+									<span class="text-right text-sm font-medium text-zinc-200">
+										{row.competitor.name}
+									</span>
+								</div>
+
+								<div class="flex items-center justify-between gap-4">
+									<span class="text-sm text-zinc-500">Status</span>
+
+									<span
+										class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
+									>
+										Submitted
+									</span>
+								</div>
+							</div>
+
+							<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
+								<button
+									type="button"
+									title="Copy submission link"
+									aria-label={`Copy submission link for ${row.competitor.name}`}
+									onclick={() => copySubmissionLink(row.contestCompetitorId)}
+									class="flex h-10 w-10 items-center justify-center rounded-full border border-fuchsia-300/20 text-fuchsia-300 transition hover:bg-fuchsia-500/10 hover:text-fuchsia-200"
+								>
+									<Copy size={17} />
+								</button>
+
+								<form method="POST" action="?/delete">
+									<input type="hidden" name="songId" value={row.song.id} />
+
+									<button
+										type="submit"
+										title="Delete song"
+										aria-label={`Delete ${row.song.title}`}
+										onclick={(event) => {
+											if (!confirm(`Delete "${row.song.title}" by ${row.song.artist}?`)) {
+												event.preventDefault();
+											}
+										}}
+										class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
+									>
+										<Trash2 size={17} />
+									</button>
+								</form>
+							</div>
+						</article>
+					{/each}
+
+					{#each missingRows as row (row.competitor.id)}
+						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/20">
+							<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
+								<div class="min-w-0">
+									<p class="truncate font-semibold text-white">
+										{row.competitor.name}
+									</p>
+
+									<p class="mt-1 text-sm text-zinc-600">No song submitted yet</p>
+								</div>
+
+								<span
+									class="inline-flex h-6 shrink-0 items-center rounded-full border border-amber-400/20 bg-amber-500/10 px-3 text-xs leading-none text-amber-200"
+								>
+									Missing
+								</span>
+							</div>
+
+							<div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 text-sm">
+								<div>
+									<p class="text-zinc-600">Artist</p>
+									<p class="mt-1 text-zinc-500">–</p>
+								</div>
+
+								<div>
+									<p class="text-zinc-600">Title</p>
+									<p class="mt-1 text-zinc-500">–</p>
+								</div>
+							</div>
+
+							<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
+								<button
+									type="button"
+									title="Copy submission link"
+									aria-label={`Copy submission link for ${row.competitor.name}`}
+									onclick={() => copySubmissionLink(row.contestCompetitorId)}
+									class="flex h-10 w-10 items-center justify-center rounded-full border border-fuchsia-300/20 text-fuchsia-300 transition hover:bg-fuchsia-500/10 hover:text-fuchsia-200"
+								>
+									<Copy size={17} />
+								</button>
+
+								<form method="POST" action="?/removeParticipant">
+									<input type="hidden" name="contestCompetitorId" value={row.contestCompetitorId} />
+
+									<button
+										type="submit"
+										title="Remove contributor"
+										aria-label={`Remove ${row.competitor.name} from the contest`}
+										onclick={(event) => {
+											if (!confirm(`Remove ${row.competitor.name} from this contest?`)) {
+												event.preventDefault();
+											}
+										}}
+										class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
+									>
+										<UserMinus size={17} />
+									</button>
+								</form>
+							</div>
+						</article>
+					{/each}
+				</div>
+
+				<!-- Desktop Ansicht -->
+				<div class="hidden overflow-hidden rounded-2xl border border-white/10 sm:block">
 					<table class="w-full text-left text-sm">
 						<thead class="bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase">
 							<tr>
@@ -222,11 +378,7 @@
 										<button
 											type="button"
 											class="text-xs text-fuchsia-300 hover:text-fuchsia-200"
-											onclick={() => {
-												navigator.clipboard.writeText(
-													`${window.location.origin}/submit/${row.contestCompetitorId}`
-												);
-											}}
+											onclick={() => copySubmissionLink(row.contestCompetitorId)}
 										>
 											Copy link
 										</button>
@@ -277,11 +429,7 @@
 										<button
 											type="button"
 											class="text-xs text-fuchsia-300 hover:text-fuchsia-200"
-											onclick={() => {
-												navigator.clipboard.writeText(
-													`${window.location.origin}/submit/${row.contestCompetitorId}`
-												);
-											}}
+											onclick={() => copySubmissionLink(row.contestCompetitorId)}
 										>
 											Copy link
 										</button>
