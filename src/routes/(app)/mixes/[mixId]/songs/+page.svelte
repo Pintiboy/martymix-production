@@ -334,9 +334,34 @@
 									title="Copy submission link"
 									aria-label={`Copy submission link for ${row.competitor.name}`}
 									onclick={() => copySubmissionLink(row.contestCompetitorId)}
-									class="flex h-10 w-10 items-center justify-center rounded-full border border-fuchsia-300/20 text-fuchsia-300 transition hover:bg-fuchsia-500/10 hover:text-fuchsia-200"
+									class={[
+										'relative flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300',
+										copiedContestCompetitorId === row.contestCompetitorId
+											? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
+											: 'border-fuchsia-300/20 text-fuchsia-300 hover:bg-fuchsia-500/10 hover:text-fuchsia-200'
+									]}
 								>
-									<Copy size={17} />
+									<span
+										class={[
+											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+											copiedContestCompetitorId === row.contestCompetitorId
+												? 'scale-50 rotate-45 opacity-0'
+												: 'scale-100 rotate-0 opacity-100'
+										]}
+									>
+										<Copy size={17} />
+									</span>
+
+									<span
+										class={[
+											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+											copiedContestCompetitorId === row.contestCompetitorId
+												? 'scale-100 rotate-0 opacity-100'
+												: 'scale-50 -rotate-45 opacity-0'
+										]}
+									>
+										<Check size={18} strokeWidth={2.5} />
+									</span>
 								</button>
 
 								<form method="POST" action="?/removeParticipant">
