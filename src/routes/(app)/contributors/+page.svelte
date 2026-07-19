@@ -7,6 +7,8 @@
 	import { onMount, tick } from 'svelte';
 
 	onMount(async () => {
+		if (!window.matchMedia('(min-width: 640px)').matches) return;
+
 		await tick();
 		nameInput.focus();
 	});
@@ -16,6 +18,8 @@
 	$effect(() => {
 		if (form?.success && form?.action === 'create') {
 			tick().then(() => {
+				if (!window.matchMedia('(min-width: 640px)').matches) return; // Bei kleineren Bildschirmen wird der Fokus auf das Eingabefeld nicht gesetzt.
+
 				nameInput.focus();
 				nameInput.select();
 			});
@@ -75,16 +79,16 @@
 	<title>Contributors | Martymix</title>
 </svelte:head>
 
-<main class="min-h-screen bg-zinc-950 px-6 py-10 text-white">
-	<section class="mx-auto max-w-6xl">
+<div>
+	<section>
 		<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
 			← Back to dashboard
 		</a>
 
-		<div class="mt-10 mb-10 flex items-end justify-between gap-6">
+		<div class="mt-6 mb-6 flex items-end justify-between gap-6 sm:mt-10 sm:mb-10">
 			<div>
 				<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Contributors</p>
-				<h1 class="text-4xl font-bold tracking-tight">The regular music crowd</h1>
+				<h1 class="text-3xl font-bold tracking-tight sm:text-4xl">The regular music crowd</h1>
 				<p class="mt-3 max-w-2xl text-zinc-400">
 					Manage the friends who regularly join the music mixes.
 				</p>
@@ -103,7 +107,7 @@
 				method="POST"
 				action="?/create"
 				use:enhance
-				class="rounded-3xl border border-white/10 bg-white/3 p-6"
+				class="rounded-3xl border border-white/10 bg-white/3 p-4 sm:p-6"
 			>
 				<h2 class="text-2xl font-semibold">Add contributor</h2>
 				<p class="mt-2 text-sm text-zinc-400">
@@ -232,7 +236,124 @@
 				</div>
 
 				{#if visibleParticipants.length > 0}
-					<div class="overflow-hidden rounded-2xl border border-white/10">
+					<!-- Mobile cards -->
+					<div class="space-y-3 sm:hidden">
+						{#each visibleParticipants as participant (participant.id)}
+							<article
+								class={[
+									'overflow-hidden rounded-2xl border border-white/10 transition',
+									participant.isActive ? 'bg-zinc-900/50' : 'bg-zinc-900/20 opacity-60'
+								]}
+							>
+								<button
+									type="button"
+									onclick={() => (editingParticipant = participant)}
+									class="block w-full text-left"
+								>
+									<div class="flex items-start justify-between gap-4 border-b border-white/10 p-4">
+										<div class="flex min-w-0 items-center gap-3">
+											<div
+												class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-xl"
+											>
+												{#if participant.country}
+													{countryCodeToFlag(participant.country)}
+												{:else}
+													<span class="text-sm text-zinc-600">–</span>
+												{/if}
+											</div>
+
+											<div class="min-w-0">
+												<p class="truncate font-semibold text-white">
+													{participant.name}
+												</p>
+
+												{#if participant.preferredName}
+													<p class="mt-0.5 truncate text-sm text-zinc-500">
+														Preferred name: {participant.preferredName}
+													</p>
+												{/if}
+											</div>
+										</div>
+
+										{#if participant.isActive}
+											<span
+												class="inline-flex h-6 shrink-0 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs text-emerald-200"
+											>
+												Active
+											</span>
+										{:else}
+											<span
+												class="inline-flex h-6 shrink-0 items-center rounded-full border border-zinc-400/20 bg-zinc-500/10 px-3 text-xs text-zinc-400"
+											>
+												Inactive
+											</span>
+										{/if}
+									</div>
+
+									<div class="space-y-3 p-4 text-sm">
+										<div class="flex items-center justify-between gap-4">
+											<span class="text-zinc-500">Email</span>
+
+											<span class="flex min-w-0 items-center gap-2 text-right text-zinc-300">
+												{#if participant.email}
+													<Mail size={15} class="shrink-0 text-zinc-500" />
+													<span class="truncate">{participant.email}</span>
+												{:else}
+													<span class="text-zinc-600">Not provided</span>
+												{/if}
+											</span>
+										</div>
+
+										<div class="flex items-center justify-between gap-4">
+											<span class="text-zinc-500">Language</span>
+
+											<span class="text-zinc-300">
+												{participant.preferredLanguage === 'DE' ? 'German' : 'English'}
+											</span>
+										</div>
+									</div>
+								</button>
+
+								<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
+									<form method="POST" action="?/toggleActive">
+										<input type="hidden" name="participantId" value={participant.id} />
+										<input type="hidden" name="isActive" value={String(participant.isActive)} />
+
+										<button
+											type="submit"
+											class={[
+												'rounded-full border px-4 py-2 text-xs font-medium transition',
+												participant.isActive
+													? 'border-amber-400/20 text-amber-200 hover:bg-amber-500/10'
+													: 'border-emerald-400/20 text-emerald-200 hover:bg-emerald-500/10'
+											]}
+										>
+											{participant.isActive ? 'Deactivate' : 'Activate'}
+										</button>
+									</form>
+
+									<form method="POST" action="?/delete">
+										<input type="hidden" name="participantId" value={participant.id} />
+
+										<button
+											type="submit"
+											onclick={(event) => {
+												if (!confirm(`Delete ${participant.name}?`)) {
+													event.preventDefault();
+												}
+											}}
+											class="rounded-full border border-red-400/20 px-4 py-2 text-xs font-medium text-red-300 transition hover:bg-red-500/10"
+										>
+											Delete
+										</button>
+									</form>
+								</div>
+							</article>
+						{/each}
+					</div>
+
+					<!-- Desktop table -->
+					<div class="hidden overflow-hidden rounded-2xl border border-white/10 sm:block">
 						<table class="w-full text-sm">
 							<thead class="bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase">
 								<tr>
@@ -359,7 +480,7 @@
 	</section>
 	{#if editingParticipant}
 		<div
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm"
+			class="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/70 px-2 py-2 backdrop-blur-sm sm:items-center sm:px-6"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="edit-participant-title"
@@ -372,7 +493,7 @@
 			></button>
 
 			<div
-				class="relative w-full max-w-lg rounded-3xl border border-white/10 bg-zinc-950 p-6 shadow-2xl shadow-fuchsia-950/40"
+				class="relative max-h-[calc(100dvh-1rem)] w-full max-w-lg overflow-y-auto rounded-3xl border border-white/10 bg-zinc-950 p-4 shadow-2xl shadow-fuchsia-950/40 sm:max-h-[calc(100dvh-3rem)] sm:p-6"
 			>
 				<div
 					class="pointer-events-none absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-fuchsia-300/60 to-transparent"
@@ -491,4 +612,4 @@
 			</div>
 		</div>
 	{/if}
-</main>
+</div>

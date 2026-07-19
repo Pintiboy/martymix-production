@@ -32,8 +32,8 @@
 	<title>{contest.theme} | Martyn's Music Competition</title>
 </svelte:head>
 
-<div class="min-h-screen bg-zinc-950 px-2 sm:px-6 py-2 sm:py-10 text-white">
-	<section class="mx-auto max-w-6xl">
+<div>
+	<section>
 		<div class="flex items-center justify-between gap-4">
 			<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
 				← Back to dashboard

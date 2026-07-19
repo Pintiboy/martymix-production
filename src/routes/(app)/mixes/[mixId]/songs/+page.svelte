@@ -112,8 +112,8 @@
 	<title>Songs | {contest.theme}</title>
 </svelte:head>
 
-<div class="min-h-screen bg-zinc-950 px-2 py-4 sm:px-6 sm:py-10 text-white">
-	<section class="mx-auto max-w-6xl">
+<div>
+	<section>
 		<a href={resolve(`/mixes/${contest.id}`)} class="text-sm text-zinc-400 hover:text-white">
 			← Back to mix overview
 		</a>

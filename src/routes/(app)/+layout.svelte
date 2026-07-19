@@ -61,24 +61,26 @@
 		</div>
 	</header>
 	<main
-		class="relative min-h-screen overflow-hidden bg-zinc-950 px-4 sm:px-6 py-4 sm:py-10 text-white"
+		class="relative min-h-screen overflow-x-clip bg-zinc-950 px-4 py-4 text-white sm:px-6 sm:py-10"
 	>
 		<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
 			<div
-				aria-hidden="true"
 				class="absolute -top-50 -left-50 h-125 w-125 rounded-full bg-fuchsia-500/15 blur-3xl"
 			></div>
 
 			<div
-				aria-hidden="true"
 				class="absolute -right-25 -bottom-25 h-100 w-100 rounded-full bg-cyan-500/10 blur-3xl"
 			></div>
 		</div>
+
 		<div
 			aria-hidden="true"
 			class="pointer-events-none absolute top-1/2 -right-75 h-200 w-200 -translate-y-1/2 rounded-full opacity-10"
-			style="background: repeating-radial-gradient(circle, transparent 0px,	transparent 8px, rgba(255,255,255,0.38) 9px, transparent 10px);"
+			style="background: repeating-radial-gradient(circle, transparent 0px, transparent 8px, rgba(255,255,255,0.38) 9px, transparent 10px);"
 		></div>
-		{@render children()}
+
+		<div class="relative mx-auto max-w-6xl">
+			{@render children()}
+		</div>
 	</main>
 </div>
