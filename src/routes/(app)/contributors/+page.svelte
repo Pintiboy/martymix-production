@@ -83,7 +83,7 @@
 	<section>
 		<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
 			← Back to dashboard
-		</a>
+		</a>å
 
 		<div class="mt-6 mb-6 flex items-end justify-between gap-6 sm:mt-10 sm:mb-10">
 			<div>

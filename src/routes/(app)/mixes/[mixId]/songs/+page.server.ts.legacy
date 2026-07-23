@@ -1,60 +1,7 @@
 import { fail, error } from '@sveltejs/kit';
 import { requireUser } from '$lib/server/auth-guard';
 import { prisma } from '$lib/prisma';
-import { ContestStatus, Prisma } from '$lib/generated/prisma/client';
-
-const PLAYLIST_EDITABLE_STATUSES = new Set<ContestStatus>([
-	ContestStatus.VOTING_OPEN,
-	ContestStatus.RESULTS_READY,
-	ContestStatus.FINISHED
-]);
-
-function parseOptionalPlaylistUrl(
-	value: FormDataEntryValue | null,
-	type: 'spotify' | 'youtube'
-): string | null | undefined {
-	const rawValue = String(value ?? '').trim();
-
-	if (!rawValue) {
-		return null;
-	}
-
-	let url: URL;
-
-	try {
-		url = new URL(rawValue);
-	} catch {
-		return undefined;
-	}
-
-	if (url.protocol !== 'https:') {
-		return undefined;
-	}
-
-	const hostname = url.hostname.toLowerCase();
-
-	if (type === 'spotify') {
-		const isSpotify =
-			hostname === 'open.spotify.com' ||
-			hostname === 'spotify.com' ||
-			hostname.endsWith('.spotify.com');
-
-		if (!isSpotify) return undefined;
-	}
-
-	if (type === 'youtube') {
-		const isYouTube =
-			hostname === 'youtube.com' ||
-			hostname === 'www.youtube.com' ||
-			hostname === 'music.youtube.com' ||
-			hostname === 'youtu.be' ||
-			hostname.endsWith('.youtube.com');
-
-		if (!isYouTube) return undefined;
-	}
-
-	return url.toString();
-}
+import { Prisma } from '$lib/generated/prisma/client';
 
 export const load = async ({ params, locals }) => {
 	const user = requireUser(locals);
@@ -135,8 +82,6 @@ export const load = async ({ params, locals }) => {
 
 	const submittedSongs = submissionRows.filter((row) => row.song).length;
 	const expectedSongs = submissionRows.length;
-	const allSongsSubmitted = expectedSongs > 0 && submittedSongs === expectedSongs;
-	const playlistsCanBeEdited = allSongsSubmitted || PLAYLIST_EDITABLE_STATUSES.has(contest.status);
 
 	return {
 		contest,
@@ -144,106 +89,11 @@ export const load = async ({ params, locals }) => {
 		availableCompetitors,
 		submissionRows,
 		submittedSongs,
-		expectedSongs,
-		allSongsSubmitted,
-		playlistsCanBeEdited
+		expectedSongs
 	};
 };
 
 export const actions = {
-	savePlaylists: async ({ request, params, locals }) => {
-		const user = requireUser(locals);
-		const formData = await request.formData();
-
-		const spotifyRaw = String(formData.get('spotifyPlaylistUrl') ?? '').trim();
-		const youtubeRaw = String(formData.get('youtubePlaylistUrl') ?? '').trim();
-
-		const contest = await prisma.contest.findFirst({
-			where: {
-				id: params.mixId,
-				ownerId: user.id
-			},
-			select: {
-				id: true,
-				status: true,
-				_count: {
-					select: {
-						songs: true,
-						competitors: true
-					}
-				}
-			}
-		});
-
-		if (!contest) {
-			error(404, 'Mix not found');
-		}
-
-		const allSongsSubmitted =
-			contest._count.competitors > 0 && contest._count.songs === contest._count.competitors;
-
-		const playlistsCanBeEdited =
-			allSongsSubmitted || PLAYLIST_EDITABLE_STATUSES.has(contest.status);
-
-		if (!playlistsCanBeEdited) {
-			return fail(400, {
-				action: 'savePlaylists',
-				error:
-					'Playlist links can only be added once all contributors have submitted a song or voting has opened.',
-				values: {
-					spotifyPlaylistUrl: spotifyRaw,
-					youtubePlaylistUrl: youtubeRaw
-				}
-			});
-		}
-
-		const spotifyPlaylistUrl = parseOptionalPlaylistUrl(
-			formData.get('spotifyPlaylistUrl'),
-			'spotify'
-		);
-		const youtubePlaylistUrl = parseOptionalPlaylistUrl(
-			formData.get('youtubePlaylistUrl'),
-			'youtube'
-		);
-
-		if (spotifyPlaylistUrl === undefined) {
-			return fail(400, {
-				action: 'savePlaylists',
-				error: 'Please enter a valid Spotify playlist URL.',
-				values: {
-					spotifyPlaylistUrl: spotifyRaw,
-					youtubePlaylistUrl: youtubeRaw
-				}
-			});
-		}
-
-		if (youtubePlaylistUrl === undefined) {
-			return fail(400, {
-				action: 'savePlaylists',
-				error: 'Please enter a valid YouTube playlist URL.',
-				values: {
-					spotifyPlaylistUrl: spotifyRaw,
-					youtubePlaylistUrl: youtubeRaw
-				}
-			});
-		}
-
-		await prisma.contest.update({
-			where: {
-				id: contest.id
-			},
-			data: {
-				spotifyPlaylistUrl,
-				youtubePlaylistUrl
-			}
-		});
-
-		return {
-			success: true,
-			action: 'savePlaylists'
-		};
-	},
-
 	create: async ({ request, params, locals }) => {
 		const user = requireUser(locals);
 		const formData = await request.formData();
@@ -335,7 +185,6 @@ export const actions = {
 			action: 'createSong'
 		};
 	},
-
 	delete: async ({ params, request, locals }) => {
 		const user = requireUser(locals);
 		const formData = await request.formData();
@@ -506,6 +355,7 @@ export const actions = {
 		const votingOrder = Math.floor(Math.random() * (count + 1)) + 1;
 
 		await prisma.$transaction([
+			// Erst weit nach hinten schieben, damit keine Unique-Kollision entsteht
 			prisma.contestCompetitor.updateMany({
 				where: {
 					contestId,
@@ -528,6 +378,7 @@ export const actions = {
 				}
 			}),
 
+			// Danach aus temporär +1000 effektiv +1 machen
 			prisma.contestCompetitor.updateMany({
 				where: {
 					contestId,

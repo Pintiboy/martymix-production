@@ -4,32 +4,16 @@
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
-	import QRCode from 'qrcode';
 
-	import {
-		Copy,
-		Check,
-		Trash2,
-		UserMinus,
-		GripVertical,
-		ExternalLink,
-		Music2,
-		CirclePlay,
-		QrCode,
-		Pencil
-	} from '@lucide/svelte/icons';
+	import { Copy, Check, Trash2, UserMinus, GripVertical } from '@lucide/svelte/icons';
 
 	let { data, form } = $props();
 
 	let isAddSongModalOpen = $state(false);
 	let isAddContributorModalOpen = $state(false);
-	let isPlaylistModalOpen = $state(false);
 	let copiedContestCompetitorId = $state<string | null>(null);
-	let copiedPlaylist = $state<'spotify' | 'youtube' | null>(null);
-	let spotifyQrCode = $state<string | null>(null);
-	let youtubeQrCode = $state<string | null>(null);
 
-	let contest = $derived(data.contest);
+	const contest = data.contest;
 
 	type SubmittedSongRow = {
 		id: string;
@@ -82,10 +66,6 @@
 			isAddContributorModalOpen = false;
 		}
 
-		if (form?.success && form.action === 'savePlaylists') {
-			isPlaylistModalOpen = false;
-		}
-
 		if (form?.error) {
 			// optional: passendes Modal wieder öffnen
 		}
@@ -126,51 +106,6 @@
 			toast.error('Could not copy submission link.');
 		}
 	}
-
-	async function copyPlaylistLink(type: 'spotify' | 'youtube', url: string) {
-		try {
-			await navigator.clipboard.writeText(url);
-			copiedPlaylist = type;
-
-			setTimeout(() => {
-				if (copiedPlaylist === type) copiedPlaylist = null;
-			}, 1200);
-
-			toast.success(`${type === 'spotify' ? 'Spotify' : 'YouTube'} playlist link copied.`);
-		} catch (error) {
-			console.error('Could not copy playlist link:', error);
-			toast.error('Could not copy playlist link.');
-		}
-	}
-
-	$effect(() => {
-		const spotifyUrl = contest.spotifyPlaylistUrl;
-		const youtubeUrl = contest.youtubePlaylistUrl;
-
-		if (spotifyUrl) {
-			QRCode.toDataURL(spotifyUrl, {
-				width: 320,
-				margin: 1,
-				errorCorrectionLevel: 'M'
-			})
-				.then((value) => (spotifyQrCode = value))
-				.catch(() => (spotifyQrCode = null));
-		} else {
-			spotifyQrCode = null;
-		}
-
-		if (youtubeUrl) {
-			QRCode.toDataURL(youtubeUrl, {
-				width: 320,
-				margin: 1,
-				errorCorrectionLevel: 'M'
-			})
-				.then((value) => (youtubeQrCode = value))
-				.catch(() => (youtubeQrCode = null));
-		} else {
-			youtubeQrCode = null;
-		}
-	});
 </script>
 
 <svelte:head>
@@ -210,176 +145,6 @@
 				>
 					Add song
 				</button>
-			</div>
-		</div>
-
-		<div class="mb-6 rounded-3xl border border-white/10 bg-white/3 p-4 sm:mb-8 sm:p-6">
-			<div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-				<div>
-					<p class="text-xs tracking-[0.25em] text-fuchsia-300 uppercase">Playlists</p>
-					<h2 class="mt-2 text-2xl font-semibold">Listening links</h2>
-					<p class="mt-2 max-w-2xl text-sm text-zinc-500">
-						Add the Spotify and YouTube playlists once the song list is complete. QR codes are
-						generated automatically.
-					</p>
-				</div>
-
-				<button
-					type="button"
-					onclick={() => (isPlaylistModalOpen = true)}
-					disabled={!data.playlistsCanBeEdited}
-					class="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-				>
-					<Pencil size={16} />
-					{contest.spotifyPlaylistUrl || contest.youtubePlaylistUrl
-						? 'Edit playlist links'
-						: 'Add playlist links'}
-				</button>
-			</div>
-
-			{#if !data.playlistsCanBeEdited}
-				<div
-					class="mb-5 rounded-2xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200"
-				>
-					Playlist links can be added once all contributors have submitted a song or voting has
-					opened.
-				</div>
-			{/if}
-
-			<div class="grid gap-4 lg:grid-cols-2">
-				<article class="rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-5">
-					<div class="flex items-start justify-between gap-4">
-						<div class="flex min-w-0 items-center gap-3">
-							<div
-								class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300"
-							>
-								<Music2 size={21} />
-							</div>
-							<div class="min-w-0">
-								<h3 class="font-semibold text-white">Spotify playlist</h3>
-								<p class="mt-1 truncate text-sm text-zinc-500">
-									{contest.spotifyPlaylistUrl ?? 'No link added yet'}
-								</p>
-							</div>
-						</div>
-
-						{#if contest.spotifyPlaylistUrl}
-							<div class="flex shrink-0 items-center gap-2">
-								<button
-									type="button"
-									onclick={() => copyPlaylistLink('spotify', contest.spotifyPlaylistUrl)}
-									class="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
-									aria-label="Copy Spotify playlist link"
-								>
-									{#if copiedPlaylist === 'spotify'}
-										<Check size={16} class="text-emerald-300" />
-									{:else}
-										<Copy size={16} />
-									{/if}
-								</button>
-								<a
-									href={contest.spotifyPlaylistUrl}
-									target="_blank"
-									rel="noreferrer"
-									class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
-									aria-label="Open Spotify playlist"
-								>
-									<ExternalLink size={16} />
-								</a>
-							</div>
-						{/if}
-					</div>
-
-					{#if contest.spotifyPlaylistUrl}
-						<div class="mt-5 flex flex-col items-center rounded-2xl bg-white p-4">
-							{#if spotifyQrCode}
-								<img
-									src={spotifyQrCode}
-									alt="QR code for the Spotify playlist"
-									class="h-44 w-44 sm:h-52 sm:w-52"
-								/>
-							{:else}
-								<div class="flex h-44 w-44 items-center justify-center text-zinc-500">
-									<QrCode size={40} />
-								</div>
-							{/if}
-							<p class="mt-2 text-xs font-medium text-zinc-700">Scan to open in Spotify</p>
-						</div>
-					{:else}
-						<div
-							class="mt-5 flex min-h-36 items-center justify-center rounded-2xl border border-dashed border-white/10 text-sm text-zinc-600"
-						>
-							No Spotify playlist available
-						</div>
-					{/if}
-				</article>
-
-				<article class="rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-5">
-					<div class="flex items-start justify-between gap-4">
-						<div class="flex min-w-0 items-center gap-3">
-							<div
-								class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-red-400/20 bg-red-500/10 text-red-300"
-							>
-								<CirclePlay size={21} />
-							</div>
-							<div class="min-w-0">
-								<h3 class="font-semibold text-white">YouTube playlist</h3>
-								<p class="mt-1 truncate text-sm text-zinc-500">
-									{contest.youtubePlaylistUrl ?? 'No link added yet'}
-								</p>
-							</div>
-						</div>
-
-						{#if contest.youtubePlaylistUrl}
-							<div class="flex shrink-0 items-center gap-2">
-								<button
-									type="button"
-									onclick={() => copyPlaylistLink('youtube', contest.youtubePlaylistUrl)}
-									class="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
-									aria-label="Copy YouTube playlist link"
-								>
-									{#if copiedPlaylist === 'youtube'}
-										<Check size={16} class="text-emerald-300" />
-									{:else}
-										<Copy size={16} />
-									{/if}
-								</button>
-								<a
-									href={contest.youtubePlaylistUrl}
-									target="_blank"
-									rel="noreferrer"
-									class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
-									aria-label="Open YouTube playlist"
-								>
-									<ExternalLink size={16} />
-								</a>
-							</div>
-						{/if}
-					</div>
-
-					{#if contest.youtubePlaylistUrl}
-						<div class="mt-5 flex flex-col items-center rounded-2xl bg-white p-4">
-							{#if youtubeQrCode}
-								<img
-									src={youtubeQrCode}
-									alt="QR code for the YouTube playlist"
-									class="h-44 w-44 sm:h-52 sm:w-52"
-								/>
-							{:else}
-								<div class="flex h-44 w-44 items-center justify-center text-zinc-500">
-									<QrCode size={40} />
-								</div>
-							{/if}
-							<p class="mt-2 text-xs font-medium text-zinc-700">Scan to open on YouTube</p>
-						</div>
-					{:else}
-						<div
-							class="mt-5 flex min-h-36 items-center justify-center rounded-2xl border border-dashed border-white/10 text-sm text-zinc-600"
-						>
-							No YouTube playlist available
-						</div>
-					{/if}
-				</article>
 			</div>
 		</div>
 
@@ -819,96 +584,6 @@
 			{/if}
 		</div>
 	</section>
-
-	<Modal
-		open={isPlaylistModalOpen}
-		titleId="playlist-links-title"
-		onClose={() => (isPlaylistModalOpen = false)}
-	>
-		{#snippet children({ close })}
-			<form
-				method="POST"
-				action="?/savePlaylists"
-				use:enhance={() => {
-					return async ({ result, update }) => {
-						await update();
-
-						if (result.type === 'success') {
-							isPlaylistModalOpen = false;
-							toast.success('Playlist links saved.');
-						}
-
-						if (result.type === 'failure') {
-							isPlaylistModalOpen = true;
-							toast.error('Could not save playlist links.');
-						}
-					};
-				}}
-			>
-				<p class="mb-2 text-xs tracking-[0.3em] text-fuchsia-300 uppercase">Playlists</p>
-				<h2 id="playlist-links-title" class="text-2xl font-semibold">Edit playlist links</h2>
-				<p class="mt-2 text-sm text-zinc-500">
-					Leave a field empty to remove the corresponding playlist.
-				</p>
-
-				{#if form?.error && form.action === 'savePlaylists'}
-					<div
-						class="mt-5 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200"
-					>
-						{form.error}
-					</div>
-				{/if}
-
-				<label class="mt-6 block">
-					<span class="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-300">
-						<Music2 size={16} class="text-emerald-300" />
-						Spotify playlist URL
-					</span>
-					<input
-						type="url"
-						name="spotifyPlaylistUrl"
-						value={form?.action === 'savePlaylists'
-							? (form?.values?.spotifyPlaylistUrl ?? contest.spotifyPlaylistUrl ?? '')
-							: (contest.spotifyPlaylistUrl ?? '')}
-						placeholder="https://open.spotify.com/playlist/..."
-						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-fuchsia-300/60"
-					/>
-				</label>
-
-				<label class="mt-5 block">
-					<span class="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-300">
-						<CirclePlay size={16} class="text-red-300" />
-						YouTube playlist URL
-					</span>
-					<input
-						type="url"
-						name="youtubePlaylistUrl"
-						value={form?.action === 'savePlaylists'
-							? (form?.values?.youtubePlaylistUrl ?? contest.youtubePlaylistUrl ?? '')
-							: (contest.youtubePlaylistUrl ?? '')}
-						placeholder="https://www.youtube.com/playlist?list=..."
-						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-fuchsia-300/60"
-					/>
-				</label>
-
-				<div class="mt-8 flex justify-end gap-3">
-					<button
-						type="button"
-						onclick={close}
-						class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
-					>
-						Cancel
-					</button>
-					<button
-						type="submit"
-						class="rounded-full bg-white px-6 py-3 font-medium text-zinc-950 transition hover:scale-105"
-					>
-						Save playlist links
-					</button>
-				</div>
-			</form>
-		{/snippet}
-	</Modal>
 
 	<Modal
 		open={isAddSongModalOpen}

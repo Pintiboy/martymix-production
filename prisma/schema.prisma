@@ -51,6 +51,9 @@ model Contest {
   votingInvitedAt DateTime?
   votingClosesAt  DateTime?
 
+  spotifyPlaylistUrl String?
+  youtubePlaylistUrl String?
+
   resultsCreatedAt DateTime?
 
   themeProposerId String?
