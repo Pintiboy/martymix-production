@@ -9,7 +9,7 @@ import { PUBLIC_APP_URL } from '$env/static/public';
 const resend = new Resend(RESEND_API_KEY);
 
 const TEST_RECIPIENT: string = 'utzingerandreas@gmail.com';
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 type Args = {
 	contestId: string;
