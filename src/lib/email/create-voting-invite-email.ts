@@ -473,6 +473,21 @@ export function createVotingInviteEmail({
 									margin:20px 0 0;
 									padding:18px 20px;
 									border-radius:18px;
+									background-color:#3f1d46;
+									border:1px solid #a21caf;
+									font-size:15px;
+									line-height:1.8;
+									color:#f4e8ff;
+								"
+							>
+								${t.apologyHtml}
+							</div>
+
+							<div
+								style="
+									margin:20px 0 0;
+									padding:18px 20px;
+									border-radius:18px;
 									background-color:#27272a;
 									border:1px solid #3f3f46;
 								"
