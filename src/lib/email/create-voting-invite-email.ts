@@ -85,6 +85,13 @@ const copy = {
 <p>You're the first people ever to try out this website, so if you notice anything that's a bit odd (or completely broken 😄), I'd really appreciate you letting me know.</p>
 
 <p>Hopefully you'll like the idea behind it as much as I enjoyed building it. Have fun! ❤️</p>
+`,
+		apologyHtml: `
+<p><strong>Quick apology! 😊</strong></p>
+
+<p>It turns out I managed to introduce a tiny bug into the very first live email. The participant list accidentally showed a few nicknames instead of real names. Nothing serious, but enough to annoy the perfectionist in me. 😄</p>
+
+<p>So here's the corrected version. Sorry for the duplicate email, and thank you for your patience!</p>
 `
 	},
 
@@ -133,6 +140,13 @@ const copy = {
 <p>Ihr seid die allerersten, die die Website ausprobieren. Falls euch also irgendetwas auffällt – egal ob eine Kleinigkeit oder ein richtiger Bug 😄 – freue ich mich riesig über euer Feedback.</p>
 
 <p>Ich hoffe, euch gefällt die Idee genauso gut, wie mir das Entwickeln Spaß gemacht hat. Viel Spaß! ❤️</p>
+`,
+		apologyHtml: `
+<p><strong>Eine kleine Entschuldigung vorweg! 😊</strong></p>
+
+<p>Ausgerechnet in der ersten Live-Mail hat sich noch ein kleiner Bug eingeschlichen. In der Teilnehmerliste wurden teilweise Spitznamen statt der richtigen Namen angezeigt. Nichts Schlimmes, aber mein innerer Perfektionist konnte das natürlich nicht so stehen lassen. 😄</p>
+
+<p>Deshalb bekommt ihr die E-Mail noch einmal in korrigierter Form. Entschuldigt bitte die doppelte Mail und vielen Dank für euer Verständnis!</p>
 `
 	}
 } satisfies Record<Language, Record<string, unknown>>;
@@ -443,7 +457,20 @@ export function createVotingInviteEmail({
 								${safeGreeting} ${safeName} 👋
 							</h1>
 
-
+							<div
+								style="
+									margin:20px 0 0;
+									padding:18px 20px;
+									border-radius:18px;
+									background-color:#3f1d46;
+									border:1px solid #a21caf;
+									font-size:15px;
+									line-height:1.8;
+									color:#f4e8ff;
+								"
+							>
+								${t.apologyHtml}
+							</div>
 							
 							<p
 								style="

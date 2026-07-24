@@ -9,7 +9,7 @@ import { PUBLIC_APP_URL } from '$env/static/public';
 const resend = new Resend(RESEND_API_KEY);
 
 const TEST_RECIPIENT: string = 'utzingerandreas@gmail.com';
-const TEST_MODE = false;
+const TEST_MODE = true;
 
 type Args = {
 	contestId: string;
@@ -106,9 +106,7 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 		throw new Error('The contest does not contain any songs.');
 	}
 
-	const participantNames = contest.competitors.map(
-		(entry) => entry.competitor.preferredName || entry.competitor.name
-	);
+	const participantNames = contest.competitors.map((entry) => entry.competitor.name);
 
 	const logoUrl = new URL(getLogoPath(contest.type), PUBLIC_APP_URL).toString();
 
