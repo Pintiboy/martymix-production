@@ -63,17 +63,18 @@ const copy = {
 		unique:
 			'This voting link is unique to you. You can return and update your votes until voting closes.',
 		footer: (brandName: string) => `${brandName} – made by Andi Utzinger`,
-		aboutMartynHeading: 'Meet Martyn Clarke!',
+		aboutMartynHeading: 'Meet Martyn',
+
 		aboutMartynHtml: `
 <p>Most of you probably don't know <strong>Martyn Clarke</strong>, so here's a little introduction.</p>
 
-<p>Martyn is a good friend of mine from London and, in many ways, the reason this app exists.</p>
+<p>Martyn is a good friend of mine from London and the creator of <strong>Martymix</strong>.</p>
 
 <p>For many years he has been organising music competitions like this purely for fun. It's one of his favourite hobbies, and over time he has built a wonderful community of music lovers from different countries. The competitions have always been a great success, but organising everything has required an incredible amount of work. Until now, everything was managed using nothing more than emails, Word documents and Excel spreadsheets.</p>
 
-<p>Watching him do all that gave me an idea: <strong>why not build a platform that brings everything together in one place?</strong></p>
+<p>Watching him do all that gave me an idea: <strong>why not build a dedicated website that brings everything together in one place?</strong></p>
 
-<p>That's how Martymix was born. Participants can submit their songs, listen to the playlists, cast their votes and view the results – all in one central place. I hope it makes the competitions even more enjoyable for everyone, while giving Martyn more time to focus on what he loves most: discovering great music.</p>
+<p>That's how <strong>martymix.co.uk</strong> was born. It allows participants to submit their songs, listen to the playlists, cast their votes and view the results &ndash; all in one central place. I hope it makes the competitions even more enjoyable for everyone, while giving Martyn more time to focus on what he loves most: discovering great music.</p>
 `
 	},
 
@@ -101,17 +102,18 @@ const copy = {
 		unique:
 			'Dieser Abstimmungslink ist nur für dich bestimmt. Du kannst deine Stimmen bis zum Ende der Abstimmung jederzeit ändern.',
 		footer: (brandName: string) => `${brandName} – made by Andi Utzinger`,
-		aboutMartynHeading: 'Darf ich vorstellen: Martyn Clarke',
+		aboutMartynHeading: 'Darf ich vorstellen: Martyn',
+
 		aboutMartynHtml: `
 <p>Die meisten von euch kennen <strong>Martyn Clarke</strong> wahrscheinlich noch nicht. Deshalb möchte ich ihn kurz vorstellen.</p>
 
-<p>Martyn ist ein guter Freund von mir aus London und in gewisser Weise der Grund, warum diese App überhaupt entstanden ist.</p>
+<p>Martyn ist ein guter Freund von mir aus London und der Erfinder von <strong>Martymix</strong>.</p>
 
-<p>Seit vielen Jahren organisiert er solche Musik-Wettbewerbe mit großer Begeisterung. Es ist eines seiner liebsten Hobbys und im Laufe der Zeit hat sich daraus eine tolle Gemeinschaft von Musikfans aus verschiedenen Ländern entwickelt. Die Wettbewerbe waren immer ein voller Erfolg – allerdings bedeutete ihre Organisation auch enorm viel Arbeit. Bisher lief alles ausschließlich über E-Mails sowie Word- und Excel-Dateien.</p>
+<p>Seit vielen Jahren organisiert er solche Musikwettbewerbe mit großer Begeisterung. Es ist eines seiner liebsten Hobbys und im Laufe der Zeit hat sich daraus eine tolle Gemeinschaft von Musikfans aus verschiedenen Ländern entwickelt. Die Wettbewerbe waren immer ein voller Erfolg &ndash; allerdings bedeutete ihre Organisation auch enorm viel Arbeit. Bisher lief alles ausschließlich über E-Mails sowie Word- und Excel-Dateien.</p>
 
-<p>Als ich gesehen habe, wie viel Zeit Martyn dafür investieren musste, kam mir eine Idee: <strong>Warum nicht eine Plattform entwickeln, auf der alles an einem Ort zusammenkommt?</strong></p>
+<p>Als ich gesehen habe, wie viel Zeit Martyn dafür investieren musste, kam mir eine Idee: <strong>Warum nicht eine eigene Website entwickeln, auf der alles an einem Ort zusammenkommt?</strong></p>
 
-<p>So entstand Martymix. Hier können alle Teilnehmer ihre Songs einreichen, die Playlists anhören, ihre Stimmen abgeben und später die Ergebnisse ansehen – alles zentral an einem Ort. Ich hoffe, dass die Wettbewerbe dadurch für alle noch mehr Spaß machen und Martyn sich wieder stärker auf das konzentrieren kann, was ihm am meisten Freude bereitet: großartige Musik zu entdecken.</p>
+<p>So entstand <strong>martymix.co.uk</strong>. Dort können alle Teilnehmer ihre Songs einreichen, die Playlists anhören, ihre Stimmen abgeben und später die Ergebnisse ansehen &ndash; alles zentral an einem Ort. Ich hoffe, dass die Wettbewerbe dadurch für alle noch mehr Spaß machen und Martyn sich wieder stärker auf das konzentrieren kann, was ihm am meisten Freude bereitet: großartige Musik zu entdecken.</p>
 `
 	}
 } satisfies Record<Language, Record<string, unknown>>;

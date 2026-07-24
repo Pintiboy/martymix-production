@@ -17,8 +17,6 @@
 
 			listenFirst: 'Listen first',
 			playlists: 'Playlists',
-			playlistsDescription:
-				'Listen to all songs before casting your votes. You can open a playlist directly or scan its QR code on another device.',
 
 			spotifyPlaylist: 'Spotify playlist',
 			spotifyDescription: 'Open the complete playlist in Spotify.',
@@ -43,7 +41,12 @@
 			saveSuccess: 'Your voting has been saved.',
 			saveError: 'Your voting could not be saved.',
 
-			personalLink: 'This is your personal voting link. Please do not share it.'
+			personalLink: 'This is your personal voting link. Please do not share it.',
+
+			playlistsDescriptionMobile:
+				'Listen to all songs before casting your votes. You can open either playlist directly.',
+			playlistsDescription:
+				'Listen to all songs before casting your votes. You can open a playlist directly or scan its QR code on another device.'
 		},
 
 		DE: {
@@ -57,6 +60,8 @@
 			playlists: 'Playlists',
 			playlistsDescription:
 				'Höre dir alle Songs an, bevor du abstimmst. Du kannst eine Playlist direkt öffnen oder den QR-Code mit einem anderen Gerät scannen.',
+			playlistsDescriptionMobile:
+				'Höre dir alle Songs an, bevor du abstimmst. Du kannst beide Playlists direkt öffnen.',
 
 			spotifyPlaylist: 'Spotify-Playlist',
 			spotifyDescription: 'Öffne die vollständige Playlist in Spotify.',
@@ -195,7 +200,11 @@
 						{t.playlists}
 					</h2>
 
-					<p class="mt-2 text-sm leading-6 text-zinc-400">
+					<p class="mt-2 text-sm leading-6 text-zinc-400 sm:hidden">
+						{t.playlistsDescriptionMobile}
+					</p>
+
+					<p class="mt-2 hidden text-sm leading-6 text-zinc-400 sm:block">
 						{t.playlistsDescription}
 					</p>
 				</div>
