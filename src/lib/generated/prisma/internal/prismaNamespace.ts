@@ -1295,6 +1295,7 @@ export const CompetitorScalarFieldEnum = {
   name: 'name',
   preferredName: 'preferredName',
   preferredLanguage: 'preferredLanguage',
+  greeting: 'greeting',
   isActive: 'isActive',
   email: 'email',
   country: 'country',

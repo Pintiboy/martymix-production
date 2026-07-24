@@ -8,8 +8,8 @@ import { PUBLIC_APP_URL } from '$env/static/public';
 
 const resend = new Resend(RESEND_API_KEY);
 
-const TEST_RECIPIENT = 'utzingerandreas@gmail.com';
-const TEST_MODE = true;
+const TEST_RECIPIENT: string = 'utzingerandreas@gmail.com';
+const TEST_MODE = false;
 
 type Args = {
 	contestId: string;
@@ -85,6 +85,7 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 							name: true,
 							preferredName: true,
 							preferredLanguage: true,
+							greeting: true,
 							email: true
 						}
 					}
@@ -142,8 +143,7 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 
 	const results: Array<{
 		competitorId: string;
-		intendedRecipient: string | null;
-		actualRecipient: string;
+		recipient: string;
 		emailId: string;
 	}> = [];
 
@@ -155,11 +155,20 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 		}
 
 		// Während der Testphase nur Andreas anschreiben
-		if (TEST_RECIPIENT && competitor.email.toLowerCase() !== TEST_RECIPIENT.toLowerCase()) {
+		if (TEST_MODE && competitor.email.toLowerCase() !== TEST_RECIPIENT.toLowerCase()) {
 			continue;
 		}
 
 		const voteUrl = new URL(`/vote/${entry.id}`, PUBLIC_APP_URL).toString();
+
+		console.log('COMPETITOR FROM DATABASE', {
+			id: competitor.id,
+			name: competitor.name,
+			preferredName: competitor.preferredName,
+			email: competitor.email,
+			greeting: competitor.greeting,
+			language: competitor.preferredLanguage
+		});
 
 		const { subject, html } = createVotingInviteEmail({
 			language: competitor.preferredLanguage,
@@ -175,7 +184,8 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 			youtubePlaylistUrl: contest.youtubePlaylistUrl,
 			spotifyQrContentId,
 			youtubeQrContentId,
-			timeZone: 'Europe/Berlin'
+			timeZone: 'Europe/Berlin',
+			greeting: competitor.greeting
 		});
 
 		const { data, error } = await resend.emails.send({

@@ -76,6 +76,7 @@ model Competitor {
   name     String
   preferredName     String?
   preferredLanguage Language @default(EN)
+  greeting String?
   
   isActive Boolean @default(true)
   email    String?

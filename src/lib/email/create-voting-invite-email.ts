@@ -26,6 +26,7 @@ type Args = {
 	youtubeQrContentId?: string | null;
 
 	timeZone?: string;
+	greeting?: string | null;
 };
 
 function getBrandName(contestType: ContestType) {
@@ -43,8 +44,8 @@ const copy = {
 		subject: (brandName: string, theme: string) =>
 			`${brandName}: Voting is now open for "${theme}"`,
 
-		hello: 'Hello',
-		intro: 'The songs are in and voting has officially started.',
+		defaultGreeting: 'Hello',
+		intro: 'The songs are in, the playlist is ready and voting has officially started! 🎉',
 		theme: 'The mix',
 		listenHeading: 'Give every song a fair chance',
 		listenText:
@@ -75,6 +76,15 @@ const copy = {
 <p>Watching him do all that gave me an idea: <strong>why not build a dedicated website that brings everything together in one place?</strong></p>
 
 <p>That's how <strong>martymix.co.uk</strong> was born. It allows participants to submit their songs, listen to the playlists, cast their votes and view the results &ndash; all in one central place. I hope it makes the competitions even more enjoyable for everyone, while giving Martyn more time to focus on what he loves most: discovering great music.</p>
+`,
+		thankYouHeading: 'First of all...',
+
+		thankYouHtml: `
+<p>Before we get started, I'd just like to say a huge <strong>thank you</strong> to the <strong>24 of you</strong> who agreed to be part of this very first test run.</p>
+
+<p>You're the first people ever to try out this website, so if you notice anything that's a bit odd (or completely broken 😄), I'd really appreciate you letting me know.</p>
+
+<p>Hopefully you'll like the idea behind it as much as I enjoyed building it. Have fun! ❤️</p>
 `
 	},
 
@@ -82,8 +92,8 @@ const copy = {
 		subject: (brandName: string, theme: string) =>
 			`${brandName}: Die Abstimmung für „${theme}“ ist eröffnet`,
 
-		hello: 'Hallo',
-		intro: 'Alle Songs stehen fest und die Abstimmung ist offiziell eröffnet.',
+		defaultGreeting: 'Hallo',
+		intro: 'Alle Songs sind da, die Playlist steht und die Abstimmung ist offiziell eröffnet! 🎉',
 		theme: 'Der Mix',
 		listenHeading: 'Gib jedem Song eine faire Chance',
 		listenText:
@@ -114,6 +124,15 @@ const copy = {
 <p>Als ich gesehen habe, wie viel Zeit Martyn dafür investieren musste, kam mir eine Idee: <strong>Warum nicht eine eigene Website entwickeln, auf der alles an einem Ort zusammenkommt?</strong></p>
 
 <p>So entstand <strong>martymix.co.uk</strong>. Dort können alle Teilnehmer ihre Songs einreichen, die Playlists anhören, ihre Stimmen abgeben und später die Ergebnisse ansehen &ndash; alles zentral an einem Ort. Ich hoffe, dass die Wettbewerbe dadurch für alle noch mehr Spaß machen und Martyn sich wieder stärker auf das konzentrieren kann, was ihm am meisten Freude bereitet: großartige Musik zu entdecken.</p>
+`,
+		thankYouHeading: 'Zunächst einmal...',
+
+		thankYouHtml: `
+<p>Bevor es losgeht, möchte ich mich erst einmal ganz herzlich bei den <strong>24 von euch</strong> bedanken, die sich bereit erklärt haben, bei diesem ersten Testlauf mitzumachen. Richtig Banger wurden genannt, bei Songs kann man schon erahnen wer sie nominiert hat.</p>
+
+<p>Ihr seid die allerersten, die die Website ausprobieren. Falls euch also irgendetwas auffällt – egal ob eine Kleinigkeit oder ein richtiger Bug 😄 – freue ich mich riesig über euer Feedback.</p>
+
+<p>Ich hoffe, euch gefällt die Idee genauso gut, wie mir das Entwickeln Spaß gemacht hat. Viel Spaß! ❤️</p>
 `
 	}
 } satisfies Record<Language, Record<string, unknown>>;
@@ -226,6 +245,7 @@ function createPlaylistCard({
 export function createVotingInviteEmail({
 	language,
 	competitorName,
+	greeting,
 	mixTheme,
 	contestType,
 	voteUrl,
@@ -239,13 +259,25 @@ export function createVotingInviteEmail({
 	youtubeQrContentId,
 	timeZone = 'Europe/Berlin'
 }: Args) {
+	console.log('INSIDE VOTING TEMPLATE', {
+		competitorName,
+		greeting,
+		language
+	});
+
 	const t = copy[language] ?? copy.EN;
 	const brandName = getBrandName(contestType);
 
 	const safeName = escapeHtml(firstName(competitorName));
+	const safeGreeting = escapeHtml(greeting?.trim() || t.defaultGreeting);
 	const safeTheme = escapeHtml(mixTheme);
 	const safeVoteUrl = escapeHtml(voteUrl);
 	const safeLogoUrl = escapeHtml(logoUrl);
+
+	console.log('FINAL GREETING', {
+		safeGreeting,
+		safeName
+	});
 
 	const deadline = escapeHtml(formatDeadline(votingClosesAt, language, timeZone));
 	const subject = t.subject(brandName, mixTheme);
@@ -408,9 +440,11 @@ export function createVotingInviteEmail({
 									color:#ffffff;
 								"
 							>
-								${t.hello} ${safeName} 👋
+								${safeGreeting} ${safeName} 👋
 							</h1>
 
+
+							
 							<p
 								style="
 									margin:20px 0 0;
@@ -454,6 +488,31 @@ export function createVotingInviteEmail({
 								>
 									${safeTheme}
 								</p>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td style="padding:30px 28px 0;font-family:Arial,Helvetica,sans-serif;">
+							<h2
+								style="
+									margin:0 0 14px;
+									font-size:18px;
+									line-height:1.3;
+									color:#f0abfc;
+								"
+							>
+								❤️ ${t.thankYouHeading}
+							</h2>
+
+							<div
+								style="
+									font-size:15px;
+									line-height:1.8;
+									color:#d4d4d8;
+								"
+							>
+								${t.thankYouHtml}
 							</div>
 						</td>
 					</tr>
