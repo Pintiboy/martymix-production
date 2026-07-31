@@ -3,7 +3,6 @@
 	import { dev } from '$app/environment';
 
 	import MixHeader from '$lib/components/mixes/MixHeader.svelte';
-	import MixStatusCards from '$lib/components/mixes/MixStatusCards.svelte';
 	import DeadLineActionModal from '$lib/components/DeadLineActionModal.svelte';
 	import MixNavigationCards from '$lib/components/mixes/MixNavigationCards.svelte';
 	import MixVotingOrderCard from '$lib/components/mixes/MixVotingOrderCard.svelte';
@@ -19,7 +18,6 @@
 	const contest = $derived(data.contest);
 
 	let isInviteModalOpen = $state(false);
-	let isVotingModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 
 	function dateInWeeks(weeks: number) {
@@ -63,30 +61,18 @@
 			</div>
 		</div>
 
-		<MixHeader
-			mix={contest}
-			onOpenInviteModal={() => (isInviteModalOpen = true)}
-			onOpenVotingModal={() => (isVotingModalOpen = true)}
-		/>
+		<MixHeader mix={contest} />
 
-		<MixStatusCards
+		<MixNavigationCards
 			mix={contest}
 			submittedSongs={data.submittedSongs}
 			expectedSongs={data.expectedSongs}
 			songsComplete={data.songsComplete}
 			actualVotes={data.actualVotes}
 			expectedVotes={data.expectedVotes}
-			votingComplete={data.votingComplete}
 			votingStarted={data.votingStarted}
+			votingComplete={data.votingComplete}
 			onOpenInviteModal={() => (isInviteModalOpen = true)}
-			onOpenVotingModal={() => (isVotingModalOpen = true)}
-		/>
-
-		<MixNavigationCards
-			mix={contest}
-			songsComplete={data.songsComplete}
-			votingStarted={data.votingStarted}
-			votingComplete={data.votingComplete}
 		/>
 
 		{#if data.instructionsHtml}
