@@ -37,6 +37,8 @@ export type ContestMinAggregateOutputType = {
   votingClosesAt: Date | null
   spotifyPlaylistUrl: string | null
   youtubePlaylistUrl: string | null
+  submissionEmailText: string | null
+  votingEmailText: string | null
   resultsCreatedAt: Date | null
   themeProposerId: string | null
   ownerId: string | null
@@ -57,6 +59,8 @@ export type ContestMaxAggregateOutputType = {
   votingClosesAt: Date | null
   spotifyPlaylistUrl: string | null
   youtubePlaylistUrl: string | null
+  submissionEmailText: string | null
+  votingEmailText: string | null
   resultsCreatedAt: Date | null
   themeProposerId: string | null
   ownerId: string | null
@@ -77,6 +81,8 @@ export type ContestCountAggregateOutputType = {
   votingClosesAt: number
   spotifyPlaylistUrl: number
   youtubePlaylistUrl: number
+  submissionEmailText: number
+  votingEmailText: number
   resultsCreatedAt: number
   themeProposerId: number
   ownerId: number
@@ -99,6 +105,8 @@ export type ContestMinAggregateInputType = {
   votingClosesAt?: true
   spotifyPlaylistUrl?: true
   youtubePlaylistUrl?: true
+  submissionEmailText?: true
+  votingEmailText?: true
   resultsCreatedAt?: true
   themeProposerId?: true
   ownerId?: true
@@ -119,6 +127,8 @@ export type ContestMaxAggregateInputType = {
   votingClosesAt?: true
   spotifyPlaylistUrl?: true
   youtubePlaylistUrl?: true
+  submissionEmailText?: true
+  votingEmailText?: true
   resultsCreatedAt?: true
   themeProposerId?: true
   ownerId?: true
@@ -139,6 +149,8 @@ export type ContestCountAggregateInputType = {
   votingClosesAt?: true
   spotifyPlaylistUrl?: true
   youtubePlaylistUrl?: true
+  submissionEmailText?: true
+  votingEmailText?: true
   resultsCreatedAt?: true
   themeProposerId?: true
   ownerId?: true
@@ -232,6 +244,8 @@ export type ContestGroupByOutputType = {
   votingClosesAt: Date | null
   spotifyPlaylistUrl: string | null
   youtubePlaylistUrl: string | null
+  submissionEmailText: string | null
+  votingEmailText: string | null
   resultsCreatedAt: Date | null
   themeProposerId: string | null
   ownerId: string | null
@@ -273,6 +287,8 @@ export type ContestWhereInput = {
   votingClosesAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   spotifyPlaylistUrl?: Prisma.StringNullableFilter<"Contest"> | string | null
   youtubePlaylistUrl?: Prisma.StringNullableFilter<"Contest"> | string | null
+  submissionEmailText?: Prisma.StringNullableFilter<"Contest"> | string | null
+  votingEmailText?: Prisma.StringNullableFilter<"Contest"> | string | null
   resultsCreatedAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   themeProposerId?: Prisma.StringNullableFilter<"Contest"> | string | null
   ownerId?: Prisma.StringNullableFilter<"Contest"> | string | null
@@ -298,6 +314,8 @@ export type ContestOrderByWithRelationInput = {
   votingClosesAt?: Prisma.SortOrderInput | Prisma.SortOrder
   spotifyPlaylistUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   youtubePlaylistUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  submissionEmailText?: Prisma.SortOrderInput | Prisma.SortOrder
+  votingEmailText?: Prisma.SortOrderInput | Prisma.SortOrder
   resultsCreatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   themeProposerId?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -326,6 +344,8 @@ export type ContestWhereUniqueInput = Prisma.AtLeast<{
   votingClosesAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   spotifyPlaylistUrl?: Prisma.StringNullableFilter<"Contest"> | string | null
   youtubePlaylistUrl?: Prisma.StringNullableFilter<"Contest"> | string | null
+  submissionEmailText?: Prisma.StringNullableFilter<"Contest"> | string | null
+  votingEmailText?: Prisma.StringNullableFilter<"Contest"> | string | null
   resultsCreatedAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   themeProposerId?: Prisma.StringNullableFilter<"Contest"> | string | null
   ownerId?: Prisma.StringNullableFilter<"Contest"> | string | null
@@ -351,6 +371,8 @@ export type ContestOrderByWithAggregationInput = {
   votingClosesAt?: Prisma.SortOrderInput | Prisma.SortOrder
   spotifyPlaylistUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   youtubePlaylistUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  submissionEmailText?: Prisma.SortOrderInput | Prisma.SortOrder
+  votingEmailText?: Prisma.SortOrderInput | Prisma.SortOrder
   resultsCreatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   themeProposerId?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -377,6 +399,8 @@ export type ContestScalarWhereWithAggregatesInput = {
   votingClosesAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Contest"> | Date | string | null
   spotifyPlaylistUrl?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
   youtubePlaylistUrl?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
+  submissionEmailText?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
+  votingEmailText?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
   resultsCreatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Contest"> | Date | string | null
   themeProposerId?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
   ownerId?: Prisma.StringNullableWithAggregatesFilter<"Contest"> | string | null
@@ -397,6 +421,8 @@ export type ContestCreateInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -420,6 +446,8 @@ export type ContestUncheckedCreateInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   ownerId?: string | null
@@ -443,6 +471,8 @@ export type ContestUpdateInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -466,6 +496,8 @@ export type ContestUncheckedUpdateInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -489,6 +521,8 @@ export type ContestCreateManyInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   ownerId?: string | null
@@ -509,6 +543,8 @@ export type ContestUpdateManyMutationInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -527,6 +563,8 @@ export type ContestUncheckedUpdateManyInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -547,6 +585,8 @@ export type ContestCountOrderByAggregateInput = {
   votingClosesAt?: Prisma.SortOrder
   spotifyPlaylistUrl?: Prisma.SortOrder
   youtubePlaylistUrl?: Prisma.SortOrder
+  submissionEmailText?: Prisma.SortOrder
+  votingEmailText?: Prisma.SortOrder
   resultsCreatedAt?: Prisma.SortOrder
   themeProposerId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -567,6 +607,8 @@ export type ContestMaxOrderByAggregateInput = {
   votingClosesAt?: Prisma.SortOrder
   spotifyPlaylistUrl?: Prisma.SortOrder
   youtubePlaylistUrl?: Prisma.SortOrder
+  submissionEmailText?: Prisma.SortOrder
+  votingEmailText?: Prisma.SortOrder
   resultsCreatedAt?: Prisma.SortOrder
   themeProposerId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -587,6 +629,8 @@ export type ContestMinOrderByAggregateInput = {
   votingClosesAt?: Prisma.SortOrder
   spotifyPlaylistUrl?: Prisma.SortOrder
   youtubePlaylistUrl?: Prisma.SortOrder
+  submissionEmailText?: Prisma.SortOrder
+  votingEmailText?: Prisma.SortOrder
   resultsCreatedAt?: Prisma.SortOrder
   themeProposerId?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
@@ -772,6 +816,8 @@ export type ContestCreateWithoutThemeProposerInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -794,6 +840,8 @@ export type ContestUncheckedCreateWithoutThemeProposerInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   ownerId?: string | null
   createdAt?: Date | string
@@ -845,6 +893,8 @@ export type ContestScalarWhereInput = {
   votingClosesAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   spotifyPlaylistUrl?: Prisma.StringNullableFilter<"Contest"> | string | null
   youtubePlaylistUrl?: Prisma.StringNullableFilter<"Contest"> | string | null
+  submissionEmailText?: Prisma.StringNullableFilter<"Contest"> | string | null
+  votingEmailText?: Prisma.StringNullableFilter<"Contest"> | string | null
   resultsCreatedAt?: Prisma.DateTimeNullableFilter<"Contest"> | Date | string | null
   themeProposerId?: Prisma.StringNullableFilter<"Contest"> | string | null
   ownerId?: Prisma.StringNullableFilter<"Contest"> | string | null
@@ -865,6 +915,8 @@ export type ContestCreateWithoutCompetitorsInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -887,6 +939,8 @@ export type ContestUncheckedCreateWithoutCompetitorsInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   ownerId?: string | null
@@ -925,6 +979,8 @@ export type ContestUpdateWithoutCompetitorsInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -947,6 +1003,8 @@ export type ContestUncheckedUpdateWithoutCompetitorsInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -969,6 +1027,8 @@ export type ContestCreateWithoutSongsInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -991,6 +1051,8 @@ export type ContestUncheckedCreateWithoutSongsInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   ownerId?: string | null
@@ -1029,6 +1091,8 @@ export type ContestUpdateWithoutSongsInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1051,6 +1115,8 @@ export type ContestUncheckedUpdateWithoutSongsInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1073,6 +1139,8 @@ export type ContestCreateWithoutVotesInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1095,6 +1163,8 @@ export type ContestUncheckedCreateWithoutVotesInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   ownerId?: string | null
@@ -1133,6 +1203,8 @@ export type ContestUpdateWithoutVotesInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1155,6 +1227,8 @@ export type ContestUncheckedUpdateWithoutVotesInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1177,6 +1251,8 @@ export type ContestCreateWithoutOwnerInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1199,6 +1275,8 @@ export type ContestUncheckedCreateWithoutOwnerInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   createdAt?: Date | string
@@ -1247,6 +1325,8 @@ export type ContestCreateManyThemeProposerInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   ownerId?: string | null
   createdAt?: Date | string
@@ -1266,6 +1346,8 @@ export type ContestUpdateWithoutThemeProposerInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1288,6 +1370,8 @@ export type ContestUncheckedUpdateWithoutThemeProposerInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1310,6 +1394,8 @@ export type ContestUncheckedUpdateManyWithoutThemeProposerInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1329,6 +1415,8 @@ export type ContestCreateManyOwnerInput = {
   votingClosesAt?: Date | string | null
   spotifyPlaylistUrl?: string | null
   youtubePlaylistUrl?: string | null
+  submissionEmailText?: string | null
+  votingEmailText?: string | null
   resultsCreatedAt?: Date | string | null
   themeProposerId?: string | null
   createdAt?: Date | string
@@ -1348,6 +1436,8 @@ export type ContestUpdateWithoutOwnerInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1370,6 +1460,8 @@ export type ContestUncheckedUpdateWithoutOwnerInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1392,6 +1484,8 @@ export type ContestUncheckedUpdateManyWithoutOwnerInput = {
   votingClosesAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   spotifyPlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   youtubePlaylistUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submissionEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  votingEmailText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resultsCreatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   themeProposerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1460,6 +1554,8 @@ export type ContestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   votingClosesAt?: boolean
   spotifyPlaylistUrl?: boolean
   youtubePlaylistUrl?: boolean
+  submissionEmailText?: boolean
+  votingEmailText?: boolean
   resultsCreatedAt?: boolean
   themeProposerId?: boolean
   ownerId?: boolean
@@ -1486,6 +1582,8 @@ export type ContestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   votingClosesAt?: boolean
   spotifyPlaylistUrl?: boolean
   youtubePlaylistUrl?: boolean
+  submissionEmailText?: boolean
+  votingEmailText?: boolean
   resultsCreatedAt?: boolean
   themeProposerId?: boolean
   ownerId?: boolean
@@ -1508,6 +1606,8 @@ export type ContestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   votingClosesAt?: boolean
   spotifyPlaylistUrl?: boolean
   youtubePlaylistUrl?: boolean
+  submissionEmailText?: boolean
+  votingEmailText?: boolean
   resultsCreatedAt?: boolean
   themeProposerId?: boolean
   ownerId?: boolean
@@ -1530,6 +1630,8 @@ export type ContestSelectScalar = {
   votingClosesAt?: boolean
   spotifyPlaylistUrl?: boolean
   youtubePlaylistUrl?: boolean
+  submissionEmailText?: boolean
+  votingEmailText?: boolean
   resultsCreatedAt?: boolean
   themeProposerId?: boolean
   ownerId?: boolean
@@ -1537,7 +1639,7 @@ export type ContestSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ContestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "theme" | "description" | "instructions" | "type" | "status" | "submissionInvitedAt" | "submissionClosesAt" | "votingInvitedAt" | "votingClosesAt" | "spotifyPlaylistUrl" | "youtubePlaylistUrl" | "resultsCreatedAt" | "themeProposerId" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["contest"]>
+export type ContestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "theme" | "description" | "instructions" | "type" | "status" | "submissionInvitedAt" | "submissionClosesAt" | "votingInvitedAt" | "votingClosesAt" | "spotifyPlaylistUrl" | "youtubePlaylistUrl" | "submissionEmailText" | "votingEmailText" | "resultsCreatedAt" | "themeProposerId" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["contest"]>
 export type ContestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   themeProposer?: boolean | Prisma.Contest$themeProposerArgs<ExtArgs>
   songs?: boolean | Prisma.Contest$songsArgs<ExtArgs>
@@ -1577,6 +1679,8 @@ export type $ContestPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     votingClosesAt: Date | null
     spotifyPlaylistUrl: string | null
     youtubePlaylistUrl: string | null
+    submissionEmailText: string | null
+    votingEmailText: string | null
     resultsCreatedAt: Date | null
     themeProposerId: string | null
     ownerId: string | null
@@ -2022,6 +2126,8 @@ export interface ContestFieldRefs {
   readonly votingClosesAt: Prisma.FieldRef<"Contest", 'DateTime'>
   readonly spotifyPlaylistUrl: Prisma.FieldRef<"Contest", 'String'>
   readonly youtubePlaylistUrl: Prisma.FieldRef<"Contest", 'String'>
+  readonly submissionEmailText: Prisma.FieldRef<"Contest", 'String'>
+  readonly votingEmailText: Prisma.FieldRef<"Contest", 'String'>
   readonly resultsCreatedAt: Prisma.FieldRef<"Contest", 'DateTime'>
   readonly themeProposerId: Prisma.FieldRef<"Contest", 'String'>
   readonly ownerId: Prisma.FieldRef<"Contest", 'String'>

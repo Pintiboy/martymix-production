@@ -1,4 +1,5 @@
 import type { ContestType, Language } from '$lib/generated/prisma/client';
+import { marked } from 'marked';
 
 type Song = {
 	artist: string;
@@ -27,6 +28,7 @@ type Args = {
 
 	timeZone?: string;
 	greeting?: string | null;
+	customText?: string | null;
 };
 
 function getBrandName(contestType: ContestType) {
@@ -260,6 +262,7 @@ export function createVotingInviteEmail({
 	language,
 	competitorName,
 	greeting,
+	customText,
 	mixTheme,
 	contestType,
 	voteUrl,
@@ -287,6 +290,7 @@ export function createVotingInviteEmail({
 	const safeTheme = escapeHtml(mixTheme);
 	const safeVoteUrl = escapeHtml(voteUrl);
 	const safeLogoUrl = escapeHtml(logoUrl);
+	const customTextHtml = customText ? marked.parse(customText, { async: false }) : '';
 
 	console.log('FINAL GREETING', {
 		safeGreeting,
@@ -442,6 +446,19 @@ export function createVotingInviteEmail({
 							>
 						</td>
 					</tr>
+
+					${
+						customTextHtml
+							? `
+					<tr>
+						<td style="padding:24px 28px 0;font-family:Arial,Helvetica,sans-serif;color:#d4d4d8;">
+							<div style="font-size:15px;line-height:1.8;color:#d4d4d8;">
+								${customTextHtml}
+							</div>
+						</td>
+					</tr>`
+							: ''
+					}
 
 					<tr>
 						<td style="padding:8px 28px 0;font-family:Arial,Helvetica,sans-serif;">

@@ -54,6 +54,9 @@ model Contest {
   spotifyPlaylistUrl String?
   youtubePlaylistUrl String?
 
+  submissionEmailText String?
+  votingEmailText     String?
+
   resultsCreatedAt DateTime?
 
   themeProposerId String?

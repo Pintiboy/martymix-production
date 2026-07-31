@@ -8,6 +8,7 @@ import { marked } from 'marked';
 import { createSubmissionInviteEmail } from '$lib/email/submission-invite-email';
 import { PUBLIC_APP_URL } from '$env/static/public';
 import type { ContestType } from '$lib/generated/prisma/client';
+import { parseBritishDeadlineDate } from '$lib/deadlines';
 const resend = new Resend(env.RESEND_API_KEY);
 type ResultStatus = 'Locked' | 'Preliminary' | 'Final';
 
@@ -200,6 +201,14 @@ export const actions = {
 			});
 		}
 
+		const submissionClosesAt = parseBritishDeadlineDate(submissionClosesAtValue);
+		if (!submissionClosesAt) {
+			return fail(400, {
+				error: 'The selected submission deadline is invalid.',
+				action: 'sendSubmissionInvites'
+			});
+		}
+
 		const from = env.EMAIL_FROM ?? 'Martymix <no-reply@onboarding.dev>';
 
 		const contest = await prisma.contest.findUnique({
@@ -264,6 +273,7 @@ export const actions = {
 					contestType: entry.contest.type,
 					submitUrl,
 					instructions: entry.contest.instructions,
+					customText: entry.contest.submissionEmailText,
 					logoUrl: getLogoUrl(entry.contest.type)
 				});
 
@@ -291,7 +301,7 @@ export const actions = {
 			data: {
 				status: 'SUBMISSION_OPEN',
 				submissionInvitedAt: new Date(),
-				submissionClosesAt: new Date(`${submissionClosesAtValue}T12:00:00`)
+				submissionClosesAt
 			}
 		});
 
@@ -312,6 +322,13 @@ export const actions = {
 		if (!votingClosesAtValue) {
 			return fail(400, {
 				error: 'Voting deadline is required.'
+			});
+		}
+
+		const votingClosesAt = parseBritishDeadlineDate(votingClosesAtValue);
+		if (!votingClosesAt) {
+			return fail(400, {
+				error: 'The selected voting deadline is invalid.'
 			});
 		}
 
@@ -337,7 +354,7 @@ export const actions = {
 			data: {
 				status: 'VOTING_OPEN',
 				votingInvitedAt: new Date(),
-				votingClosesAt: new Date(`${votingClosesAtValue}T12:00:00`)
+				votingClosesAt
 			}
 		});
 

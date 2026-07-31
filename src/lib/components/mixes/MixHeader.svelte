@@ -2,20 +2,16 @@
 	const { mix } = $props();
 </script>
 
-<div class="mt-6 sm:mt-10 rounded-3xl border border-white/10 bg-white/3 p-6 sm:p-8">
-	<div class="flex flex-col sm:flex-row items-start justify-between gap-6">
-		<div>
-			<p class="mb-3 text-xs sm:text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Mix</p>
+<header class="mt-6 mb-8 sm:mt-10 sm:mb-10">
+	<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Mix</p>
 
-			<h1 class="text-xl sm:text-5xl font-bold tracking-tight">
-				{mix.theme}
-			</h1>
+	<h1 class="text-3xl font-bold tracking-tight sm:text-5xl">
+		{mix.theme}
+	</h1>
 
-			{#if mix.description}
-				<p class="mt-5 max-w-3xl text-md sm:text-lg text-zinc-300">
-					{mix.description}
-				</p>
-			{/if}
-		</div>
-	</div>
-</div>
+	{#if mix.description}
+		<p class="mt-4 max-w-3xl text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
+			{mix.description}
+		</p>
+	{/if}
+</header>

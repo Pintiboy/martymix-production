@@ -1280,6 +1280,8 @@ export const ContestScalarFieldEnum = {
   votingClosesAt: 'votingClosesAt',
   spotifyPlaylistUrl: 'spotifyPlaylistUrl',
   youtubePlaylistUrl: 'youtubePlaylistUrl',
+  submissionEmailText: 'submissionEmailText',
+  votingEmailText: 'votingEmailText',
   resultsCreatedAt: 'resultsCreatedAt',
   themeProposerId: 'themeProposerId',
   ownerId: 'ownerId',

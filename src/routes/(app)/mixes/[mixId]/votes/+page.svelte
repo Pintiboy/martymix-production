@@ -130,7 +130,7 @@
 <section>
 	<a
 		href={resolve(`/mixes/${data.contest.id}`)}
-		class="inline-flex items-center text-sm text-zinc-400 transition hover:text-white"
+		class="sticky top-20 z-40 inline-flex w-fit items-center rounded-full border border-white/10 bg-zinc-950/85 px-4 py-2 text-sm text-zinc-300 shadow-lg shadow-black/20 backdrop-blur transition hover:border-white/20 hover:bg-zinc-900 hover:text-white"
 	>
 		← Back to mix
 	</a>
@@ -415,7 +415,7 @@
 				<span class="mb-2 block text-sm font-medium text-zinc-300"> Voting closes </span>
 
 				<input
-					type="datetime-local"
+					type="date"
 					name="votingClosesAt"
 					value={form?.action === 'openVoting' ? (form?.values?.votingClosesAt ?? '') : ''}
 					required
@@ -426,6 +426,9 @@
 						focus:border-fuchsia-300/60
 					"
 				/>
+				<span class="mt-2 block text-xs text-zinc-500">
+					The deadline is set to 8:00 PM UK time.
+				</span>
 			</label>
 
 			<div

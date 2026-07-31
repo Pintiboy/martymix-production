@@ -10,6 +10,7 @@ type Args = {
 	contestType: ContestType;
 	submitUrl: string;
 	instructions?: string | null;
+	customText?: string | null;
 	logoUrl: string;
 };
 
@@ -66,12 +67,14 @@ export function createSubmissionInviteEmail({
 	contestType,
 	submitUrl,
 	instructions,
+	customText,
 	logoUrl
 }: Args) {
 	const t = copy[language] ?? copy.EN;
 	const brandName = getBrandName(contestType);
 
 	const instructionsHtml = instructions ? marked.parse(instructions, { async: false }) : '';
+	const customTextHtml = customText ? marked.parse(customText, { async: false }) : '';
 
 	const safeName = escapeHtml(firstName(competitorName));
 	const safeTheme = escapeHtml(mixTheme);
@@ -118,6 +121,19 @@ export function createSubmissionInviteEmail({
 							</div>
 						</td>
 					</tr>
+
+					${
+						customTextHtml
+							? `
+					<tr>
+						<td style="padding:24px 28px 0;font-family:Arial,Helvetica,sans-serif;color:#d4d4d8;">
+							<div style="font-size:15px;line-height:1.7;color:#d4d4d8;">
+								${customTextHtml}
+							</div>
+						</td>
+					</tr>`
+							: ''
+					}
 
 					${
 						instructionsHtml

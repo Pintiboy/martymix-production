@@ -11,6 +11,7 @@
 	import MixDangerZoneCard from '$lib/components/mixes/MixDangerZoneCard.svelte';
 	import { SvelteDate } from 'svelte/reactivity';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
+	import Settings from '@lucide/svelte/icons/settings';
 
 	let { data } = $props();
 	let confirmTitle = $state('');
@@ -34,19 +35,32 @@
 
 <div>
 	<section>
-		<div class="flex items-center justify-between gap-4">
-			<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
+		<div class="sticky top-20 z-40 flex items-center justify-between gap-4">
+			<a
+				href={resolve('/dashboard')}
+				class="inline-flex w-fit items-center rounded-full border border-white/10 bg-zinc-950/85 px-4 py-2 text-sm text-zinc-300 shadow-lg shadow-black/20 backdrop-blur transition hover:border-white/20 hover:bg-zinc-900 hover:text-white"
+			>
 				← Back to dashboard
 			</a>
 
-			{#if dev}
-				<!-- Wird nur im Entwicklungsmodus angezeigt -->
-				<span
-					class="rounded-full border text-center border-fuchsia-300/20 bg-fuchsia-500/10 px-3 py-1 text-xs font-mono text-fuchsia-200"
+			<div class="flex items-center gap-3">
+				{#if dev}
+					<!-- Wird nur im Entwicklungsmodus angezeigt -->
+					<span
+						class="rounded-full border text-center border-fuchsia-300/20 bg-fuchsia-500/10 px-3 py-1 text-xs font-mono text-fuchsia-200"
+					>
+						DEV · status: {contest.status}
+					</span>
+				{/if}
+
+				<a
+					href={resolve(`/mixes/${contest.id}/settings`)}
+					class="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/10 hover:text-white"
 				>
-					DEV · status: {contest.status}
-				</span>
-			{/if}
+					<Settings size={16} />
+					Settings
+				</a>
+			</div>
 		</div>
 
 		<MixHeader

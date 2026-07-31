@@ -52,6 +52,7 @@
 			<h2 class="text-2xl font-semibold text-white">{title}</h2>
 
 			<p class="mt-3 text-sm leading-6 text-zinc-400">{description}</p>
+			<p class="mt-2 text-xs text-zinc-500">The deadline is set to 8:00 PM UK time.</p>
 
 			<form
 				method="POST"

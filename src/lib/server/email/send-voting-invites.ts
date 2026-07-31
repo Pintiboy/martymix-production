@@ -53,6 +53,7 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 			type: true,
 			status: true,
 			votingClosesAt: true,
+			votingEmailText: true,
 			spotifyPlaylistUrl: true,
 			youtubePlaylistUrl: true,
 
@@ -183,7 +184,8 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 			spotifyQrContentId,
 			youtubeQrContentId,
 			timeZone: 'Europe/Berlin',
-			greeting: competitor.greeting
+			greeting: competitor.greeting,
+			customText: contest.votingEmailText
 		});
 
 		const { data, error } = await resend.emails.send({

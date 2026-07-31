@@ -4,6 +4,7 @@ import { requireUser } from '$lib/server/auth-guard';
 import { Prisma } from '$lib/generated/prisma/client';
 import { sendVotingInvites } from '$lib/server/email/send-voting-invites.js';
 import { ContestStatus } from '$lib/generated/prisma/client';
+import { parseBritishDeadlineDate } from '$lib/deadlines';
 
 const VALID_RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
@@ -357,9 +358,9 @@ export const actions = {
 			});
 		}
 
-		const votingClosesAt = new Date(votingClosesAtValue);
+		const votingClosesAt = parseBritishDeadlineDate(votingClosesAtValue);
 
-		if (Number.isNaN(votingClosesAt.getTime())) {
+		if (!votingClosesAt) {
 			return fail(400, {
 				action: 'openVoting',
 				error: 'The selected voting deadline is invalid.',
