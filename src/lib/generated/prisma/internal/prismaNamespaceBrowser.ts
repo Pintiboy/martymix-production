@@ -87,6 +87,8 @@ export const ContestScalarFieldEnum = {
   instructions: 'instructions',
   type: 'type',
   status: 'status',
+  testMode: 'testMode',
+  testEmailRecipient: 'testEmailRecipient',
   submissionInvitedAt: 'submissionInvitedAt',
   submissionClosesAt: 'submissionClosesAt',
   votingInvitedAt: 'votingInvitedAt',

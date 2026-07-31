@@ -27,10 +27,47 @@ export const load = async ({ params, locals }) => {
 		error(404, 'Mix not found');
 	}
 
-	return { contest };
+	return {
+		contest,
+		ownerEmail: user.email,
+		testRecipientEmail: contest.testEmailRecipient?.trim() || user.email
+	};
 };
 
 export const actions = {
+	saveTestMode: async ({ request, params, locals }) => {
+		const user = requireUser(locals);
+		const formData = await request.formData();
+		const testMode = formData.get('testMode') === 'on';
+		const testEmailRecipient = String(formData.get('testEmailRecipient') ?? '').trim();
+
+		if (testEmailRecipient && !/^\S+@\S+\.\S+$/.test(testEmailRecipient)) {
+			return fail(400, {
+				action: 'saveTestMode',
+				error: 'Enter a valid test recipient email address.',
+				values: {
+					testMode: testMode ? 'on' : '',
+					testEmailRecipient
+				}
+			});
+		}
+
+		const result = await prisma.contest.updateMany({
+			where: {
+				id: params.mixId,
+				ownerId: user.id
+			},
+			data: {
+				testMode,
+				testEmailRecipient: testEmailRecipient || null
+			}
+		});
+
+		if (result.count === 0) error(404, 'Mix not found');
+
+		return { success: true, action: 'saveTestMode' };
+	},
+
 	saveEmailTexts: async ({ request, params, locals }) => {
 		const user = requireUser(locals);
 		const formData = await request.formData();

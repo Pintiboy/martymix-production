@@ -89,7 +89,8 @@ export const load = async ({ params, locals }) => {
 		votingComplete,
 		votingStarted,
 		resultStatus,
-		instructionsHtml
+		instructionsHtml,
+		testRecipientEmail: contest.testEmailRecipient?.trim() || user.email
 	};
 };
 
@@ -217,7 +218,9 @@ export const actions = {
 				ownerId: user.id
 			},
 			select: {
-				status: true
+				status: true,
+				testMode: true,
+				testEmailRecipient: true
 			}
 		});
 
@@ -239,9 +242,13 @@ export const actions = {
 				},
 				competitor: {
 					ownerId: user.id,
-					email: {
-						not: null
-					}
+					...(contest.testMode
+						? {}
+						: {
+								email: {
+									not: null
+								}
+							})
 				}
 			},
 			include: {
@@ -259,31 +266,45 @@ export const actions = {
 			});
 		}
 
-		const emails = contestCompetitors
-			.filter((entry) => entry.competitor.email?.trim())
-			.map((entry) => {
-				const submitUrl = `${PUBLIC_APP_URL}/submit/${entry.id}`;
+		const inviteEntries = contest.testMode
+			? contestCompetitors.filter(
+					(entry, index, entries) =>
+						entries.findIndex(
+							(candidate) =>
+								candidate.competitor.preferredLanguage === entry.competitor.preferredLanguage
+						) === index
+				)
+			: contestCompetitors.filter((entry) => entry.competitor.email?.trim());
 
-				const competitorName = entry.competitor.preferredName?.trim() || entry.competitor.name;
+		const emails = inviteEntries.map((entry) => {
+			const submitUrl = `${PUBLIC_APP_URL}/submit/${entry.id}`;
 
-				const { subject, html } = createSubmissionInviteEmail({
-					language: entry.competitor.preferredLanguage,
-					competitorName,
-					mixTheme: entry.contest.theme,
-					contestType: entry.contest.type,
-					submitUrl,
-					instructions: entry.contest.instructions,
-					customText: entry.contest.submissionEmailText,
-					logoUrl: getLogoUrl(entry.contest.type)
-				});
+			const competitorName = entry.competitor.preferredName?.trim() || entry.competitor.name;
 
-				return {
-					from,
-					to: [entry.competitor.email!.trim()],
-					subject,
-					html
-				};
+			const { subject, html } = createSubmissionInviteEmail({
+				language: entry.competitor.preferredLanguage,
+				competitorName,
+				mixTheme: entry.contest.theme,
+				contestType: entry.contest.type,
+				submitUrl,
+				instructions: entry.contest.instructions,
+				customText: entry.contest.submissionEmailText,
+				logoUrl: getLogoUrl(entry.contest.type)
 			});
+
+			return {
+				from,
+				to: [
+					contest.testMode
+						? contest.testEmailRecipient?.trim() || user.email
+						: entry.competitor.email!.trim()
+				],
+				subject: contest.testMode
+					? `[TEST · ${entry.competitor.preferredLanguage} · for ${entry.competitor.name}] ${subject}`
+					: subject,
+				html
+			};
+		});
 
 		const { error: resendError } = await resend.batch.send(emails);
 
@@ -309,7 +330,8 @@ export const actions = {
 			success: true,
 			message: 'Participants invited for song submissions.',
 			action: 'sendSubmissionInvites',
-			sentInvites: contestCompetitors.length
+			sentInvites: emails.length,
+			testMode: contest.testMode
 		};
 	},
 

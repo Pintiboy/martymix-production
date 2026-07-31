@@ -4,6 +4,7 @@
 	import CalendarDays from '@lucide/svelte/icons/calendar-days';
 	import Mail from '@lucide/svelte/icons/mail';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
+	import TestTube2 from '@lucide/svelte/icons/test-tube-2';
 	import { toast } from 'svelte-sonner';
 	import EmailMarkdownPreview from '$lib/components/mixes/EmailMarkdownPreview.svelte';
 	import { deadlineDateInputValue } from '$lib/deadlines';
@@ -25,9 +26,18 @@
 	let targetStatus = $state('');
 	let confirmTheme = $state('');
 
+	function getFormValue(key: string) {
+		if (!form || !('values' in form) || !form.values || typeof form.values !== 'object') {
+			return '';
+		}
+
+		const value = (form.values as Record<string, unknown>)[key];
+		return typeof value === 'string' ? value : '';
+	}
+
 	function initialEmailText(field: 'submissionEmailText' | 'votingEmailText') {
 		if (form?.action === 'saveEmailTexts') {
-			return form.values?.[field] ?? data.contest[field] ?? '';
+			return getFormValue(field) || data.contest[field] || '';
 		}
 
 		return data.contest[field] ?? '';
@@ -69,8 +79,93 @@
 
 	<form
 		method="POST"
+		action="?/saveTestMode"
+		class={[
+			'rounded-3xl border p-6 sm:p-8',
+			data.contest.testMode ? 'border-amber-400/20 bg-amber-500/5' : 'border-white/10 bg-white/3'
+		]}
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				await update();
+				if (result.type === 'success') toast.success('Test mode saved.');
+				if (result.type === 'failure') toast.error('Test mode could not be saved.');
+			};
+		}}
+	>
+		<div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+			<div class="flex items-start gap-4">
+				<div
+					class={[
+						'rounded-2xl p-3',
+						data.contest.testMode
+							? 'bg-amber-500/10 text-amber-200'
+							: 'bg-zinc-500/10 text-zinc-300'
+					]}
+				>
+					<TestTube2 size={22} />
+				</div>
+				<div>
+					<h2 class="text-2xl font-semibold">Test mode</h2>
+					<p class="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
+						When enabled, one personalised invitation per participant language is sent for each
+						email phase (song submission and voting), only to
+						<strong class="font-medium text-zinc-200">{data.testRecipientEmail}</strong>. This means
+						at most one English and one German email per phase. Participants will not receive any
+						email.
+					</p>
+				</div>
+			</div>
+
+			<div class="flex shrink-0 items-center justify-between gap-4 sm:flex-col sm:items-end">
+				<label class="inline-flex cursor-pointer items-center gap-3">
+					<input
+						type="checkbox"
+						name="testMode"
+						checked={form?.action === 'saveTestMode' && form?.error
+							? getFormValue('testMode') === 'on'
+							: data.contest.testMode}
+						class="h-5 w-5 rounded border-white/20 bg-zinc-900 text-fuchsia-500 focus:ring-fuchsia-400/40"
+					/>
+					<span class="text-sm font-medium text-zinc-200">Enabled</span>
+				</label>
+				<button
+					type="submit"
+					class="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-zinc-950 transition hover:scale-105"
+				>
+					Save test mode
+				</button>
+			</div>
+		</div>
+
+		{#if form?.action === 'saveTestMode' && form?.error}
+			<div class="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200">
+				{form.error}
+			</div>
+		{/if}
+
+		<label class="mt-6 block max-w-xl">
+			<span class="mb-2 block text-sm font-medium text-zinc-300">
+				Test recipient email <span class="font-normal text-zinc-500">(optional)</span>
+			</span>
+			<input
+				type="email"
+				name="testEmailRecipient"
+				value={form?.action === 'saveTestMode' && form?.error
+					? getFormValue('testEmailRecipient')
+					: (data.contest.testEmailRecipient ?? '')}
+				placeholder={data.ownerEmail}
+				class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
+			/>
+			<span class="mt-2 block text-xs leading-5 text-zinc-500">
+				Leave this empty to use the contest owner's address: {data.ownerEmail}
+			</span>
+		</label>
+	</form>
+
+	<form
+		method="POST"
 		action="?/saveEmailTexts"
-		class="rounded-3xl border border-white/10 bg-white/3 p-6 sm:p-8"
+		class="mt-8 rounded-3xl border border-white/10 bg-white/3 p-6 sm:p-8"
 		use:enhance={() => {
 			return async ({ result, update }) => {
 				await update();

@@ -507,10 +507,6 @@ export type EnumLanguageFieldUpdateOperationsInput = {
   set?: $Enums.Language
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type CompetitorCreateNestedOneWithoutContestsInput = {
   create?: Prisma.XOR<Prisma.CompetitorCreateWithoutContestsInput, Prisma.CompetitorUncheckedCreateWithoutContestsInput>
   connectOrCreate?: Prisma.CompetitorCreateOrConnectWithoutContestsInput

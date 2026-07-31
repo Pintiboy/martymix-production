@@ -1274,6 +1274,8 @@ export const ContestScalarFieldEnum = {
   instructions: 'instructions',
   type: 'type',
   status: 'status',
+  testMode: 'testMode',
+  testEmailRecipient: 'testEmailRecipient',
   submissionInvitedAt: 'submissionInvitedAt',
   submissionClosesAt: 'submissionClosesAt',
   votingInvitedAt: 'votingInvitedAt',
@@ -1526,6 +1528,13 @@ export type ListEnumContestStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1550,13 +1559,6 @@ export type EnumLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Language[]'
  */
 export type ListEnumLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Language[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1798,4 +1800,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

@@ -38,12 +38,14 @@ enum ContestType {
 model Contest {
   id String @id @default(cuid())
 
-  theme       String
-  description String?
+  theme        String
+  description  String?
   instructions String?
 
-  type ContestType @default(MARTYMIX)
-  status ContestStatus @default(NEW)
+  type               ContestType   @default(MARTYMIX)
+  status             ContestStatus @default(NEW)
+  testMode           Boolean       @default(true)
+  testEmailRecipient String?
 
   submissionInvitedAt DateTime?
   submissionClosesAt  DateTime?
@@ -67,7 +69,7 @@ model Contest {
   competitors ContestCompetitor[]
 
   ownerId String?
-  owner   User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -76,11 +78,11 @@ model Contest {
 model Competitor {
   id String @id @default(cuid())
 
-  name     String
+  name              String
   preferredName     String?
   preferredLanguage Language @default(EN)
-  greeting String?
-  
+  greeting          String?
+
   isActive Boolean @default(true)
   email    String?
   country  String?
@@ -91,7 +93,7 @@ model Competitor {
   proposedContests Contest[]           @relation("ContestThemeProposer")
 
   ownerId String?
-  owner   User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner   User?   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -193,22 +195,22 @@ model WorldCupBet {
 // Better Auth Tables
 
 model User {
-  id            String    @id
-  name          String
-  username      String?
+  id              String   @id
+  name            String
+  username        String?
   displayUsername String?
-  email         String
-  language      Language @default(EN)
-  role          UserRole  @default(USER)
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  email           String
+  language        Language @default(EN)
+  role            UserRole @default(USER)
+  emailVerified   Boolean  @default(false)
+  image           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  sessions      Session[]
-  accounts      Account[]
-  contests      Contest[]
-  competitors   Competitor[]
+  sessions    Session[]
+  accounts    Account[]
+  contests    Contest[]
+  competitors Competitor[]
 
   @@unique([email])
   @@unique([username])

@@ -169,7 +169,6 @@ function firstName(name: string) {
 function formatDeadline(date: Date, language: Language, timeZone: string) {
 	return new Intl.DateTimeFormat(language === 'DE' ? 'de-DE' : 'en-GB', {
 		dateStyle: 'full',
-		timeStyle: 'short',
 		timeZone
 	}).format(date);
 }
@@ -490,21 +489,6 @@ export function createVotingInviteEmail({
 									margin:20px 0 0;
 									padding:18px 20px;
 									border-radius:18px;
-									background-color:#3f1d46;
-									border:1px solid #a21caf;
-									font-size:15px;
-									line-height:1.8;
-									color:#f4e8ff;
-								"
-							>
-								${t.apologyHtml}
-							</div>
-
-							<div
-								style="
-									margin:20px 0 0;
-									padding:18px 20px;
-									border-radius:18px;
 									background-color:#27272a;
 									border:1px solid #3f3f46;
 								"
@@ -532,31 +516,6 @@ export function createVotingInviteEmail({
 								>
 									${safeTheme}
 								</p>
-							</div>
-						</td>
-					</tr>
-
-					<tr>
-						<td style="padding:30px 28px 0;font-family:Arial,Helvetica,sans-serif;">
-							<h2
-								style="
-									margin:0 0 14px;
-									font-size:18px;
-									line-height:1.3;
-									color:#f0abfc;
-								"
-							>
-								❤️ ${t.thankYouHeading}
-							</h2>
-
-							<div
-								style="
-									font-size:15px;
-									line-height:1.8;
-									color:#d4d4d8;
-								"
-							>
-								${t.thankYouHtml}
 							</div>
 						</td>
 					</tr>
@@ -645,31 +604,6 @@ export function createVotingInviteEmail({
 							</p>
 						</td>
 					</tr>
-
-          <tr>
-            <td style="padding:30px 28px 0;font-family:Arial,Helvetica,sans-serif;">
-              <h2
-                style="
-                  margin:0 0 14px;
-                  font-size:18px;
-                  line-height:1.3;
-                  color:#f0abfc;
-                "
-              >
-                💜 ${t.aboutMartynHeading}
-              </h2>
-
-              <div
-                style="
-                  font-size:15px;
-                  line-height:1.8;
-                  color:#d4d4d8;
-                "
-              >
-                ${t.aboutMartynHtml}
-              </div>
-            </td>
-          </tr>
 
 					<tr>
 						<td style="padding:28px 28px 0;font-family:Arial,Helvetica,sans-serif;">
@@ -761,3 +695,58 @@ export function createVotingInviteEmail({
 		html
 	};
 }
+
+/*  Die alte "Meet Martyn" Sektion:
+<!-- <tr>
+		<td style="padding:30px 28px 0;font-family:Arial,Helvetica,sans-serif;">
+			<h2
+				style="
+					margin:0 0 14px;
+					font-size:18px;
+					line-height:1.3;
+					color:#f0abfc;
+				"
+			>
+				💜 ${t.aboutMartynHeading}
+			</h2>
+
+			<div
+				style="
+					font-size:15px;
+					line-height:1.8;
+					color:#d4d4d8;
+				"
+			>
+				${t.aboutMartynHtml}
+			</div>
+		</td>
+	</tr> -->
+*/
+
+/** Die alte "Thank you" Sektion:
+ * 		<tr>
+				<td style="padding:30px 28px 0;font-family:Arial,Helvetica,sans-serif;">
+					<h2
+						style="
+							margin:0 0 14px;
+							font-size:18px;
+							line-height:1.3;
+							color:#f0abfc;
+						"
+					>
+						❤️ ${t.thankYouHeading}
+					</h2>
+
+					<div
+						style="
+							font-size:15px;
+							line-height:1.8;
+							color:#d4d4d8;
+						"
+					>
+						${t.thankYouHtml}
+					</div>
+				</td>
+		</tr>
+ *
+ */

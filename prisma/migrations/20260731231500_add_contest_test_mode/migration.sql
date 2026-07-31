@@ -1,0 +1,2 @@
+ALTER TABLE "Contest"
+ADD COLUMN "testMode" BOOLEAN NOT NULL DEFAULT true;

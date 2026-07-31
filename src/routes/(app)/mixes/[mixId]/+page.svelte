@@ -11,6 +11,7 @@
 	import { SvelteDate } from 'svelte/reactivity';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
 	import Settings from '@lucide/svelte/icons/settings';
+	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 
 	let { data } = $props();
 	let confirmTitle = $state('');
@@ -63,6 +64,25 @@
 
 		<MixHeader mix={contest} />
 
+		{#if contest.testMode}
+			<div
+				class="mb-8 flex items-start gap-3 rounded-2xl border border-amber-400/25 bg-amber-500/10 px-4 py-3 text-sm leading-6 text-amber-100"
+			>
+				<TriangleAlert size={19} class="mt-0.5 shrink-0" />
+				<p>
+					<strong class="font-semibold">Test mode is active.</strong>
+					One invitation per participant language and email phase is sent only to
+					<strong class="font-semibold">{data.testRecipientEmail}</strong>. You can disable test
+					mode in
+					<a
+						href={resolve(`/mixes/${contest.id}/settings`)}
+						class="font-semibold underline decoration-amber-300/50 underline-offset-2 hover:text-white"
+						>Settings</a
+					>.
+				</p>
+			</div>
+		{/if}
+
 		<MixNavigationCards
 			mix={contest}
 			submittedSongs={data.submittedSongs}
@@ -80,6 +100,8 @@
 				<h2 class="mb-4 text-2xl font-semibold">Instructions</h2>
 
 				<div class="prose prose-invert max-w-none">
+					<!-- The Markdown belongs to the authenticated contest owner loaded by +page.server.ts. -->
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html data.instructionsHtml}
 				</div>
 			</div>

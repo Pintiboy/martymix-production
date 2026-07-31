@@ -24,6 +24,8 @@ export const load = async ({ params, locals }) => {
 			id: true,
 			theme: true,
 			status: true,
+			testMode: true,
+			testEmailRecipient: true,
 
 			songs: {
 				select: {
@@ -129,8 +131,10 @@ export const load = async ({ params, locals }) => {
 		contest: {
 			id: contest.id,
 			theme: contest.theme,
-			status: contest.status
+			status: contest.status,
+			testMode: contest.testMode
 		},
+		testRecipientEmail: contest.testEmailRecipient?.trim() || user.email,
 
 		songs: contest.songs.map((song) => ({
 			id: song.id,

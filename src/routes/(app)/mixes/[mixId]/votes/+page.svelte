@@ -10,6 +10,7 @@
 	import X from '@lucide/svelte/icons/x';
 	import { toast } from 'svelte-sonner';
 	import { Send } from '@lucide/svelte/icons';
+	import { SvelteDate } from 'svelte/reactivity';
 
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
 
@@ -24,9 +25,38 @@
 	let copiedContestCompetitorId = $state<string | null>(null);
 	let isSaving = $state(false);
 	let isDeleting = $state(false);
+	let votingDeadline = $state('');
+
+	function dateInWeeks(weeks: number) {
+		const date = new SvelteDate();
+		date.setDate(date.getDate() + weeks * 7);
+
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
+	}
+
+	function openVotingInvitesModal() {
+		votingDeadline = dateInWeeks(5);
+		isOpenVotingModalOpen = true;
+	}
+
+	function focusOnMount(node: HTMLInputElement) {
+		node.focus();
+	}
 
 	function createEmptySelection() {
 		return Object.fromEntries(ranks.map((rank) => [rank, ''])) as Record<number, string>;
+	}
+
+	function getFormValues() {
+		if (!form || !('values' in form) || !form.values || typeof form.values !== 'object') {
+			return null;
+		}
+
+		return form.values as Record<string, string>;
 	}
 
 	function getRankLabel(rank: number) {
@@ -63,7 +93,7 @@
 
 		const failedValues =
 			form?.action === 'save' && form?.contestCompetitorId === row.contestCompetitorId
-				? form.values
+				? getFormValues()
 				: null;
 
 		selectedSongs = Object.fromEntries(
@@ -113,12 +143,6 @@
 			}
 		}
 	});
-
-	$effect(() => {
-		if (form?.success && form.action === 'openVoting') {
-			isOpenVotingModalOpen = false;
-		}
-	});
 </script>
 
 <svelte:head>
@@ -163,7 +187,7 @@
 
 			<button
 				type="button"
-				onclick={() => (isOpenVotingModalOpen = true)}
+				onclick={openVotingInvitesModal}
 				class="
 			inline-flex cursor-pointer items-center justify-center gap-2
 			rounded-full bg-white px-5 py-3
@@ -373,11 +397,11 @@
 					await update();
 
 					if (result.type === 'success') {
-						isOpenVotingModalOpen = false;
+						close();
 
 						toast.success(
 							result.data?.testMode
-								? `${result.data.sentEmails} test emails sent to Andreas.`
+								? `${result.data.sentEmails} test invitations sent to ${data.testRecipientEmail}.`
 								: `${result.data?.sentEmails ?? 0} voting invitations sent.`
 						);
 					}
@@ -393,12 +417,18 @@
 
 			<h2 id="open-voting-title" class="text-2xl font-semibold">Open voting</h2>
 
-			<p class="mt-3 text-sm leading-6 text-zinc-400">
-				This will open voting for this mix and send the personal voting invitation to the
-				participant whose email address is
-				<strong class="text-zinc-200">utzingerandreas@gmail.com</strong>. All other participants
-				will be skipped during the current test phase.
-			</p>
+			{#if data.contest.testMode}
+				<p class="mt-3 text-sm leading-6 text-zinc-400">
+					This will open voting and generate one personal invitation per participant language.
+					Because test mode is active, at most one English and one German invitation will be sent
+					only to
+					<strong class="text-zinc-200">{data.testRecipientEmail}</strong>.
+				</p>
+			{:else}
+				<p class="mt-3 text-sm leading-6 text-zinc-400">
+					This will open voting and send each participant their personal voting invitation.
+				</p>
+			{/if}
 
 			{#if form?.error && form.action === 'openVoting'}
 				<div
@@ -417,7 +447,8 @@
 				<input
 					type="date"
 					name="votingClosesAt"
-					value={form?.action === 'openVoting' ? (form?.values?.votingClosesAt ?? '') : ''}
+					bind:value={votingDeadline}
+					use:focusOnMount
 					required
 					class="
 						w-full rounded-2xl border border-white/10
@@ -431,18 +462,19 @@
 				</span>
 			</label>
 
-			<div
-				class="
+			{#if data.contest.testMode}
+				<div
+					class="
 		mt-5 rounded-2xl border border-amber-400/20
 		bg-amber-500/10 px-4 py-3
 		text-sm leading-6 text-amber-100
 	"
-			>
-				<strong class="font-semibold">Test mode is active.</strong>
-				Only the participant with the email address
-				<strong class="font-semibold">utzingerandreas@gmail.com</strong>
-				will receive an invitation. All other participants will be skipped.
-			</div>
+				>
+					<strong class="font-semibold">Test mode is active.</strong>
+					At most one English and one German invitation will go to
+					<strong class="font-semibold">{data.testRecipientEmail}</strong>.
+				</div>
+			{/if}
 
 			<div class="mt-8 flex justify-end gap-3">
 				<button
@@ -576,7 +608,7 @@
 					{/if}
 
 					<div class="space-y-4">
-						{#each ranks as rank}
+						{#each ranks as rank (rank)}
 							<label class="block">
 								<span class="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-300">
 									<span

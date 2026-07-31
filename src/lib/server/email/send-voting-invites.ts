@@ -8,9 +8,6 @@ import { PUBLIC_APP_URL } from '$env/static/public';
 
 const resend = new Resend(RESEND_API_KEY);
 
-const TEST_RECIPIENT: string = 'utzingerandreas@gmail.com';
-const TEST_MODE = false;
-
 type Args = {
 	contestId: string;
 	ownerId: string;
@@ -52,10 +49,17 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 			theme: true,
 			type: true,
 			status: true,
+			testMode: true,
+			testEmailRecipient: true,
 			votingClosesAt: true,
 			votingEmailText: true,
 			spotifyPlaylistUrl: true,
 			youtubePlaylistUrl: true,
+			owner: {
+				select: {
+					email: true
+				}
+			},
 
 			songs: {
 				select: {
@@ -107,6 +111,12 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 		throw new Error('The contest does not contain any songs.');
 	}
 
+	const testRecipient = contest.testEmailRecipient?.trim() || contest.owner?.email;
+
+	if (contest.testMode && !testRecipient) {
+		throw new Error('No test recipient email address is available.');
+	}
+
 	const participantNames = contest.competitors.map((entry) => entry.competitor.name);
 
 	const logoUrl = new URL(getLogoPath(contest.type), PUBLIC_APP_URL).toString();
@@ -146,17 +156,24 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 		emailId: string;
 	}> = [];
 
-	for (const entry of contest.competitors) {
+	const inviteEntries = contest.testMode
+		? contest.competitors.filter(
+				(entry, index, entries) =>
+					entries.findIndex(
+						(candidate) =>
+							candidate.competitor.preferredLanguage === entry.competitor.preferredLanguage
+					) === index
+			)
+		: contest.competitors;
+
+	for (const entry of inviteEntries) {
 		const competitor = entry.competitor;
 
-		if (!competitor.email) {
+		if (!contest.testMode && !competitor.email) {
 			continue;
 		}
 
-		// Während der Testphase nur Andreas anschreiben
-		if (TEST_MODE && competitor.email.toLowerCase() !== TEST_RECIPIENT.toLowerCase()) {
-			continue;
-		}
+		const recipient = contest.testMode ? testRecipient! : competitor.email!;
 
 		const voteUrl = new URL(`/vote/${entry.id}`, PUBLIC_APP_URL).toString();
 
@@ -190,8 +207,10 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 
 		const { data, error } = await resend.emails.send({
 			from: VOTING_EMAIL_FROM,
-			to: competitor.email,
-			subject,
+			to: recipient,
+			subject: contest.testMode
+				? `[TEST · ${competitor.preferredLanguage} · for ${competitor.name}] ${subject}`
+				: subject,
 			html,
 			attachments: sharedAttachments
 		});
@@ -206,14 +225,14 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 
 		results.push({
 			competitorId: competitor.id,
-			recipient: competitor.email,
+			recipient,
 			emailId: data.id
 		});
 	}
 
 	return {
 		sent: results.length,
-		testMode: TEST_MODE,
+		testMode: contest.testMode,
 		results
 	};
 }

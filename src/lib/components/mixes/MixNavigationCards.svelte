@@ -3,7 +3,7 @@
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import { formatBritishDate } from '$lib/helpers';
 
-	type Props = {
+	interface Props {
 		mix: {
 			id: string;
 			status: string;
@@ -18,9 +18,9 @@
 		votingStarted: boolean;
 		votingComplete: boolean;
 		onOpenInviteModal: () => void;
-	};
+	}
 
-	const {
+	let {
 		mix,
 		submittedSongs,
 		expectedSongs,
