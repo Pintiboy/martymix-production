@@ -375,7 +375,6 @@ export const actions = {
 
 		const songs = await prisma.song.findMany({
 			where: {
-				id: { in: orderedSongIds },
 				contestId: params.mixId,
 				contest: {
 					ownerId: user.id
@@ -384,7 +383,14 @@ export const actions = {
 			select: { id: true }
 		});
 
-		if (songs.length !== orderedSongIds.length) {
+		const contestSongIds = new Set(songs.map((song) => song.id));
+		const submittedSongIds = new Set(orderedSongIds);
+
+		if (
+			orderedSongIds.length !== songs.length ||
+			submittedSongIds.size !== orderedSongIds.length ||
+			orderedSongIds.some((songId) => !contestSongIds.has(songId))
+		) {
 			return fail(400, {
 				error: 'Invalid song order.'
 			});

@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
 	import { onMount } from 'svelte';
+	import { flip } from 'svelte/animate';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
 	import QRCode from 'qrcode';
 
@@ -46,8 +47,8 @@
 		};
 	};
 
-	let submittedRows = $state<SubmittedSongRow[]>(
-		data.submissionRows.flatMap((row) => {
+	function getInitialSubmittedRows(): SubmittedSongRow[] {
+		return data.submissionRows.flatMap((row) => {
 			if (!row.song) return [];
 
 			return [
@@ -61,17 +62,77 @@
 					}
 				}
 			];
-		})
-	);
+		});
+	}
+
+	let submittedRows = $state<SubmittedSongRow[]>(getInitialSubmittedRows());
 
 	let missingRows = $derived(data.submissionRows.filter((row) => !row.song));
 
 	let hasOrderChanged = $state(false);
+	const flipDurationMs = 100;
+	let draggedSongId = $state<string | null>(null);
 
-	/* function handleDnd(event: CustomEvent<{ items: SubmittedSongRow[] }>) {
-		submittedRows = event.detail.items;
-		hasOrderChanged = true;
-	} */
+	function initialSongIds() {
+		return submittedRows.map((row) => row.song.id);
+	}
+
+	let savedSongIds = $state(initialSongIds());
+
+	function getFormValue(key: string) {
+		if (!form || !('values' in form) || !form.values || typeof form.values !== 'object') {
+			return '';
+		}
+
+		const value = (form.values as Record<string, unknown>)[key];
+		return typeof value === 'string' ? value : '';
+	}
+
+	function updateOrderChanged() {
+		hasOrderChanged = submittedRows.some((row, index) => row.song.id !== savedSongIds[index]);
+	}
+
+	function startSongDrag(event: PointerEvent, songId: string) {
+		if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+		event.preventDefault();
+		(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+		draggedSongId = songId;
+	}
+
+	function moveSongDrag(event: PointerEvent) {
+		if (!draggedSongId) return;
+
+		event.preventDefault();
+
+		const target = document
+			.elementFromPoint(event.clientX, event.clientY)
+			?.closest<HTMLElement>('[data-sort-song-id]');
+		const targetSongId = target?.dataset.sortSongId;
+
+		if (!targetSongId || targetSongId === draggedSongId) return;
+
+		const fromIndex = submittedRows.findIndex((row) => row.id === draggedSongId);
+		const toIndex = submittedRows.findIndex((row) => row.id === targetSongId);
+
+		if (fromIndex === -1 || toIndex === -1) return;
+
+		const reorderedRows = [...submittedRows];
+		const [draggedRow] = reorderedRows.splice(fromIndex, 1);
+		reorderedRows.splice(toIndex, 0, draggedRow);
+		submittedRows = reorderedRows;
+		updateOrderChanged();
+
+		const edgeDistance = 72;
+		if (event.clientY < edgeDistance) window.scrollBy({ top: -12 });
+		if (event.clientY > window.innerHeight - edgeDistance) window.scrollBy({ top: 12 });
+	}
+
+	function finishSongDrag(event: PointerEvent) {
+		const handle = event.currentTarget as HTMLElement;
+		if (handle.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
+		draggedSongId = null;
+	}
 
 	$effect(() => {
 		if (form?.success && form.action === 'createSong') {
@@ -270,7 +331,7 @@
 							<div class="flex shrink-0 items-center gap-2">
 								<button
 									type="button"
-									onclick={() => copyPlaylistLink('spotify', contest.spotifyPlaylistUrl)}
+									onclick={() => copyPlaylistLink('spotify', contest.spotifyPlaylistUrl ?? '')}
 									class="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
 									aria-label="Copy Spotify playlist link"
 								>
@@ -337,7 +398,7 @@
 							<div class="flex shrink-0 items-center gap-2">
 								<button
 									type="button"
-									onclick={() => copyPlaylistLink('youtube', contest.youtubePlaylistUrl)}
+									onclick={() => copyPlaylistLink('youtube', contest.youtubePlaylistUrl ?? '')}
 									class="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
 									aria-label="Copy YouTube playlist link"
 								>
@@ -404,6 +465,7 @@
 
 								if (result.type === 'success') {
 									toast.success('Listening order saved.');
+									savedSongIds = submittedRows.map((row) => row.song.id);
 									hasOrderChanged = false;
 								}
 
@@ -435,106 +497,127 @@
 			{#if data.submissionRows.length > 0}
 				<!-- Mobile Ansicht -->
 				<div class="space-y-3 sm:hidden">
-					{#each submittedRows as row, index (row.id)}
-						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50">
-							<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
-								<div class="flex min-w-0 items-start gap-3">
-									<div
-										class="flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm font-medium text-zinc-300 tabular-nums"
-									>
-										{String(index + 1).padStart(2, '0')}
+					<div class="space-y-3">
+						{#each submittedRows as row, index (row.id)}
+							<article
+								animate:flip={{ duration: flipDurationMs }}
+								data-sort-song-id={row.id}
+								class={[
+									'overflow-hidden rounded-2xl border bg-zinc-900/50 transition-colors',
+									draggedSongId === row.id
+										? 'border-fuchsia-300/60 bg-fuchsia-500/10'
+										: 'border-white/10'
+								]}
+							>
+								<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
+									<div class="flex min-w-0 items-start gap-3">
+										<div
+											class="flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm font-medium text-zinc-300 tabular-nums"
+										>
+											{String(index + 1).padStart(2, '0')}
+										</div>
+
+										<div class="min-w-0">
+											<p class="truncate font-semibold text-white">
+												{row.song.title}
+											</p>
+
+											<p class="mt-0.5 truncate text-sm text-zinc-400">
+												{row.song.artist}
+											</p>
+										</div>
 									</div>
-
-									<div class="min-w-0">
-										<p class="truncate font-semibold text-white">
-											{row.song.title}
-										</p>
-
-										<p class="mt-0.5 truncate text-sm text-zinc-400">
-											{row.song.artist}
-										</p>
-									</div>
-								</div>
-
-								<GripVertical size={20} class="mt-1 shrink-0 text-zinc-600" aria-hidden="true" />
-							</div>
-
-							<div class="space-y-3 p-4">
-								<div class="flex items-center justify-between gap-4">
-									<span class="text-sm text-zinc-500">Contributor</span>
-
-									<span class="text-right text-sm font-medium text-zinc-200">
-										{row.competitor.name}
-									</span>
-								</div>
-
-								<div class="flex items-center justify-between gap-4">
-									<span class="text-sm text-zinc-500">Status</span>
-
-									<span
-										class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
-									>
-										Submitted
-									</span>
-								</div>
-							</div>
-
-							<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
-								<button
-									type="button"
-									title="Copy submission link"
-									aria-label={`Copy submission link for ${row.competitor.name}`}
-									onclick={() => copySubmissionLink(row.contestCompetitorId)}
-									class={[
-										'relative flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300',
-										copiedContestCompetitorId === row.contestCompetitorId
-											? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
-											: 'border-fuchsia-300/20 text-fuchsia-300 hover:bg-fuchsia-500/10 hover:text-fuchsia-200'
-									]}
-								>
-									<span
-										class={[
-											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
-											copiedContestCompetitorId === row.contestCompetitorId
-												? 'scale-50 rotate-45 opacity-0'
-												: 'scale-100 rotate-0 opacity-100'
-										]}
-									>
-										<Copy size={17} />
-									</span>
-
-									<span
-										class={[
-											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
-											copiedContestCompetitorId === row.contestCompetitorId
-												? 'scale-100 rotate-0 opacity-100'
-												: 'scale-50 -rotate-45 opacity-0'
-										]}
-									>
-										<Check size={18} strokeWidth={2.5} />
-									</span>
-								</button>
-
-								<form method="POST" action="?/delete">
-									<input type="hidden" name="songId" value={row.song.id} />
 
 									<button
-										type="submit"
-										title="Delete song"
-										aria-label={`Delete ${row.song.title}`}
-										onclick={(event) => {
-											if (!confirm(`Delete "${row.song.title}" by ${row.song.artist}?`)) {
-												event.preventDefault();
-											}
-										}}
-										class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
+										type="button"
+										onpointerdown={(event) => startSongDrag(event, row.id)}
+										onpointermove={moveSongDrag}
+										onpointerup={finishSongDrag}
+										onpointercancel={finishSongDrag}
+										aria-label={`Drag to reorder ${row.song.title}`}
+										class="mt-1 flex h-9 w-9 shrink-0 cursor-grab touch-none items-center justify-center rounded-xl text-zinc-500 transition hover:bg-white/5 hover:text-zinc-300 active:cursor-grabbing"
 									>
-										<Trash2 size={17} />
+										<GripVertical size={20} aria-hidden="true" />
 									</button>
-								</form>
-							</div>
-						</article>
-					{/each}
+								</div>
+
+								<div class="space-y-3 p-4">
+									<div class="flex items-center justify-between gap-4">
+										<span class="text-sm text-zinc-500">Contributor</span>
+
+										<span class="text-right text-sm font-medium text-zinc-200">
+											{row.competitor.name}
+										</span>
+									</div>
+
+									<div class="flex items-center justify-between gap-4">
+										<span class="text-sm text-zinc-500">Status</span>
+
+										<span
+											class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
+										>
+											Submitted
+										</span>
+									</div>
+								</div>
+
+								<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
+									<button
+										type="button"
+										title="Copy submission link"
+										aria-label={`Copy submission link for ${row.competitor.name}`}
+										onclick={() => copySubmissionLink(row.contestCompetitorId)}
+										class={[
+											'relative flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300',
+											copiedContestCompetitorId === row.contestCompetitorId
+												? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
+												: 'border-fuchsia-300/20 text-fuchsia-300 hover:bg-fuchsia-500/10 hover:text-fuchsia-200'
+										]}
+									>
+										<span
+											class={[
+												'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+												copiedContestCompetitorId === row.contestCompetitorId
+													? 'scale-50 rotate-45 opacity-0'
+													: 'scale-100 rotate-0 opacity-100'
+											]}
+										>
+											<Copy size={17} />
+										</span>
+
+										<span
+											class={[
+												'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+												copiedContestCompetitorId === row.contestCompetitorId
+													? 'scale-100 rotate-0 opacity-100'
+													: 'scale-50 -rotate-45 opacity-0'
+											]}
+										>
+											<Check size={18} strokeWidth={2.5} />
+										</span>
+									</button>
+
+									<form method="POST" action="?/delete">
+										<input type="hidden" name="songId" value={row.song.id} />
+
+										<button
+											type="submit"
+											title="Delete song"
+											aria-label={`Delete ${row.song.title}`}
+											onclick={(event) => {
+												if (!confirm(`Delete "${row.song.title}" by ${row.song.artist}?`)) {
+													event.preventDefault();
+												}
+											}}
+											class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
+										>
+											<Trash2 size={17} />
+										</button>
+									</form>
+								</div>
+							</article>
+						{/each}
+					</div>
 
 					{#each missingRows as row (row.competitor.id)}
 						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/20">
@@ -625,54 +708,75 @@
 				</div>
 
 				<!-- Desktop Ansicht -->
-				<div class="hidden overflow-hidden rounded-2xl border border-white/10 sm:block">
-					<table class="w-full text-left text-sm">
-						<thead class="bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase">
-							<tr>
-								<th class="px-4 py-3 font-medium" style="text-align: left;">#</th>
-								<th class="px-4 py-3 font-medium" style="text-align: left;">Contributor</th>
-								<th class="px-4 py-3 font-medium" style="text-align: left;">Artist</th>
-								<th class="px-4 py-3 font-medium" style="text-align: left;">Title</th>
-								<th class="px-4 py-3 font-medium" style="text-align: left;">Status</th>
-								<th class="px-4 py-3 font-medium" style="text-align: left;">Link</th>
-								<th class="px-4 py-3 font-medium" style="text-align: right;">Actions</th>
-							</tr>
-						</thead>
+				<div class="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
+					<div class="min-w-225 text-sm" role="table" aria-label="Submitted songs">
+						<div
+							class="grid grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem] bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase"
+							role="row"
+						>
+							<div class="px-4 py-3 font-medium" role="columnheader">#</div>
+							<div class="px-4 py-3 font-medium" role="columnheader">Contributor</div>
+							<div class="px-4 py-3 font-medium" role="columnheader">Artist</div>
+							<div class="px-4 py-3 font-medium" role="columnheader">Title</div>
+							<div class="px-4 py-3 font-medium" role="columnheader">Status</div>
+							<div class="px-4 py-3 font-medium" role="columnheader">Link</div>
+							<div class="px-4 py-3 text-right font-medium" role="columnheader">Actions</div>
+						</div>
 
-						<tbody class="divide-y divide-white/10">
+						<div class="divide-y divide-white/10" role="rowgroup">
 							{#each submittedRows as row, index (row.id)}
-								<tr class="bg-zinc-900/40 transition hover:bg-zinc-900">
-									<td class="w-20 px-4 py-2 align-middle text-zinc-500">
+								<div
+									animate:flip={{ duration: flipDurationMs }}
+									data-sort-song-id={row.id}
+									class={[
+										'grid grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem] transition-colors',
+										draggedSongId === row.id
+											? 'bg-fuchsia-500/15'
+											: 'bg-zinc-900/40 hover:bg-zinc-900'
+									]}
+									role="row"
+								>
+									<div class="flex items-center px-4 py-2 text-zinc-500" role="cell">
 										<div class="flex items-center gap-2">
-											<span class="cursor-grab text-zinc-600 active:cursor-grabbing">☰</span>
+											<button
+												type="button"
+												onpointerdown={(event) => startSongDrag(event, row.id)}
+												onpointermove={moveSongDrag}
+												onpointerup={finishSongDrag}
+												onpointercancel={finishSongDrag}
+												aria-label={`Drag to reorder ${row.song.title}`}
+												class="flex h-8 w-8 cursor-grab items-center justify-center rounded-lg text-zinc-500 transition hover:bg-white/5 hover:text-zinc-300 active:cursor-grabbing"
+											>
+												<GripVertical size={18} aria-hidden="true" />
+											</button>
 
 											<span class="font-medium text-zinc-300 tabular-nums">
 												{String(index + 1).padStart(2, '0')}
 											</span>
 										</div>
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle font-medium text-white">
+									<div class="flex items-center px-4 py-2 font-medium text-white" role="cell">
 										{row.competitor.name}
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle text-zinc-300">
+									<div class="flex items-center px-4 py-2 text-zinc-300" role="cell">
 										{row.song.artist}
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle text-zinc-300">
+									<div class="flex items-center px-4 py-2 text-zinc-300" role="cell">
 										{row.song.title}
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle">
+									<div class="flex items-center px-4 py-2" role="cell">
 										<span
 											class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
 										>
 											Submitted
 										</span>
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle">
+									<div class="flex items-center px-4 py-2" role="cell">
 										<button
 											type="button"
 											onclick={() => copySubmissionLink(row.contestCompetitorId)}
@@ -708,9 +812,9 @@
 												</span>
 											</span>
 										</button>
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle" style="text-align: right;">
+									<div class="flex items-center justify-end px-4 py-2" role="cell">
 										<form method="POST" action="?/delete" class="inline-block">
 											<input type="hidden" name="songId" value={row.song.id} />
 
@@ -726,32 +830,35 @@
 												Delete
 											</button>
 										</form>
-									</td>
-								</tr>
+									</div>
+								</div>
 							{/each}
-						</tbody>
+						</div>
 
-						<tbody class="divide-y divide-white/10 border-t border-white/10">
+						<div class="divide-y divide-white/10 border-t border-white/10" role="rowgroup">
 							{#each missingRows as row (row.competitor.id)}
-								<tr class="bg-zinc-900/15">
-									<td class="w-20 px-4 py-2 align-middle text-zinc-700">–</td>
+								<div
+									class="grid grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem] bg-zinc-900/15"
+									role="row"
+								>
+									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 
-									<td class="px-4 py-2 align-middle font-medium text-white">
+									<div class="flex items-center px-4 py-2 font-medium text-white" role="cell">
 										{row.competitor.name}
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle text-zinc-700">–</td>
-									<td class="px-4 py-2 align-middle text-zinc-700">–</td>
+									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
+									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 
-									<td class="px-4 py-2 align-middle">
+									<div class="flex items-center px-4 py-2" role="cell">
 										<span
 											class="inline-flex h-6 items-center rounded-full border border-amber-400/20 bg-amber-500/10 px-3 text-xs leading-none text-amber-200"
 										>
 											Missing
 										</span>
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle">
+									<div class="flex items-center px-4 py-2" role="cell">
 										<button
 											type="button"
 											onclick={() => copySubmissionLink(row.contestCompetitorId)}
@@ -787,9 +894,9 @@
 												</span>
 											</span>
 										</button>
-									</td>
+									</div>
 
-									<td class="px-4 py-2 align-middle" style="text-align: right;">
+									<div class="flex items-center justify-end px-4 py-2" role="cell">
 										<form method="POST" action="?/removeParticipant" class="inline-block">
 											<input
 												type="hidden"
@@ -809,11 +916,11 @@
 												Remove contributor
 											</button>
 										</form>
-									</td>
-								</tr>
+									</div>
+								</div>
 							{/each}
-						</tbody>
-					</table>
+						</div>
+					</div>
 				</div>
 			{:else}
 				<div class="rounded-2xl border border-dashed border-white/15 p-10 text-center">
@@ -871,7 +978,7 @@
 						type="url"
 						name="spotifyPlaylistUrl"
 						value={form?.action === 'savePlaylists'
-							? (form?.values?.spotifyPlaylistUrl ?? contest.spotifyPlaylistUrl ?? '')
+							? getFormValue('spotifyPlaylistUrl')
 							: (contest.spotifyPlaylistUrl ?? '')}
 						placeholder="https://open.spotify.com/playlist/..."
 						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-fuchsia-300/60"
@@ -887,7 +994,7 @@
 						type="url"
 						name="youtubePlaylistUrl"
 						value={form?.action === 'savePlaylists'
-							? (form?.values?.youtubePlaylistUrl ?? contest.youtubePlaylistUrl ?? '')
+							? getFormValue('youtubePlaylistUrl')
 							: (contest.youtubePlaylistUrl ?? '')}
 						placeholder="https://www.youtube.com/playlist?list=..."
 						class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-fuchsia-300/60"
@@ -969,7 +1076,7 @@
 
 							<select
 								name="competitorId"
-								value={form?.values?.competitorId ?? ''}
+								value={form?.action === 'createSong' ? getFormValue('competitorId') : ''}
 								class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-2 align-middle text-white transition outline-none focus:border-fuchsia-300/60"
 							>
 								<option value="">Select participant</option>
@@ -987,7 +1094,7 @@
 
 							<input
 								name="artist"
-								value={form?.values?.artist ?? ''}
+								value={form?.action === 'createSong' ? getFormValue('artist') : ''}
 								placeholder="Kate Bush"
 								class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
 							/>
@@ -998,7 +1105,7 @@
 
 							<input
 								name="title"
-								value={form?.values?.title ?? ''}
+								value={form?.action === 'createSong' ? getFormValue('title') : ''}
 								placeholder="Running Up That Hill"
 								class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white transition outline-none placeholder:text-zinc-600 focus:border-fuchsia-300/60"
 							/>
@@ -1063,7 +1170,7 @@
 
 				<select
 					name="competitorId"
-					value={form?.action === 'addContributor' ? (form?.values?.competitorId ?? '') : ''}
+					value={form?.action === 'addContributor' ? getFormValue('competitorId') : ''}
 					class="mt-5 w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-2 text-white"
 				>
 					<option value="">Select contributor</option>

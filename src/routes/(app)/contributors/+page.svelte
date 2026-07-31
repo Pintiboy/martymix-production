@@ -420,11 +420,7 @@
 
 										<td style="text-align: right;" class="px-4 py-3">
 											<div class="flex justify-end gap-2">
-												<form
-													method="POST"
-													action="?/toggleActive"
-													onclick={(event) => event.stopPropagation()}
-												>
+												<form method="POST" action="?/toggleActive">
 													<input type="hidden" name="participantId" value={participant.id} />
 													<input
 														type="hidden"
@@ -434,6 +430,7 @@
 
 													<button
 														type="submit"
+														onclick={(event) => event.stopPropagation()}
 														class={`rounded-full border px-3 py-1 text-xs transition ${
 															participant.isActive
 																? 'border-amber-400/20 text-amber-200 hover:bg-amber-500/10'
@@ -444,16 +441,13 @@
 													</button>
 												</form>
 
-												<form
-													method="POST"
-													action="?/delete"
-													onclick={(event) => event.stopPropagation()}
-												>
+												<form method="POST" action="?/delete">
 													<input type="hidden" name="participantId" value={participant.id} />
 
 													<button
 														type="submit"
 														onclick={(event) => {
+															event.stopPropagation();
 															if (!confirm(`Delete ${participant.name}?`)) {
 																event.preventDefault();
 															}

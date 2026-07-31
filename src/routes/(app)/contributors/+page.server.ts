@@ -42,7 +42,7 @@ export const actions = {
 		if (!name) {
 			return fail(400, {
 				error: 'Name is required.',
-				values: { name, email, country }
+				values: { name, preferredName, email, preferredLanguage, country }
 			});
 		}
 
