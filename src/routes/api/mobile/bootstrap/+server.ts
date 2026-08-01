@@ -14,7 +14,7 @@ export async function GET({ request }) {
 
 	const userId = session.user.id;
 
-	const [contests, competitors, contestCompetitors, songs] = await Promise.all([
+	const [contests, competitors, contestCompetitors, songs, votes] = await Promise.all([
 		prisma.contest.findMany({
 			where: {
 				ownerId: userId
@@ -106,8 +106,33 @@ export async function GET({ request }) {
 				createdAt: true,
 				updatedAt: true
 			}
+		}),
+
+		prisma.vote.findMany({
+			where: {
+				contest: {
+					ownerId: userId
+				}
+			},
+			select: {
+				contestId: true,
+				voterId: true
+			}
 		})
 	]);
+
+	const votersByContest = new Map<string, Set<string>>();
+
+	for (const vote of votes) {
+		const voters = votersByContest.get(vote.contestId) ?? new Set<string>();
+		voters.add(vote.voterId);
+		votersByContest.set(vote.contestId, voters);
+	}
+
+	const contestVoteCounts = contests.map((contest) => ({
+		contestId: contest.id,
+		submittedVotes: votersByContest.get(contest.id)?.size ?? 0
+	}));
 
 	return json({
 		user: {
@@ -120,6 +145,7 @@ export async function GET({ request }) {
 		competitors,
 		contestCompetitors,
 		songs,
+		contestVoteCounts,
 		generatedAt: new Date().toISOString()
 	});
 }
