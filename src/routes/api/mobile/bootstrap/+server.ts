@@ -50,6 +50,8 @@ export async function GET({ request }) {
 			select: {
 				id: true,
 				name: true,
+				preferredName: true,
+				preferredLanguage: true,
 				email: true,
 				country: true,
 				isActive: true,
