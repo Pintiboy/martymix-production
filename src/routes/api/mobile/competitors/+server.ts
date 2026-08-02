@@ -5,6 +5,8 @@ import { auth } from '$lib/auth';
 
 type CreateCompetitorBody = {
 	name?: unknown;
+	preferredName?: unknown;
+	preferredLanguage?: unknown;
 	email?: unknown;
 	country?: unknown;
 };
@@ -27,6 +29,11 @@ export async function POST({ request }) {
 	}
 
 	const name = typeof body.name === 'string' ? body.name.trim() : '';
+	const preferredName =
+		typeof body.preferredName === 'string' && body.preferredName.trim()
+			? body.preferredName.trim()
+			: null;
+	const preferredLanguage = body.preferredLanguage === 'DE' ? 'DE' : 'EN';
 
 	const email =
 		typeof body.email === 'string' && body.email.trim() ? body.email.trim().toLowerCase() : null;
@@ -44,6 +51,18 @@ export async function POST({ request }) {
 		error(400, 'Name is too long');
 	}
 
+	if (preferredName && preferredName.length > 100) {
+		error(400, 'Preferred name is too long');
+	}
+
+	if (
+		body.preferredLanguage !== undefined &&
+		body.preferredLanguage !== 'EN' &&
+		body.preferredLanguage !== 'DE'
+	) {
+		error(400, 'Invalid preferred language');
+	}
+
 	if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 		error(400, 'Please enter a valid email address');
 	}
@@ -55,6 +74,8 @@ export async function POST({ request }) {
 	const competitor = await prisma.competitor.create({
 		data: {
 			name,
+			preferredName,
+			preferredLanguage,
 			email,
 			country,
 			isActive: true,
@@ -63,6 +84,8 @@ export async function POST({ request }) {
 		select: {
 			id: true,
 			name: true,
+			preferredName: true,
+			preferredLanguage: true,
 			email: true,
 			country: true,
 			isActive: true,
