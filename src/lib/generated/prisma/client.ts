@@ -82,6 +82,11 @@ export type WorldCupBet = Prisma.WorldCupBetModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model PushDevice
+ * 
+ */
+export type PushDevice = Prisma.PushDeviceModel
+/**
  * Model Session
  * 
  */

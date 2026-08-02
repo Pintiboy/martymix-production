@@ -211,10 +211,25 @@ model User {
   accounts    Account[]
   contests    Contest[]
   competitors Competitor[]
+  pushDevices PushDevice[]
 
   @@unique([email])
   @@unique([username])
   @@map("user")
+}
+
+model PushDevice {
+  id            String @id @default(cuid())
+  expoPushToken String @unique
+  platform      String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Session {

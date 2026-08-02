@@ -59,6 +59,7 @@ export const ModelName = {
   WorldCupParticipant: 'WorldCupParticipant',
   WorldCupBet: 'WorldCupBet',
   User: 'User',
+  PushDevice: 'PushDevice',
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification'
@@ -205,6 +206,18 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PushDeviceScalarFieldEnum = {
+  id: 'id',
+  expoPushToken: 'expoPushToken',
+  platform: 'platform',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PushDeviceScalarFieldEnum = (typeof PushDeviceScalarFieldEnum)[keyof typeof PushDeviceScalarFieldEnum]
 
 
 export const SessionScalarFieldEnum = {

@@ -1,6 +1,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { prisma } from '$lib/prisma';
 import { ContestStatus, Prisma } from '$lib/generated/prisma/client';
+import { sendVoteSubmittedNotification } from '$lib/server/push-notifications';
 import QRCode from 'qrcode';
 
 const VALID_RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
@@ -193,6 +194,14 @@ export const actions = {
 			});
 		}
 
+		const existingVoteCount = await prisma.vote.count({
+			where: {
+				contestId: contest.id,
+				voterId: competitor.id
+			}
+		});
+		const isFirstSubmission = existingVoteCount !== VALID_RANKS.length;
+
 		try {
 			await prisma.$transaction([
 				prisma.vote.deleteMany({
@@ -219,6 +228,19 @@ export const actions = {
 			}
 
 			throw caughtError;
+		}
+
+		if (isFirstSubmission && contest.ownerId) {
+			try {
+				await sendVoteSubmittedNotification({
+					ownerId: contest.ownerId,
+					contestId: contest.id,
+					contestTheme: contest.theme,
+					competitorName: competitor.preferredName ?? competitor.name
+				});
+			} catch (caughtError) {
+				console.error('Failed to send vote-submitted push notification', caughtError);
+			}
 		}
 
 		return {
