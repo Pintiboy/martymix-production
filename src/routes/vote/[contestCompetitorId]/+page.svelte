@@ -40,6 +40,13 @@
 			updateVoting: 'Update voting',
 			saveSuccess: 'Your voting has been saved.',
 			saveError: 'Your voting could not be saved.',
+			votingDeadline: 'Voting deadline',
+			votingClosed: 'Voting closed',
+			daysRemaining: 'days remaining',
+			dayRemaining: 'day remaining',
+			hoursRemaining: 'hours remaining',
+			hourRemaining: 'hour remaining',
+			lessThanOneHourRemaining: 'Less than 1 hour remaining',
 
 			personalLink: 'This is your personal voting link. Please do not share it.',
 
@@ -86,6 +93,13 @@
 			updateVoting: 'Abstimmung aktualisieren',
 			saveSuccess: 'Deine Abstimmung wurde gespeichert.',
 			saveError: 'Deine Abstimmung konnte nicht gespeichert werden.',
+			votingDeadline: 'Abstimmungsfrist',
+			votingClosed: 'Abstimmung geschlossen',
+			daysRemaining: 'Tage verbleibend',
+			dayRemaining: 'Tag verbleibend',
+			hoursRemaining: 'Stunden verbleibend',
+			hourRemaining: 'Stunde verbleibend',
+			lessThanOneHourRemaining: 'Weniger als 1 Stunde verbleibend',
 
 			personalLink: 'Dies ist dein persönlicher Abstimmungslink. Bitte gib ihn nicht weiter.'
 		}
@@ -93,6 +107,39 @@
 
 	const language = data.competitor.preferredLanguage === 'DE' ? 'DE' : 'EN';
 	const t = translations[language];
+	const locale = language === 'DE' ? 'de-DE' : 'en-GB';
+	const votingUntil = $derived(
+		data.contest.votingUntil ? new Date(data.contest.votingUntil) : null
+	);
+
+	const deadlineText = $derived(
+		votingUntil
+			? new Intl.DateTimeFormat(locale, {
+					weekday: 'long',
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				}).format(votingUntil)
+			: null
+	);
+
+	const countdownText = $derived.by(() => {
+		if (!votingUntil) return null;
+
+		const diff = votingUntil.getTime() - Date.now();
+
+		if (diff <= 0) return t.votingClosed;
+
+		const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+		const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+		if (days > 1) return `${days} ${t.daysRemaining}`;
+		if (days === 1) return `1 ${t.dayRemaining}`;
+		if (hours > 1) return `${hours} ${t.hoursRemaining}`;
+		if (hours === 1) return `1 ${t.hourRemaining}`;
+
+		return t.lessThanOneHourRemaining;
+	});
 
 	let selectedSongs = $state<Record<number, string>>(
 		Object.fromEntries(
@@ -424,6 +471,22 @@
 				{saved ? t.updateVoting : t.saveVoting}
 			</button>
 		</form>
+
+		{#if deadlineText}
+			<div class="mt-6 rounded-3xl border border-fuchsia-300/25 bg-fuchsia-500/10 p-5">
+				<p class="text-sm font-semibold text-fuchsia-200">📅 {t.votingDeadline}</p>
+
+				<p class="mt-2 text-lg font-bold text-white">
+					{deadlineText}
+				</p>
+
+				{#if countdownText}
+					<p class="mt-1 text-sm text-zinc-300">
+						⏳ {countdownText}
+					</p>
+				{/if}
+			</div>
+		{/if}
 
 		<p class="mt-6 text-center text-xs text-zinc-600">
 			{t.personalLink}
