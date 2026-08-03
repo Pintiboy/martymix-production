@@ -166,6 +166,43 @@ function firstName(name: string) {
 	return name.trim().split(/\s+/)[0] || name;
 }
 
+function privateParticipantName(name: string) {
+	const nameParts = name.trim().split(/\s+/).filter(Boolean);
+
+	if (nameParts.length <= 1) {
+		return nameParts[0] || name;
+	}
+
+	const lastName = nameParts[nameParts.length - 1];
+	return `${nameParts[0]} ${lastName.charAt(0)}.`;
+}
+
+function renderEmailMarkdown(markdown: string) {
+	return marked
+		.parse(escapeHtml(markdown), { async: false, breaks: true })
+		.replaceAll(
+			'<h1>',
+			'<h1 style="margin:0 0 14px;font-size:21px;line-height:1.35;color:#ffffff;">'
+		)
+		.replaceAll(
+			'<h2>',
+			'<h2 style="margin:0 0 12px;font-size:19px;line-height:1.4;color:#ffffff;">'
+		)
+		.replaceAll(
+			'<h3>',
+			'<h3 style="margin:0 0 10px;font-size:17px;line-height:1.4;color:#ffffff;">'
+		)
+		.replaceAll('<p>', '<p style="margin:0 0 14px;">')
+		.replaceAll('<ul>', '<ul style="margin:0 0 14px;padding-left:22px;">')
+		.replaceAll('<ol>', '<ol style="margin:0 0 14px;padding-left:22px;">')
+		.replaceAll('<li>', '<li style="margin:0 0 6px;">')
+		.replaceAll(
+			'<blockquote>',
+			'<blockquote style="margin:0 0 14px;padding:2px 0 2px 14px;border-left:3px solid #d946ef;color:#a1a1aa;">'
+		)
+		.replaceAll('<a href="', '<a style="color:#f0abfc;text-decoration:underline;" href="');
+}
+
 function formatDeadline(date: Date, language: Language, timeZone: string) {
 	return new Intl.DateTimeFormat(language === 'DE' ? 'de-DE' : 'en-GB', {
 		dateStyle: 'full',
@@ -275,12 +312,6 @@ export function createVotingInviteEmail({
 	youtubeQrContentId,
 	timeZone = 'Europe/Berlin'
 }: Args) {
-	console.log('INSIDE VOTING TEMPLATE', {
-		competitorName,
-		greeting,
-		language
-	});
-
 	const t = copy[language] ?? copy.EN;
 	const brandName = getBrandName(contestType);
 
@@ -289,12 +320,7 @@ export function createVotingInviteEmail({
 	const safeTheme = escapeHtml(mixTheme);
 	const safeVoteUrl = escapeHtml(voteUrl);
 	const safeLogoUrl = escapeHtml(logoUrl);
-	const customTextHtml = customText ? marked.parse(customText, { async: false }) : '';
-
-	console.log('FINAL GREETING', {
-		safeGreeting,
-		safeName
-	});
+	const customTextHtml = customText?.trim() ? renderEmailMarkdown(customText) : '';
 
 	const deadline = escapeHtml(formatDeadline(votingClosesAt, language, timeZone));
 	const subject = t.subject(brandName, mixTheme);
@@ -339,7 +365,7 @@ export function createVotingInviteEmail({
 		.join('');
 
 	const participantsHtml = participantNames
-		.map((name) => escapeHtml(name))
+		.map((name) => escapeHtml(privateParticipantName(name)))
 		.join(' &nbsp;<span style="color:#d946ef;">•</span>&nbsp; ');
 
 	const playlistCards = [
@@ -446,19 +472,6 @@ export function createVotingInviteEmail({
 						</td>
 					</tr>
 
-					${
-						customTextHtml
-							? `
-					<tr>
-						<td style="padding:24px 28px 0;font-family:Arial,Helvetica,sans-serif;color:#d4d4d8;">
-							<div style="font-size:15px;line-height:1.8;color:#d4d4d8;">
-								${customTextHtml}
-							</div>
-						</td>
-					</tr>`
-							: ''
-					}
-
 					<tr>
 						<td style="padding:8px 28px 0;font-family:Arial,Helvetica,sans-serif;">
 							<h1
@@ -550,6 +563,19 @@ export function createVotingInviteEmail({
 							</p>
 						</td>
 					</tr>
+
+					${
+						customTextHtml
+							? `
+					<tr>
+						<td style="padding:26px 28px 0;font-family:Arial,Helvetica,sans-serif;color:#d4d4d8;">
+							<div style="padding:18px 20px;font-size:15px;line-height:1.7;color:#d4d4d8;background-color:#27272a;border:1px solid #3f3f46;border-radius:18px;">
+								${customTextHtml}
+							</div>
+						</td>
+					</tr>`
+							: ''
+					}
 
 					${playlistsHtml}
 

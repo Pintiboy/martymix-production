@@ -177,15 +177,6 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 
 		const voteUrl = new URL(`/vote/${entry.id}`, PUBLIC_APP_URL).toString();
 
-		console.log('COMPETITOR FROM DATABASE', {
-			id: competitor.id,
-			name: competitor.name,
-			preferredName: competitor.preferredName,
-			email: competitor.email,
-			greeting: competitor.greeting,
-			language: competitor.preferredLanguage
-		});
-
 		const { subject, html } = createVotingInviteEmail({
 			language: competitor.preferredLanguage,
 			competitorName: competitor.preferredName || competitor.name,
