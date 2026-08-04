@@ -117,8 +117,13 @@ export async function GET({ request }) {
 				}
 			},
 			select: {
+				id: true,
 				contestId: true,
-				voterId: true
+				voterId: true,
+				songId: true,
+				rank: true,
+				createdAt: true,
+				updatedAt: true
 			}
 		})
 	]);
@@ -147,6 +152,7 @@ export async function GET({ request }) {
 		competitors,
 		contestCompetitors,
 		songs,
+		votes,
 		contestVoteCounts,
 		generatedAt: new Date().toISOString()
 	});
