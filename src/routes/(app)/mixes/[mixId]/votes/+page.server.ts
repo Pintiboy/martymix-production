@@ -58,7 +58,8 @@ export const load = async ({ params, locals }) => {
 							id: true,
 							name: true,
 							preferredName: true,
-							country: true
+							country: true,
+							imageUrl: true
 						}
 					}
 				},
@@ -111,7 +112,8 @@ export const load = async ({ params, locals }) => {
 				id: contestCompetitor.competitor.id,
 				name: contestCompetitor.competitor.name,
 				preferredName: contestCompetitor.competitor.preferredName,
-				country: contestCompetitor.competitor.country
+				country: contestCompetitor.competitor.country,
+				imageUrl: contestCompetitor.competitor.imageUrl
 			},
 
 			ownSongId: ownSong?.id ?? null,

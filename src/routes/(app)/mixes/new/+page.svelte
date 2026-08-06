@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 	let { form, data } = $props();
 	let showParticipantSelection = $state(false);
 
@@ -169,11 +170,17 @@
 											: 'border-white/10 bg-zinc-950/40 text-zinc-400 hover:bg-white/5'
 									}`}
 								>
-									<span class="truncate">
-										{participant.name}
+									<span class="flex min-w-0 items-center gap-2">
+										<CompetitorAvatar
+											imageUrl={participant.imageUrl}
+											name={participant.name}
+											className="h-8 w-8 rounded-lg text-xs"
+										/>
+
+										<span class="truncate">{participant.name}</span>
 
 										{#if !participant.isActive}
-											<span class="ml-2 text-xs text-zinc-500">Inactive</span>
+											<span class="shrink-0 text-xs text-zinc-500">Inactive</span>
 										{/if}
 									</span>
 

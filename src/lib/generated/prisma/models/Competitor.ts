@@ -33,6 +33,7 @@ export type CompetitorMinAggregateOutputType = {
   isActive: boolean | null
   email: string | null
   country: string | null
+  imageUrl: string | null
   ownerId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -47,6 +48,7 @@ export type CompetitorMaxAggregateOutputType = {
   isActive: boolean | null
   email: string | null
   country: string | null
+  imageUrl: string | null
   ownerId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -61,6 +63,7 @@ export type CompetitorCountAggregateOutputType = {
   isActive: number
   email: number
   country: number
+  imageUrl: number
   ownerId: number
   createdAt: number
   updatedAt: number
@@ -77,6 +80,7 @@ export type CompetitorMinAggregateInputType = {
   isActive?: true
   email?: true
   country?: true
+  imageUrl?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -91,6 +95,7 @@ export type CompetitorMaxAggregateInputType = {
   isActive?: true
   email?: true
   country?: true
+  imageUrl?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -105,6 +110,7 @@ export type CompetitorCountAggregateInputType = {
   isActive?: true
   email?: true
   country?: true
+  imageUrl?: true
   ownerId?: true
   createdAt?: true
   updatedAt?: true
@@ -192,6 +198,7 @@ export type CompetitorGroupByOutputType = {
   isActive: boolean
   email: string | null
   country: string | null
+  imageUrl: string | null
   ownerId: string | null
   createdAt: Date
   updatedAt: Date
@@ -227,6 +234,7 @@ export type CompetitorWhereInput = {
   isActive?: Prisma.BoolFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableFilter<"Competitor"> | string | null
+  imageUrl?: Prisma.StringNullableFilter<"Competitor"> | string | null
   ownerId?: Prisma.StringNullableFilter<"Competitor"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Competitor"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Competitor"> | Date | string
@@ -246,6 +254,7 @@ export type CompetitorOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -268,6 +277,7 @@ export type CompetitorWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableFilter<"Competitor"> | string | null
+  imageUrl?: Prisma.StringNullableFilter<"Competitor"> | string | null
   ownerId?: Prisma.StringNullableFilter<"Competitor"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Competitor"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Competitor"> | Date | string
@@ -287,6 +297,7 @@ export type CompetitorOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   country?: Prisma.SortOrderInput | Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   ownerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -307,6 +318,7 @@ export type CompetitorScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
+  imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
   ownerId?: Prisma.StringNullableWithAggregatesFilter<"Competitor"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Competitor"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Competitor"> | Date | string
@@ -321,6 +333,7 @@ export type CompetitorCreateInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   songs?: Prisma.SongCreateNestedManyWithoutCompetitorInput
@@ -339,6 +352,7 @@ export type CompetitorUncheckedCreateInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   ownerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -357,6 +371,7 @@ export type CompetitorUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   songs?: Prisma.SongUpdateManyWithoutCompetitorNestedInput
@@ -375,6 +390,7 @@ export type CompetitorUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -393,6 +409,7 @@ export type CompetitorCreateManyInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   ownerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -407,6 +424,7 @@ export type CompetitorUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -420,6 +438,7 @@ export type CompetitorUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -439,6 +458,7 @@ export type CompetitorCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -453,6 +473,7 @@ export type CompetitorMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -467,6 +488,7 @@ export type CompetitorMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   email?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -600,6 +622,7 @@ export type CompetitorCreateWithoutProposedContestsInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   songs?: Prisma.SongCreateNestedManyWithoutCompetitorInput
@@ -617,6 +640,7 @@ export type CompetitorUncheckedCreateWithoutProposedContestsInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   ownerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -650,6 +674,7 @@ export type CompetitorUpdateWithoutProposedContestsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   songs?: Prisma.SongUpdateManyWithoutCompetitorNestedInput
@@ -667,6 +692,7 @@ export type CompetitorUncheckedUpdateWithoutProposedContestsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -684,6 +710,7 @@ export type CompetitorCreateWithoutContestsInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   songs?: Prisma.SongCreateNestedManyWithoutCompetitorInput
@@ -701,6 +728,7 @@ export type CompetitorUncheckedCreateWithoutContestsInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   ownerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -734,6 +762,7 @@ export type CompetitorUpdateWithoutContestsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   songs?: Prisma.SongUpdateManyWithoutCompetitorNestedInput
@@ -751,6 +780,7 @@ export type CompetitorUncheckedUpdateWithoutContestsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -768,6 +798,7 @@ export type CompetitorCreateWithoutSongsInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   votes?: Prisma.VoteCreateNestedManyWithoutVoterInput
@@ -785,6 +816,7 @@ export type CompetitorUncheckedCreateWithoutSongsInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   ownerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -818,6 +850,7 @@ export type CompetitorUpdateWithoutSongsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   votes?: Prisma.VoteUpdateManyWithoutVoterNestedInput
@@ -835,6 +868,7 @@ export type CompetitorUncheckedUpdateWithoutSongsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -852,6 +886,7 @@ export type CompetitorCreateWithoutVotesInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   songs?: Prisma.SongCreateNestedManyWithoutCompetitorInput
@@ -869,6 +904,7 @@ export type CompetitorUncheckedCreateWithoutVotesInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   ownerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -902,6 +938,7 @@ export type CompetitorUpdateWithoutVotesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   songs?: Prisma.SongUpdateManyWithoutCompetitorNestedInput
@@ -919,6 +956,7 @@ export type CompetitorUncheckedUpdateWithoutVotesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -936,6 +974,7 @@ export type CompetitorCreateWithoutOwnerInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   songs?: Prisma.SongCreateNestedManyWithoutCompetitorInput
@@ -953,6 +992,7 @@ export type CompetitorUncheckedCreateWithoutOwnerInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   songs?: Prisma.SongUncheckedCreateNestedManyWithoutCompetitorInput
@@ -999,6 +1039,7 @@ export type CompetitorScalarWhereInput = {
   isActive?: Prisma.BoolFilter<"Competitor"> | boolean
   email?: Prisma.StringNullableFilter<"Competitor"> | string | null
   country?: Prisma.StringNullableFilter<"Competitor"> | string | null
+  imageUrl?: Prisma.StringNullableFilter<"Competitor"> | string | null
   ownerId?: Prisma.StringNullableFilter<"Competitor"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Competitor"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Competitor"> | Date | string
@@ -1013,6 +1054,7 @@ export type CompetitorCreateManyOwnerInput = {
   isActive?: boolean
   email?: string | null
   country?: string | null
+  imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1026,6 +1068,7 @@ export type CompetitorUpdateWithoutOwnerInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   songs?: Prisma.SongUpdateManyWithoutCompetitorNestedInput
@@ -1043,6 +1086,7 @@ export type CompetitorUncheckedUpdateWithoutOwnerInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   songs?: Prisma.SongUncheckedUpdateManyWithoutCompetitorNestedInput
@@ -1060,6 +1104,7 @@ export type CompetitorUncheckedUpdateManyWithoutOwnerInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1131,6 +1176,7 @@ export type CompetitorSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   isActive?: boolean
   email?: boolean
   country?: boolean
+  imageUrl?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1151,6 +1197,7 @@ export type CompetitorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   isActive?: boolean
   email?: boolean
   country?: boolean
+  imageUrl?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1166,6 +1213,7 @@ export type CompetitorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   isActive?: boolean
   email?: boolean
   country?: boolean
+  imageUrl?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1181,12 +1229,13 @@ export type CompetitorSelectScalar = {
   isActive?: boolean
   email?: boolean
   country?: boolean
+  imageUrl?: boolean
   ownerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CompetitorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "preferredName" | "preferredLanguage" | "greeting" | "isActive" | "email" | "country" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["competitor"]>
+export type CompetitorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "preferredName" | "preferredLanguage" | "greeting" | "isActive" | "email" | "country" | "imageUrl" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["competitor"]>
 export type CompetitorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   songs?: boolean | Prisma.Competitor$songsArgs<ExtArgs>
   votes?: boolean | Prisma.Competitor$votesArgs<ExtArgs>
@@ -1220,6 +1269,7 @@ export type $CompetitorPayload<ExtArgs extends runtime.Types.Extensions.Internal
     isActive: boolean
     email: string | null
     country: string | null
+    imageUrl: string | null
     ownerId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1659,6 +1709,7 @@ export interface CompetitorFieldRefs {
   readonly isActive: Prisma.FieldRef<"Competitor", 'Boolean'>
   readonly email: Prisma.FieldRef<"Competitor", 'String'>
   readonly country: Prisma.FieldRef<"Competitor", 'String'>
+  readonly imageUrl: Prisma.FieldRef<"Competitor", 'String'>
   readonly ownerId: Prisma.FieldRef<"Competitor", 'String'>
   readonly createdAt: Prisma.FieldRef<"Competitor", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Competitor", 'DateTime'>

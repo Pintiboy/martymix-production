@@ -93,7 +93,8 @@ export const load = async ({ params }) => {
 			name: competitor.name,
 			preferredName: competitor.preferredName,
 			preferredLanguage: competitor.preferredLanguage,
-			country: competitor.country
+			country: competitor.country,
+			imageUrl: competitor.imageUrl
 		},
 		availableSongs,
 		ownSongId: ownSong?.id ?? null,

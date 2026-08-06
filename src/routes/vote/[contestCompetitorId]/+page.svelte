@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { Check, ExternalLink, ListMusic, Trophy, CirclePlay } from '@lucide/svelte/icons';
 	import { toast } from 'svelte-sonner';
+	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 
 	let { data, form } = $props();
 
@@ -226,7 +227,13 @@
 				{data.contest.theme}
 			</h1>
 
-			<p class="mt-5 text-lg font-medium text-white">
+			<CompetitorAvatar
+				imageUrl={data.competitor.imageUrl}
+				name={fullDisplayName}
+				className="mx-auto mt-5 h-20 w-20 rounded-3xl text-2xl"
+			/>
+
+			<p class="mt-3 text-lg font-medium text-white">
 				{t.greeting}
 				{firstName}! 👋
 			</p>

@@ -25,3 +25,4 @@ vite.config.ts.timestamp-*
 /prisma/..src/lib/generated/prisma
 
 src/routes/dev-signup/
+.env*

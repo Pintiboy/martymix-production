@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getTranslations } from '$lib/i18n';
+	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 
 	let { data, form } = $props();
 
@@ -69,6 +70,12 @@
 		<p class="my-4 hidden text-sm tracking-[0.35em] text-fuchsia-300 uppercase sm:block">
 			{brand.name}
 		</p>
+
+		<CompetitorAvatar
+			imageUrl={competitor.imageUrl}
+			name={competitor.name}
+			className="mb-4 h-20 w-20 rounded-3xl text-2xl"
+		/>
 
 		<h1 class="text-2xl font-bold tracking-tight sm:text-4xl">
 			Hi {competitor.name.split(' ')[0]},<br />

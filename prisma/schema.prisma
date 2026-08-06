@@ -86,6 +86,7 @@ model Competitor {
   isActive Boolean @default(true)
   email    String?
   country  String?
+  imageUrl String?
 
   songs            Song[]
   votes            Vote[]

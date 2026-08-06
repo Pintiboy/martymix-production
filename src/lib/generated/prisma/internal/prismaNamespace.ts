@@ -1378,6 +1378,7 @@ export const CompetitorScalarFieldEnum = {
   isActive: 'isActive',
   email: 'email',
   country: 'country',
+  imageUrl: 'imageUrl',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

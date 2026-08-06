@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 
 	let { data } = $props();
 
@@ -92,6 +93,15 @@
 						{entry.title}
 					</p>
 
+					<div class="mt-4 flex items-center gap-2 text-sm text-zinc-400">
+						<CompetitorAvatar
+							imageUrl={entry.competitor.imageUrl}
+							name={entry.competitor.name}
+							className="h-8 w-8 rounded-lg text-xs"
+						/>
+						<span class="truncate">{entry.competitor.name}</span>
+					</div>
+
 					<p class="mt-5 text-3xl font-bold text-fuchsia-200">
 						{entry.totalPoints} pts
 					</p>
@@ -156,7 +166,14 @@
 							</td>
 
 							<td class="px-4 py-3 text-zinc-500">
-								{entry.competitor.name}
+								<div class="flex items-center gap-2">
+									<CompetitorAvatar
+										imageUrl={entry.competitor.imageUrl}
+										name={entry.competitor.name}
+										className="h-8 w-8 rounded-lg text-xs"
+									/>
+									{entry.competitor.name}
+								</div>
 							</td>
 
 							<td style="text-align: right;" class="px-4 py-3 text-lg font-bold text-fuchsia-200">

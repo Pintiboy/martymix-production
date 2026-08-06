@@ -1,5 +1,7 @@
 import { prisma } from '$lib/prisma';
+import { getBlobCredentials } from '$lib/server/blob-credentials';
 import { requireUser } from '$lib/server/auth-guard';
+import { del } from '@vercel/blob';
 import { fail } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
@@ -105,6 +107,23 @@ export const actions = {
 			});
 		}
 
+		const participant = await prisma.competitor.findFirst({
+			where: {
+				id: participantId,
+				ownerId: user.id
+			},
+			select: {
+				id: true,
+				imageUrl: true
+			}
+		});
+
+		if (!participant) {
+			return fail(404, {
+				error: 'Participant not found.'
+			});
+		}
+
 		const participationCount = await prisma.contestCompetitor.count({
 			where: {
 				competitorId: participantId,
@@ -129,6 +148,14 @@ export const actions = {
 				ownerId: user.id
 			}
 		});
+
+		if (participant.imageUrl) {
+			try {
+				await del(participant.imageUrl, getBlobCredentials());
+			} catch (deleteError) {
+				console.error('Failed to delete participant image', deleteError);
+			}
+		}
 
 		return {
 			success: true,

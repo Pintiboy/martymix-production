@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { uploadPresigned } from '@vercel/blob/client';
 	import { getData } from 'country-list';
-	import { Mail } from '@lucide/svelte/icons';
+	import { ImagePlus, LoaderCircle, Mail, Trash2 } from '@lucide/svelte/icons';
 
 	import { enhance } from '$app/forms';
-	import { onMount, tick } from 'svelte';
+	import { onDestroy, onMount, tick } from 'svelte';
+	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
+	import { prepareCompetitorImage } from '$lib/client/prepare-competitor-image';
 
 	onMount(async () => {
 		if (!window.matchMedia('(min-width: 640px)').matches) return;
@@ -50,6 +53,12 @@
 
 	const frequentCountryCodes = ['GB'];
 	let editingParticipant = $state<null | (typeof data.participants)[number]>(null);
+	let imageInput = $state<HTMLInputElement>();
+	let selectedImage = $state<File | null>(null);
+	let imagePreviewUrl = $state<string | null>(null);
+	let imageStatus = $state<'idle' | 'processing' | 'ready' | 'uploading' | 'removing'>('idle');
+	let imageError = $state('');
+	let uploadProgress = $state(0);
 
 	const allCountries = getData()
 		.map((country) => ({
@@ -73,6 +82,133 @@
 			.toUpperCase()
 			.replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
 	}
+
+	function clearImageSelection() {
+		if (imagePreviewUrl) {
+			URL.revokeObjectURL(imagePreviewUrl);
+		}
+
+		selectedImage = null;
+		imagePreviewUrl = null;
+		imageStatus = 'idle';
+		imageError = '';
+		uploadProgress = 0;
+
+		if (imageInput) {
+			imageInput.value = '';
+		}
+	}
+
+	function openParticipant(participant: (typeof data.participants)[number]) {
+		clearImageSelection();
+		editingParticipant = participant;
+	}
+
+	function closeParticipant() {
+		if (imageStatus === 'uploading' || imageStatus === 'removing') return;
+
+		clearImageSelection();
+		editingParticipant = null;
+	}
+
+	function setParticipantImage(participantId: string, imageUrl: string | null) {
+		data.participants = data.participants.map((participant) =>
+			participant.id === participantId ? { ...participant, imageUrl } : participant
+		);
+
+		if (editingParticipant?.id === participantId) {
+			editingParticipant = { ...editingParticipant, imageUrl };
+		}
+	}
+
+	async function selectImage(event: Event) {
+		const input = event.currentTarget as HTMLInputElement;
+		const file = input.files?.[0];
+
+		if (!file) return;
+
+		clearImageSelection();
+		imageStatus = 'processing';
+
+		try {
+			selectedImage = await prepareCompetitorImage(file);
+			imagePreviewUrl = URL.createObjectURL(selectedImage);
+			imageStatus = 'ready';
+		} catch (caughtError) {
+			imageStatus = 'idle';
+			imageError =
+				caughtError instanceof Error ? caughtError.message : 'The image could not be processed.';
+		}
+	}
+
+	async function uploadImage() {
+		if (!editingParticipant || !selectedImage) return;
+
+		const participantId = editingParticipant.id;
+		imageStatus = 'uploading';
+		imageError = '';
+		uploadProgress = 0;
+
+		try {
+			const blob = await uploadPresigned(`competitors/${participantId}/image.webp`, selectedImage, {
+				access: 'public',
+				contentType: 'image/webp',
+				handleUploadUrl: `/api/competitors/${participantId}/image`,
+				onUploadProgress: ({ percentage }) => {
+					uploadProgress = Math.round(percentage);
+				}
+			});
+
+			const saveResponse = await fetch(`/api/competitors/${participantId}/image`, {
+				method: 'PATCH',
+				headers: {
+					'content-type': 'application/json'
+				},
+				body: JSON.stringify({ imageUrl: blob.url })
+			});
+
+			if (!saveResponse.ok) {
+				throw new Error('The uploaded image could not be saved.');
+			}
+
+			const savedImage = (await saveResponse.json()) as { imageUrl: string };
+			setParticipantImage(participantId, savedImage.imageUrl);
+			clearImageSelection();
+		} catch (caughtError) {
+			imageStatus = 'ready';
+			imageError = caughtError instanceof Error ? caughtError.message : 'The upload failed.';
+		}
+	}
+
+	async function removeImage() {
+		if (!editingParticipant?.imageUrl) return;
+
+		const participantId = editingParticipant.id;
+		imageStatus = 'removing';
+		imageError = '';
+
+		try {
+			const response = await fetch(`/api/competitors/${participantId}/image`, {
+				method: 'DELETE'
+			});
+
+			if (!response.ok) {
+				throw new Error('The image could not be removed.');
+			}
+
+			setParticipantImage(participantId, null);
+			clearImageSelection();
+		} catch (caughtError) {
+			imageStatus = 'idle';
+			imageError = caughtError instanceof Error ? caughtError.message : 'The removal failed.';
+		}
+	}
+
+	onDestroy(() => {
+		if (imagePreviewUrl) {
+			URL.revokeObjectURL(imagePreviewUrl);
+		}
+	});
 </script>
 
 <svelte:head>
@@ -247,20 +383,16 @@
 							>
 								<button
 									type="button"
-									onclick={() => (editingParticipant = participant)}
+									onclick={() => openParticipant(participant)}
 									class="block w-full text-left"
 								>
 									<div class="flex items-start justify-between gap-4 border-b border-white/10 p-4">
 										<div class="flex min-w-0 items-center gap-3">
-											<div
-												class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-xl"
-											>
-												{#if participant.country}
-													{countryCodeToFlag(participant.country)}
-												{:else}
-													<span class="text-sm text-zinc-600">–</span>
-												{/if}
-											</div>
+											<CompetitorAvatar
+												imageUrl={participant.imageUrl}
+												name={participant.name}
+												className="h-10 w-10 rounded-xl text-xl"
+											/>
 
 											<div class="min-w-0">
 												<p class="truncate font-semibold text-white">
@@ -368,7 +500,7 @@
 							<tbody class="divide-y divide-white/10">
 								{#each visibleParticipants as participant (participant.id)}
 									<tr
-										onclick={() => (editingParticipant = participant)}
+										onclick={() => openParticipant(participant)}
 										class={`group cursor-pointer transition ${
 											participant.isActive
 												? 'bg-zinc-900/40 hover:bg-zinc-900'
@@ -376,9 +508,16 @@
 										}`}
 									>
 										<td class="px-4 py-3 font-medium text-white">
-											<span class="group-hover:text-fuchsia-200">
-												{participant.name}
-											</span>
+											<div class="flex items-center gap-3">
+												<CompetitorAvatar
+													imageUrl={participant.imageUrl}
+													name={participant.name}
+													className="h-9 w-9 rounded-xl text-sm"
+												/>
+												<span class="group-hover:text-fuchsia-200">
+													{participant.name}
+												</span>
+											</div>
 										</td>
 
 										<td class="px-4 py-3 text-center text-zinc-400">
@@ -483,7 +622,7 @@
 				type="button"
 				class="absolute inset-0 cursor-default"
 				aria-label="Close modal"
-				onclick={() => (editingParticipant = null)}
+				onclick={closeParticipant}
 			></button>
 
 			<div
@@ -504,12 +643,97 @@
 
 					<button
 						type="button"
-						onclick={() => (editingParticipant = null)}
+						onclick={closeParticipant}
 						class="rounded-full border border-white/10 px-3 py-1.5 text-zinc-400 transition hover:bg-white/10 hover:text-white"
 					>
 						×
 					</button>
 				</div>
+
+				<section class="mb-6 rounded-2xl border border-white/10 bg-white/3 p-4">
+					<div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+						<CompetitorAvatar
+							imageUrl={imagePreviewUrl ?? editingParticipant.imageUrl}
+							name={editingParticipant.name}
+							className="h-28 w-28 rounded-3xl text-3xl"
+						/>
+
+						<div class="min-w-0 flex-1">
+							<h3 class="font-semibold text-white">Contributor image</h3>
+							<p class="mt-1 text-sm leading-5 text-zinc-500">
+								JPEG, PNG or WebP. The shorter side is reduced to 1,000 pixels when needed.
+							</p>
+
+							<input
+								bind:this={imageInput}
+								type="file"
+								accept="image/jpeg,image/png,image/webp"
+								onchange={selectImage}
+								class="sr-only"
+							/>
+
+							<div class="mt-3 flex flex-wrap gap-2">
+								<button
+									type="button"
+									onclick={() => imageInput?.click()}
+									disabled={imageStatus === 'processing' ||
+										imageStatus === 'uploading' ||
+										imageStatus === 'removing'}
+									class="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-zinc-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+								>
+									{#if imageStatus === 'processing'}
+										<LoaderCircle size={16} class="animate-spin" />
+										Processing…
+									{:else}
+										<ImagePlus size={16} />
+										{editingParticipant.imageUrl ? 'Choose replacement' : 'Choose image'}
+									{/if}
+								</button>
+
+								{#if selectedImage}
+									<button
+										type="button"
+										onclick={uploadImage}
+										disabled={imageStatus === 'uploading'}
+										class="inline-flex items-center gap-2 rounded-full bg-fuchsia-200 px-4 py-2 text-sm font-semibold text-fuchsia-950 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+									>
+										{#if imageStatus === 'uploading'}
+											<LoaderCircle size={16} class="animate-spin" />
+											Uploading {uploadProgress}%
+										{:else}
+											Upload image
+										{/if}
+									</button>
+								{/if}
+
+								{#if editingParticipant.imageUrl}
+									<button
+										type="button"
+										onclick={() => {
+											if (confirm(`Remove ${editingParticipant?.name}'s image?`)) {
+												removeImage();
+											}
+										}}
+										disabled={imageStatus === 'uploading' || imageStatus === 'removing'}
+										class="inline-flex items-center gap-2 rounded-full border border-red-400/20 px-4 py-2 text-sm text-red-300 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+									>
+										{#if imageStatus === 'removing'}
+											<LoaderCircle size={16} class="animate-spin" />
+											Removing…
+										{:else}
+											<Trash2 size={16} />
+											Remove image
+										{/if}
+									</button>
+								{/if}
+							</div>
+						</div>
+					</div>
+
+					{#if imageError}
+						<p class="mt-3 text-sm text-red-300">{imageError}</p>
+					{/if}
+				</section>
 
 				<form method="POST" action="?/update">
 					<input type="hidden" name="participantId" value={editingParticipant.id} />
@@ -589,7 +813,7 @@
 					<div class="mt-8 flex justify-end gap-3">
 						<button
 							type="button"
-							onclick={() => (editingParticipant = null)}
+							onclick={closeParticipant}
 							class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
 						>
 							Cancel

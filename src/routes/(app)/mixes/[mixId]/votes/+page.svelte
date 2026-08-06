@@ -13,6 +13,7 @@
 	import { SvelteDate } from 'svelte/reactivity';
 
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
+	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 
 	let { data, form } = $props();
 
@@ -221,25 +222,33 @@
 			{#each data.rows as row (row.contestCompetitorId)}
 				<article class="rounded-2xl border border-white/10 bg-zinc-900/60 p-4">
 					<div class="flex items-start justify-between gap-3">
-						<div class="min-w-0">
-							<h3 class="truncate font-semibold text-white">
-								{row.competitor.name}
-							</h3>
+						<div class="flex min-w-0 items-center gap-3">
+							<CompetitorAvatar
+								imageUrl={row.competitor.imageUrl}
+								name={row.competitor.name}
+								className="h-10 w-10 rounded-xl text-sm"
+							/>
 
-							<div class="mt-2">
-								{#if row.hasVoted}
-									<span
-										class="inline-flex rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-200"
-									>
-										Voted
-									</span>
-								{:else}
-									<span
-										class="inline-flex rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-200"
-									>
-										Missing
-									</span>
-								{/if}
+							<div class="min-w-0">
+								<h3 class="truncate font-semibold text-white">
+									{row.competitor.name}
+								</h3>
+
+								<div class="mt-2">
+									{#if row.hasVoted}
+										<span
+											class="inline-flex rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-200"
+										>
+											Voted
+										</span>
+									{:else}
+										<span
+											class="inline-flex rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-200"
+										>
+											Missing
+										</span>
+									{/if}
+								</div>
 							</div>
 						</div>
 
@@ -309,7 +318,14 @@
 					{#each data.rows as row (row.contestCompetitorId)}
 						<tr class="bg-zinc-900/35 transition hover:bg-white/4">
 							<td class="px-5 py-4 font-medium text-white">
-								{row.competitor.name}
+								<div class="flex items-center gap-3">
+									<CompetitorAvatar
+										imageUrl={row.competitor.imageUrl}
+										name={row.competitor.name}
+										className="h-9 w-9 rounded-xl text-sm"
+									/>
+									{row.competitor.name}
+								</div>
 							</td>
 
 							<td class="px-5 py-4">
