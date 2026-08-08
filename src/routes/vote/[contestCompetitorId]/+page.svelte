@@ -216,6 +216,9 @@
 	<meta property="og:title" content={socialTitle} />
 	<meta property="og:description" content={socialDescription} />
 	<meta property="og:image" content={data.socialImageUrl} />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta property="og:image:alt" content="Martymix logo" />
 	<meta property="og:site_name" content="Martymix" />
 	<meta property="og:locale" content={language === 'DE' ? 'de_DE' : 'en_GB'} />

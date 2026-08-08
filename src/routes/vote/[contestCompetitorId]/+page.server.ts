@@ -75,7 +75,7 @@ export const load = async ({ params, url }) => {
 
 	return {
 		pageUrl: url.href,
-		socialImageUrl: new URL('/images/voting-social-preview.png', url.origin).href,
+		socialImageUrl: new URL('/images/voting-social-preview.jpg', url.origin).href,
 		contest: {
 			id: contest.id,
 			theme: contest.theme,
