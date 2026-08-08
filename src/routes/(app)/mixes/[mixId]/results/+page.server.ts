@@ -124,6 +124,30 @@ export const load = async ({ params, url, locals }) => {
 		};
 	});
 
+	const twelvePointEntries = contest.songs
+		.flatMap((song) => {
+			const voters = song.votes
+				.filter((vote) => vote.rank === 1)
+				.map((vote) => vote.voter)
+				.sort((a, b) => a.name.localeCompare(b.name));
+
+			if (voters.length === 0) return [];
+
+			return [
+				{
+					id: song.id,
+					artist: song.artist,
+					title: song.title,
+					competitor: song.competitor,
+					voters
+				}
+			];
+		})
+		.sort((a, b) => {
+			if (b.voters.length !== a.voters.length) return b.voters.length - a.voters.length;
+			return a.artist.localeCompare(b.artist);
+		});
+
 	const expectedVotes = contest.competitors.length;
 	const actualVotes = voters.length;
 	const votingComplete = expectedVotes > 0 && expectedVotes === actualVotes;
@@ -133,6 +157,7 @@ export const load = async ({ params, url, locals }) => {
 		voters,
 		ranking,
 		matrix,
+		twelvePointEntries,
 		scoringSystems,
 		scoringSystem,
 		expectedVotes,

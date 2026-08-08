@@ -72,10 +72,10 @@
 	</header>
 
 	{#if podium.length > 0}
-		<div class="mb-8 grid gap-5 md:grid-cols-3">
+		<div class="mb-8 grid gap-3 md:grid-cols-3 md:gap-5">
 			{#each podium as entry, index (entry.id)}
 				<div
-					class={`rounded-3xl border p-6 ${
+					class={`flex min-w-0 items-center gap-3 rounded-2xl border p-4 md:block md:rounded-3xl md:p-6 ${
 						index === 0
 							? 'border-yellow-300/30 bg-yellow-300/10'
 							: index === 1
@@ -83,28 +83,37 @@
 								: 'border-orange-300/30 bg-orange-300/10'
 					}`}
 				>
-					<p class="text-4xl">{getMedal(index)}</p>
+					<p class="w-10 shrink-0 text-3xl md:w-auto md:text-4xl">{getMedal(index)}</p>
 
-					<h2 class="mt-2 truncate text-2xl font-bold text-white">
-						{entry.artist}
-					</h2>
+					<div class="min-w-0 flex-1">
+						<h2 class="truncate text-base font-bold text-white md:mt-2 md:text-2xl">
+							{entry.artist}
+						</h2>
 
-					<p class="mt-1 truncate text-zinc-300">
-						{entry.title}
-					</p>
+						<p class="mt-0.5 truncate text-sm text-zinc-300 md:mt-1 md:text-base">
+							{entry.title}
+						</p>
 
-					<div class="mt-4 flex items-center gap-2 text-sm text-zinc-400">
-						<CompetitorAvatar
-							imageUrl={entry.competitor.imageUrl}
-							name={entry.competitor.name}
-							className="h-8 w-8 rounded-lg text-xs"
-						/>
-						<span class="truncate">{entry.competitor.name}</span>
+						<div
+							class="mt-2 flex min-w-0 items-center gap-2 text-xs text-zinc-400 md:mt-4 md:text-sm"
+						>
+							<CompetitorAvatar
+								imageUrl={entry.competitor.imageUrl}
+								name={entry.competitor.name}
+								className="h-6 w-6 rounded-md text-[0.65rem] md:h-8 md:w-8 md:rounded-lg md:text-xs"
+							/>
+							<span class="truncate">{entry.competitor.name}</span>
+						</div>
 					</div>
 
-					<p class="mt-5 text-3xl font-bold text-fuchsia-200">
-						{entry.totalPoints} pts
-					</p>
+					<div class="shrink-0 text-right md:mt-5 md:text-left">
+						<p class="text-xl font-black tracking-tight text-fuchsia-200 md:text-3xl">
+							{entry.totalPoints}
+						</p>
+						<p class="text-[0.65rem] font-bold tracking-wider text-zinc-500 uppercase md:text-xs">
+							pts
+						</p>
+					</div>
 				</div>
 			{/each}
 		</div>
@@ -136,15 +145,56 @@
 			</label>
 		</div>
 
-		<div class="overflow-x-auto rounded-2xl border border-white/10">
-			<table class="min-w-190 w-full text-sm">
+		<div class="space-y-2 md:hidden">
+			{#each data.ranking as entry, index (entry.id)}
+				<article
+					class="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-zinc-900/55 p-3"
+				>
+					<div
+						class="grid size-10 shrink-0 place-items-center rounded-full bg-white/5 text-sm font-bold text-zinc-400"
+					>
+						<span class={index < 3 ? 'text-xl' : ''}>{getMedal(index)}</span>
+					</div>
+
+					<div class="min-w-0 flex-1">
+						<h3 class="truncate text-sm font-semibold text-white" title={entry.artist}>
+							{entry.artist}
+						</h3>
+						<p class="mt-0.5 truncate text-sm text-zinc-400" title={entry.title}>
+							{entry.title}
+						</p>
+
+						<div class="mt-2 flex min-w-0 items-center gap-2">
+							<CompetitorAvatar
+								imageUrl={entry.competitor.imageUrl}
+								name={entry.competitor.name}
+								className="h-5 w-5 rounded-md text-[0.6rem]"
+							/>
+							<span class="truncate text-xs text-zinc-600" title={entry.competitor.name}>
+								{entry.competitor.name}
+							</span>
+						</div>
+					</div>
+
+					<div class="shrink-0 text-right">
+						<p class="text-xl font-black tracking-tight text-fuchsia-200">
+							{entry.totalPoints}
+						</p>
+						<p class="text-[0.65rem] font-bold tracking-wider text-zinc-500 uppercase">pts</p>
+					</div>
+				</article>
+			{/each}
+		</div>
+
+		<div class="hidden overflow-hidden rounded-2xl border border-white/10 md:block">
+			<table class="w-full table-fixed text-sm">
 				<thead class="bg-white/5 text-xs tracking-[0.2em] text-zinc-500 uppercase">
 					<tr>
-						<th style="text-align: left;" class="px-4 py-3 font-medium">Place</th>
-						<th style="text-align: left;" class="px-4 py-3 font-medium">Artist</th>
-						<th style="text-align: left;" class="px-4 py-3 font-medium">Title</th>
-						<th style="text-align: left;" class="px-4 py-3 font-medium">Submitted by</th>
-						<th style="text-align: right;" class="px-4 py-3 font-medium">Points</th>
+						<th style="text-align: left;" class="w-[11%] px-4 py-3 font-medium">Place</th>
+						<th style="text-align: left;" class="w-[23%] px-4 py-3 font-medium">Artist</th>
+						<th style="text-align: left;" class="w-[24%] px-4 py-3 font-medium">Title</th>
+						<th style="text-align: left;" class="w-[27%] px-4 py-3 font-medium">Submitted by</th>
+						<th style="text-align: right;" class="w-[15%] px-4 py-3 font-medium">Points</th>
 					</tr>
 				</thead>
 
@@ -158,21 +208,23 @@
 							</td>
 
 							<td class="px-4 py-3 font-medium text-white">
-								{entry.artist}
+								<p class="truncate" title={entry.artist}>{entry.artist}</p>
 							</td>
 
 							<td class="px-4 py-3 text-zinc-300">
-								{entry.title}
+								<p class="truncate" title={entry.title}>{entry.title}</p>
 							</td>
 
 							<td class="px-4 py-3 text-zinc-500">
-								<div class="flex items-center gap-2">
+								<div class="flex min-w-0 items-center gap-2">
 									<CompetitorAvatar
 										imageUrl={entry.competitor.imageUrl}
 										name={entry.competitor.name}
 										className="h-8 w-8 rounded-lg text-xs"
 									/>
-									{entry.competitor.name}
+									<span class="truncate" title={entry.competitor.name}>
+										{entry.competitor.name}
+									</span>
 								</div>
 							</td>
 
@@ -194,19 +246,21 @@
 			</p>
 		</div>
 
-		<div class="overflow-x-auto rounded-2xl border border-white/10">
+		<div class="max-h-[70vh] overflow-auto rounded-2xl border border-white/10">
 			<table class="min-w-max border-separate border-spacing-0 text-sm">
 				<thead>
 					<tr class="bg-white/5">
 						<th
 							style="text-align: left;"
-							class="sticky left-0 z-20 w-90 border-r border-white/10 bg-zinc-950 px-4 py-3 font-medium text-zinc-400"
+							class="sticky top-0 left-0 z-30 w-44 min-w-44 max-w-44 border-r border-white/10 bg-zinc-950 px-3 py-3 font-medium text-zinc-400 sm:w-64 sm:min-w-64 sm:max-w-64 sm:px-4 lg:w-90 lg:min-w-90 lg:max-w-90"
 						>
 							Song
 						</th>
 
 						{#each data.voters as voter (voter.id)}
-							<th class="w-10 border-r border-white/10 px-1 py-3 text-zinc-400">
+							<th
+								class="sticky top-0 z-20 w-10 border-r border-white/10 bg-zinc-950 px-1 py-3 text-zinc-400"
+							>
 								<div class="flex items-end justify-center">
 									<span
 										class="truncate text-xs font-semibold tracking-wide whitespace-nowrap"
@@ -218,7 +272,11 @@
 							</th>
 						{/each}
 
-						<th class="w-20 px-4 py-3 text-right font-medium text-zinc-400"> Total </th>
+						<th
+							class="sticky top-0 z-20 w-20 bg-zinc-950 px-4 py-3 text-right font-medium text-zinc-400"
+						>
+							Total
+						</th>
 					</tr>
 				</thead>
 
@@ -226,9 +284,12 @@
 					{#each data.matrix as row (row.id)}
 						<tr class="group">
 							<td
-								class="sticky left-0 z-10 max-w-90 border-t border-r border-white/10 bg-zinc-950 px-4 py-3"
+								class="sticky left-0 z-10 w-44 min-w-44 max-w-44 border-t border-r border-white/10 bg-zinc-950 px-3 py-3 sm:w-64 sm:min-w-64 sm:max-w-64 sm:px-4 lg:w-90 lg:min-w-90 lg:max-w-90"
 							>
-								<p class="truncate font-medium text-white">
+								<p
+									class="block truncate font-medium text-white"
+									title={`${row.artist} - ${row.title}`}
+								>
 									{row.artist} - {row.title}
 								</p>
 							</td>
@@ -265,4 +326,62 @@
 			</table>
 		</div>
 	</div>
+
+	{#if data.twelvePointEntries.length > 0}
+		<section class="mt-8 rounded-3xl border border-fuchsia-300/15 bg-fuchsia-500/4 p-4 sm:p-6">
+			<div class="mb-5">
+				<h2 class="text-xl font-semibold sm:text-2xl">12 points</h2>
+				<p class="mt-1 text-sm text-zinc-500">
+					Songs ranked first by each voter, most awarded first.
+				</p>
+			</div>
+
+			<div class="grid gap-3 md:grid-cols-2">
+				{#each data.twelvePointEntries as entry (entry.id)}
+					<article
+						class="min-w-0 rounded-2xl border border-fuchsia-300/15 bg-zinc-950/45 p-4 sm:p-5"
+					>
+						<div class="flex min-w-0 items-center gap-4">
+							<div class="min-w-0 flex-1">
+								<h3 class="truncate font-bold text-white" title={entry.title}>
+									{entry.title}
+								</h3>
+								<p class="mt-1 truncate text-sm text-zinc-400" title={entry.artist}>
+									{entry.artist}
+								</p>
+								<p class="mt-2 truncate text-xs text-zinc-600" title={entry.competitor.name}>
+									Submitted by {entry.competitor.name}
+								</p>
+							</div>
+
+							<div class="shrink-0 text-right">
+								<p class="text-2xl font-black tracking-tight text-fuchsia-200">
+									{entry.voters.length}×
+								</p>
+								<p class="text-[0.65rem] font-bold tracking-wider text-fuchsia-500 uppercase">
+									12 pts
+								</p>
+							</div>
+						</div>
+
+						<div class="mt-4 flex flex-wrap gap-2 border-t border-fuchsia-300/10 pt-4">
+							{#each entry.voters as voter (voter.id)}
+								<div
+									class="flex min-w-0 max-w-full items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pr-3 pl-1"
+									title={voter.name}
+								>
+									<CompetitorAvatar
+										imageUrl={voter.imageUrl}
+										name={voter.name}
+										className="h-6 w-6 rounded-full text-[0.65rem]"
+									/>
+									<span class="truncate text-xs text-zinc-300">{voter.name}</span>
+								</div>
+							{/each}
+						</div>
+					</article>
+				{/each}
+			</div>
+		</section>
+	{/if}
 </section>
