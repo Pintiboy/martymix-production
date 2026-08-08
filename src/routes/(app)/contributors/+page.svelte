@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { uploadPresigned } from '@vercel/blob/client';
 	import { getData } from 'country-list';
-	import { ImagePlus, LoaderCircle, Mail, Trash2 } from '@lucide/svelte/icons';
+	import { ImagePlus, LoaderCircle, Trash2 } from '@lucide/svelte/icons';
 
 	import { enhance } from '$app/forms';
 	import { onDestroy, onMount, tick } from 'svelte';
@@ -348,8 +348,10 @@
 				</button>
 			</form>
 
-			<div class="rounded-3xl border border-white/10 bg-white/3 p-6">
-				<div class="mb-5 flex items-center justify-between gap-4">
+			<div class="min-w-0 rounded-3xl border border-white/10 bg-white/3 p-4 sm:p-6">
+				<div
+					class="mb-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"
+				>
 					<div>
 						<h2 class="text-2xl font-semibold">Contributors</h2>
 						<p class="mt-1 text-sm text-zinc-500">
@@ -364,7 +366,7 @@
 						<button
 							type="button"
 							onclick={() => (showInactive = !showInactive)}
-							class="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/10 hover:text-white"
+							class="w-full rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/10 hover:text-white sm:w-auto"
 						>
 							{showInactive ? 'Hide inactive' : 'Show inactive'}
 						</button>
@@ -387,23 +389,17 @@
 									class="block w-full text-left"
 								>
 									<div class="flex items-start justify-between gap-4 border-b border-white/10 p-4">
-										<div class="flex min-w-0 items-center gap-3">
+										<div class="flex min-w-0 flex-1 items-center gap-3">
 											<CompetitorAvatar
 												imageUrl={participant.imageUrl}
 												name={participant.name}
 												className="h-10 w-10 rounded-xl text-xl"
 											/>
 
-											<div class="min-w-0">
-												<p class="truncate font-semibold text-white">
+											<div class="min-w-0 flex-1">
+												<p class="truncate font-semibold text-white" title={participant.name}>
 													{participant.name}
 												</p>
-
-												{#if participant.preferredName}
-													<p class="mt-0.5 truncate text-sm text-zinc-500">
-														Preferred name: {participant.preferredName}
-													</p>
-												{/if}
 											</div>
 										</div>
 
@@ -423,18 +419,18 @@
 									</div>
 
 									<div class="space-y-3 p-4 text-sm">
-										<div class="flex items-center justify-between gap-4">
-											<span class="text-zinc-500">Email</span>
+										{#if participant.preferredName}
+											<div class="flex min-w-0 items-center justify-between gap-4">
+												<span class="shrink-0 text-zinc-500">Preferred name</span>
 
-											<span class="flex min-w-0 items-center gap-2 text-right text-zinc-300">
-												{#if participant.email}
-													<Mail size={15} class="shrink-0 text-zinc-500" />
-													<span class="truncate">{participant.email}</span>
-												{:else}
-													<span class="text-zinc-600">Not provided</span>
-												{/if}
-											</span>
-										</div>
+												<span
+													class="min-w-0 truncate text-right text-zinc-300"
+													title={participant.preferredName}
+												>
+													{participant.preferredName}
+												</span>
+											</div>
+										{/if}
 
 										<div class="flex items-center justify-between gap-4">
 											<span class="text-zinc-500">Language</span>
@@ -486,14 +482,13 @@
 
 					<!-- Desktop table -->
 					<div class="hidden overflow-hidden rounded-2xl border border-white/10 sm:block">
-						<table class="w-full text-sm">
+						<table class="w-full table-fixed text-sm">
 							<thead class="bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase">
 								<tr>
-									<th style="text-align: left;" class="px-4 py-3 font-medium">Name</th>
-									<th style="text-align: left;" class="px-4 py-3 font-medium">Country</th>
-									<th style="text-align: center;" class="px-4 py-3 font-medium">Email</th>
-									<th style="text-align: left;" class="px-4 py-3 font-medium">Status</th>
-									<th style="text-align: right;" class="px-4 py-3 font-medium">Actions</th>
+									<th style="text-align: left;" class="w-2/5 px-4 py-3 font-medium">Name</th>
+									<th style="text-align: left;" class="w-[15%] px-4 py-3 font-medium">Country</th>
+									<th style="text-align: left;" class="w-1/5 px-4 py-3 font-medium">Status</th>
+									<th style="text-align: right;" class="w-1/4 px-4 py-3 font-medium">Actions</th>
 								</tr>
 							</thead>
 
@@ -507,14 +502,17 @@
 												: 'bg-zinc-900/15 opacity-55 hover:bg-zinc-900/30'
 										}`}
 									>
-										<td class="px-4 py-3 font-medium text-white">
-											<div class="flex items-center gap-3">
+										<td class="min-w-0 px-4 py-3 font-medium text-white">
+											<div class="flex min-w-0 items-center gap-3">
 												<CompetitorAvatar
 													imageUrl={participant.imageUrl}
 													name={participant.name}
 													className="h-9 w-9 rounded-xl text-sm"
 												/>
-												<span class="group-hover:text-fuchsia-200">
+												<span
+													class="min-w-0 truncate group-hover:text-fuchsia-200"
+													title={participant.name}
+												>
 													{participant.name}
 												</span>
 											</div>
@@ -528,14 +526,6 @@
 												<!-- <span class="text-zinc-500">
 													{getCountryName(participant.country)}
 												</span> -->
-											{:else}
-												<span class="text-zinc-700">–</span>
-											{/if}
-										</td>
-
-										<td style="text-align: center;" class="px-4 py-3">
-											{#if participant.email}
-												<Mail size={16} class="mx-auto text-zinc-400" />
 											{:else}
 												<span class="text-zinc-700">–</span>
 											{/if}
@@ -679,7 +669,7 @@
 									disabled={imageStatus === 'processing' ||
 										imageStatus === 'uploading' ||
 										imageStatus === 'removing'}
-									class="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-zinc-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+									class="inline-flex touch-manipulation select-none items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-zinc-200 transition [-webkit-tap-highlight-color:transparent] hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
 								>
 									{#if imageStatus === 'processing'}
 										<LoaderCircle size={16} class="animate-spin" />
@@ -695,7 +685,7 @@
 										type="button"
 										onclick={uploadImage}
 										disabled={imageStatus === 'uploading'}
-										class="inline-flex items-center gap-2 rounded-full bg-fuchsia-200 px-4 py-2 text-sm font-semibold text-fuchsia-950 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+										class="inline-flex touch-manipulation select-none items-center gap-2 rounded-full bg-fuchsia-200 px-4 py-2 text-sm font-semibold text-fuchsia-950 transition [-webkit-tap-highlight-color:transparent] hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
 									>
 										{#if imageStatus === 'uploading'}
 											<LoaderCircle size={16} class="animate-spin" />
