@@ -106,9 +106,9 @@
 		}
 	} as const;
 
-	const language = data.competitor.preferredLanguage === 'DE' ? 'DE' : 'EN';
-	const t = translations[language];
-	const locale = language === 'DE' ? 'de-DE' : 'en-GB';
+	const language = $derived(data.competitor.preferredLanguage === 'DE' ? 'DE' : 'EN');
+	const t = $derived(translations[language]);
+	const locale = $derived(language === 'DE' ? 'de-DE' : 'en-GB');
 	const votingUntil = $derived(
 		data.contest.votingUntil ? new Date(data.contest.votingUntil) : null
 	);
@@ -155,8 +155,18 @@
 
 	let saved = $state(data.existingVotes.length === 10);
 
-	const fullDisplayName = data.competitor.preferredName?.trim() || data.competitor.name;
-	const firstName = fullDisplayName.trim().split(/\s+/)[0] || fullDisplayName;
+	const fullDisplayName = $derived(data.competitor.preferredName?.trim() || data.competitor.name);
+	const firstName = $derived(fullDisplayName.trim().split(/\s+/)[0] || fullDisplayName);
+	const socialTitle = $derived(
+		language === 'DE'
+			? `${firstName}, stimme jetzt für „${data.contest.theme}“ ab`
+			: `${firstName}, cast your vote for “${data.contest.theme}”`
+	);
+	const socialDescription = $derived(
+		language === 'DE'
+			? `Dies ist der persönliche Abstimmungslink für ${fullDisplayName}. Bitte nicht weitergeben.`
+			: `This is the personal voting link for ${fullDisplayName}. Please do not share it.`
+	);
 
 	const sortedSongs = [...data.availableSongs].sort((a, b) => {
 		const artistComparison = a.artist.localeCompare(b.artist, language === 'DE' ? 'de' : 'en', {
@@ -196,8 +206,24 @@
 </script>
 
 <svelte:head>
-	<title>{t.documentTitle} | {data.contest.theme}</title>
+	<title>{socialTitle}</title>
+	<meta name="description" content={socialDescription} />
 	<meta name="robots" content="noindex, nofollow" />
+	<link rel="canonical" href={data.pageUrl} />
+
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={data.pageUrl} />
+	<meta property="og:title" content={socialTitle} />
+	<meta property="og:description" content={socialDescription} />
+	<meta property="og:image" content={data.socialImageUrl} />
+	<meta property="og:image:alt" content="Martymix logo" />
+	<meta property="og:site_name" content="Martymix" />
+	<meta property="og:locale" content={language === 'DE' ? 'de_DE' : 'en_GB'} />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={socialTitle} />
+	<meta name="twitter:description" content={socialDescription} />
+	<meta name="twitter:image" content={data.socialImageUrl} />
 </svelte:head>
 
 <div

@@ -6,7 +6,7 @@ import QRCode from 'qrcode';
 
 const VALID_RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
-export const load = async ({ params }) => {
+export const load = async ({ params, url }) => {
 	const contestCompetitor = await prisma.contestCompetitor.findUnique({
 		where: {
 			id: params.contestCompetitorId
@@ -74,6 +74,8 @@ export const load = async ({ params }) => {
 	});
 
 	return {
+		pageUrl: url.href,
+		socialImageUrl: new URL('/images/og-image.png', url.origin).href,
 		contest: {
 			id: contest.id,
 			theme: contest.theme,
