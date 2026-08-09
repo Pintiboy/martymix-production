@@ -8,9 +8,13 @@ import { PUBLIC_APP_URL } from '$env/static/public';
 
 const resend = new Resend(RESEND_API_KEY);
 
-type Args = {
+type InviteArgs = {
 	contestId: string;
 	ownerId: string;
+};
+
+type ReminderArgs = InviteArgs & {
+	contestCompetitorId: string;
 };
 
 function getLogoPath(contestType: 'MARTYMIX' | 'PINTYMIX') {
@@ -38,7 +42,11 @@ async function createQrAttachment(url: string, filename: string, contentId: stri
 	};
 }
 
-export async function sendVotingInvites({ contestId, ownerId }: Args) {
+async function sendVotingEmails({
+	contestId,
+	ownerId,
+	contestCompetitorId
+}: InviteArgs & { contestCompetitorId?: string }) {
 	const contest = await prisma.contest.findFirst({
 		where: {
 			id: contestId,
@@ -156,15 +164,24 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 		emailId: string;
 	}> = [];
 
-	const inviteEntries = contest.testMode
-		? contest.competitors.filter(
-				(entry, index, entries) =>
-					entries.findIndex(
-						(candidate) =>
-							candidate.competitor.preferredLanguage === entry.competitor.preferredLanguage
-					) === index
-			)
+	const selectedEntries = contestCompetitorId
+		? contest.competitors.filter((entry) => entry.id === contestCompetitorId)
 		: contest.competitors;
+
+	if (contestCompetitorId && selectedEntries.length === 0) {
+		throw new Error('Contest contributor not found.');
+	}
+
+	const inviteEntries =
+		contest.testMode && !contestCompetitorId
+			? selectedEntries.filter(
+					(entry, index, entries) =>
+						entries.findIndex(
+							(candidate) =>
+								candidate.competitor.preferredLanguage === entry.competitor.preferredLanguage
+						) === index
+				)
+			: selectedEntries;
 
 	for (const entry of inviteEntries) {
 		const competitor = entry.competitor;
@@ -226,4 +243,12 @@ export async function sendVotingInvites({ contestId, ownerId }: Args) {
 		testMode: contest.testMode,
 		results
 	};
+}
+
+export function sendVotingInvites(args: InviteArgs) {
+	return sendVotingEmails(args);
+}
+
+export function sendVotingReminder(args: ReminderArgs) {
+	return sendVotingEmails(args);
 }

@@ -2,7 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { prisma } from '$lib/prisma';
 import { requireUser } from '$lib/server/auth-guard';
 import { Prisma } from '$lib/generated/prisma/client';
-import { sendVotingInvites } from '$lib/server/email/send-voting-invites.js';
+import { sendVotingInvites, sendVotingReminder } from '$lib/server/email/send-voting-invites.js';
 import { ContestStatus } from '$lib/generated/prisma/client';
 import { parseBritishDeadlineDate } from '$lib/deadlines';
 
@@ -59,7 +59,8 @@ export const load = async ({ params, locals }) => {
 							name: true,
 							preferredName: true,
 							country: true,
-							imageUrl: true
+							imageUrl: true,
+							email: true
 						}
 					}
 				},
@@ -113,7 +114,8 @@ export const load = async ({ params, locals }) => {
 				name: contestCompetitor.competitor.name,
 				preferredName: contestCompetitor.competitor.preferredName,
 				country: contestCompetitor.competitor.country,
-				imageUrl: contestCompetitor.competitor.imageUrl
+				imageUrl: contestCompetitor.competitor.imageUrl,
+				hasEmail: Boolean(contestCompetitor.competitor.email?.trim())
 			},
 
 			ownSongId: ownSong?.id ?? null,
@@ -346,6 +348,116 @@ export const actions = {
 			action: 'delete',
 			contestCompetitorId
 		};
+	},
+
+	sendReminder: async ({ request, params, locals }) => {
+		const user = requireUser(locals);
+		const formData = await request.formData();
+		const contestCompetitorId = String(formData.get('contestCompetitorId') ?? '').trim();
+
+		if (!contestCompetitorId) {
+			return fail(400, {
+				action: 'sendReminder',
+				error: 'Missing contributor.'
+			});
+		}
+
+		const contestCompetitor = await prisma.contestCompetitor.findFirst({
+			where: {
+				id: contestCompetitorId,
+				contestId: params.mixId,
+				contest: {
+					ownerId: user.id
+				}
+			},
+			select: {
+				id: true,
+				competitorId: true,
+				contest: {
+					select: {
+						id: true,
+						status: true
+					}
+				},
+				competitor: {
+					select: {
+						name: true,
+						preferredName: true,
+						email: true
+					}
+				}
+			}
+		});
+
+		if (!contestCompetitor) {
+			return fail(404, {
+				action: 'sendReminder',
+				error: 'This contributor does not belong to this mix.',
+				contestCompetitorId
+			});
+		}
+
+		if (contestCompetitor.contest.status !== ContestStatus.VOTING_OPEN) {
+			return fail(409, {
+				action: 'sendReminder',
+				error: 'Voting reminders can only be sent while voting is open.',
+				contestCompetitorId
+			});
+		}
+
+		if (!contestCompetitor.competitor.email?.trim()) {
+			return fail(400, {
+				action: 'sendReminder',
+				error: 'This contributor does not have an email address.',
+				contestCompetitorId
+			});
+		}
+
+		const voteCount = await prisma.vote.count({
+			where: {
+				contestId: contestCompetitor.contest.id,
+				voterId: contestCompetitor.competitorId
+			}
+		});
+
+		if (voteCount === VALID_RANKS.length) {
+			return fail(409, {
+				action: 'sendReminder',
+				error: 'This contributor has already voted.',
+				contestCompetitorId
+			});
+		}
+
+		try {
+			const delivery = await sendVotingReminder({
+				contestId: contestCompetitor.contest.id,
+				ownerId: user.id,
+				contestCompetitorId
+			});
+
+			if (delivery.sent !== 1) {
+				throw new Error('The reminder email was not sent.');
+			}
+
+			return {
+				success: true,
+				action: 'sendReminder',
+				contestCompetitorId,
+				competitorName:
+					contestCompetitor.competitor.preferredName || contestCompetitor.competitor.name
+			};
+		} catch (caughtError) {
+			console.error('Could not send voting reminder:', caughtError);
+
+			return fail(500, {
+				action: 'sendReminder',
+				error:
+					caughtError instanceof Error
+						? caughtError.message
+						: 'The reminder email could not be sent.',
+				contestCompetitorId
+			});
+		}
 	},
 
 	openVoting: async ({ request, params, locals }) => {

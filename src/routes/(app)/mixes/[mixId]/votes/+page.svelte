@@ -9,8 +9,9 @@
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import X from '@lucide/svelte/icons/x';
 	import { toast } from 'svelte-sonner';
-	import { Send } from '@lucide/svelte/icons';
+	import { LoaderCircle, Mail, Send } from '@lucide/svelte/icons';
 	import { SvelteDate } from 'svelte/reactivity';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
@@ -27,6 +28,7 @@
 	let copiedContestCompetitorId = $state<string | null>(null);
 	let isSaving = $state(false);
 	let isDeleting = $state(false);
+	let sendingReminderFor = $state<string | null>(null);
 	let votingDeadline = $state('');
 
 	function dateInWeeks(weeks: number) {
@@ -88,6 +90,37 @@
 			console.error('Could not copy voting link:', error);
 			toast.error('Could not copy voting link.');
 		}
+	}
+
+	function enhanceReminder(row: (typeof data.rows)[number]): SubmitFunction {
+		return ({ cancel }) => {
+			if (sendingReminderFor) {
+				cancel();
+				return;
+			}
+
+			sendingReminderFor = row.contestCompetitorId;
+
+			return async ({ result, update }) => {
+				try {
+					await update({ reset: false, invalidateAll: false });
+
+					if (result.type === 'success') {
+						const name = row.competitor.preferredName || row.competitor.name;
+						toast.success(`Reminder email sent to ${name}.`);
+					} else {
+						const message =
+							result.type === 'failure' && result.data && 'error' in result.data
+								? String(result.data.error)
+								: 'The reminder email could not be sent.';
+
+						toast.error(message);
+					}
+				} finally {
+					sendingReminderFor = null;
+				}
+			};
+		};
 	}
 
 	function openVoting(row: (typeof data.rows)[number]) {
@@ -279,19 +312,47 @@
 						</button>
 					</div>
 
-					<button
-						type="button"
-						onclick={() => openVoting(row)}
-						class="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-zinc-950 transition hover:scale-[1.01]"
+					<div
+						class={[
+							'mt-4 grid gap-2',
+							!row.hasVoted && row.competitor.hasEmail && data.contest.status === 'VOTING_OPEN'
+								? 'grid-cols-2'
+								: 'grid-cols-1'
+						]}
 					>
-						{#if row.hasVoted}
-							<Pencil class="h-4 w-4" />
-							View or edit voting
-						{:else}
-							<Plus class="h-4 w-4" />
-							Enter voting
+						{#if !row.hasVoted && row.competitor.hasEmail && data.contest.status === 'VOTING_OPEN'}
+							<form method="POST" action="?/sendReminder" use:enhance={enhanceReminder(row)}>
+								<input type="hidden" name="contestCompetitorId" value={row.contestCompetitorId} />
+								<button
+									type="submit"
+									disabled={sendingReminderFor !== null}
+									class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-fuchsia-300/25 bg-fuchsia-500/10 px-3 py-2.5 text-sm font-medium text-fuchsia-200 transition hover:bg-fuchsia-500/20 disabled:cursor-wait disabled:opacity-50"
+								>
+									{#if sendingReminderFor === row.contestCompetitorId}
+										<LoaderCircle class="h-4 w-4 animate-spin" />
+										Sending…
+									{:else}
+										<Mail class="h-4 w-4" />
+										Reminder
+									{/if}
+								</button>
+							</form>
 						{/if}
-					</button>
+
+						<button
+							type="button"
+							onclick={() => openVoting(row)}
+							class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-zinc-950 transition hover:scale-[1.01]"
+						>
+							{#if row.hasVoted}
+								<Pencil class="h-4 w-4" />
+								View or edit voting
+							{:else}
+								<Plus class="h-4 w-4" />
+								Enter voting
+							{/if}
+						</button>
+					</div>
 				</article>
 			{/each}
 		</div>
@@ -373,19 +434,44 @@
 							</td>
 
 							<td class="px-5 py-4 text-right">
-								<button
-									type="button"
-									onclick={() => openVoting(row)}
-									class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/10 px-3.5 py-2 text-xs font-medium text-zinc-300 transition hover:bg-white/10 hover:text-white"
-								>
-									{#if row.hasVoted}
-										<Eye class="h-4 w-4" />
-										View / edit
-									{:else}
-										<Plus class="h-4 w-4" />
-										Enter voting
+								<div class="flex items-center justify-end gap-2">
+									{#if !row.hasVoted && row.competitor.hasEmail && data.contest.status === 'VOTING_OPEN'}
+										<form method="POST" action="?/sendReminder" use:enhance={enhanceReminder(row)}>
+											<input
+												type="hidden"
+												name="contestCompetitorId"
+												value={row.contestCompetitorId}
+											/>
+											<button
+												type="submit"
+												disabled={sendingReminderFor !== null}
+												class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-fuchsia-300/25 bg-fuchsia-500/10 px-3.5 py-2 text-xs font-medium text-fuchsia-200 transition hover:bg-fuchsia-500/20 disabled:cursor-wait disabled:opacity-50"
+											>
+												{#if sendingReminderFor === row.contestCompetitorId}
+													<LoaderCircle class="h-4 w-4 animate-spin" />
+													Sending…
+												{:else}
+													<Mail class="h-4 w-4" />
+													Send reminder
+												{/if}
+											</button>
+										</form>
 									{/if}
-								</button>
+
+									<button
+										type="button"
+										onclick={() => openVoting(row)}
+										class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/10 px-3.5 py-2 text-xs font-medium text-zinc-300 transition hover:bg-white/10 hover:text-white"
+									>
+										{#if row.hasVoted}
+											<Eye class="h-4 w-4" />
+											View / edit
+										{:else}
+											<Plus class="h-4 w-4" />
+											Enter voting
+										{/if}
+									</button>
+								</div>
 							</td>
 						</tr>
 					{/each}
