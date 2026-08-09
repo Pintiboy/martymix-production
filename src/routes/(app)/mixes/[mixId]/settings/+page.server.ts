@@ -1,4 +1,4 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { ContestStatus } from '$lib/generated/prisma/client';
 import { prisma } from '$lib/prisma';
 import { requireUser } from '$lib/server/auth-guard';
@@ -35,6 +35,48 @@ export const load = async ({ params, locals }) => {
 };
 
 export const actions = {
+	deleteContest: async ({ request, params, locals }) => {
+		const user = requireUser(locals);
+		const formData = await request.formData();
+		const confirmTitle = String(formData.get('confirmTitle') ?? '').trim();
+
+		const contest = await prisma.contest.findUnique({
+			where: {
+				id: params.mixId,
+				ownerId: user.id
+			},
+			select: {
+				id: true,
+				theme: true
+			}
+		});
+
+		if (!contest) {
+			error(404, 'Contest not found');
+		}
+
+		if (confirmTitle !== contest.theme) {
+			return fail(400, {
+				error: 'Contest title does not match.',
+				action: 'deleteContest'
+			});
+		}
+
+		await prisma.$transaction([
+			prisma.vote.deleteMany({ where: { contestId: contest.id } }),
+			prisma.song.deleteMany({ where: { contestId: contest.id } }),
+			prisma.contestCompetitor.deleteMany({ where: { contestId: contest.id } }),
+			prisma.contest.delete({
+				where: {
+					id: contest.id,
+					ownerId: user.id
+				}
+			})
+		]);
+
+		throw redirect(303, '/dashboard');
+	},
+
 	saveTestMode: async ({ request, params, locals }) => {
 		const user = requireUser(locals);
 		const formData = await request.formData();

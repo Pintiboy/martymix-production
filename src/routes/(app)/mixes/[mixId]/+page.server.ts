@@ -1,10 +1,9 @@
 import { error } from '@sveltejs/kit';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { Resend } from 'resend';
 import { env } from '$env/dynamic/private';
 import { requireUser } from '$lib/server/auth-guard';
 import { prisma } from '$lib/prisma';
-import { marked } from 'marked';
 import { createSubmissionInviteEmail } from '$lib/email/submission-invite-email';
 import { PUBLIC_APP_URL } from '$env/static/public';
 import type { ContestType } from '$lib/generated/prisma/client';
@@ -61,8 +60,6 @@ export const load = async ({ params, locals }) => {
 		error(404, 'Contest not found');
 	}
 
-	const instructionsHtml = contest.instructions ? marked.parse(contest.instructions) : null;
-
 	const expectedSongs = contest.competitors.length;
 	const submittedSongs = contest.songs.length;
 	const songsComplete = expectedSongs > 0 && submittedSongs === expectedSongs;
@@ -89,67 +86,11 @@ export const load = async ({ params, locals }) => {
 		votingComplete,
 		votingStarted,
 		resultStatus,
-		instructionsHtml,
 		testRecipientEmail: contest.testEmailRecipient?.trim() || user.email
 	};
 };
 
 export const actions = {
-	deleteContest: async ({ request, params, locals }) => {
-		const user = requireUser(locals);
-
-		const formData = await request.formData();
-
-		const confirmTitle = String(formData.get('confirmTitle') ?? '').trim();
-
-		const contest = await prisma.contest.findUnique({
-			where: {
-				id: params.mixId,
-				ownerId: user.id
-			},
-			select: {
-				id: true,
-				theme: true
-			}
-		});
-
-		if (!contest) {
-			error(404, 'Contest not found');
-		}
-
-		if (confirmTitle !== contest.theme) {
-			return fail(400, {
-				error: 'Contest title does not match.',
-				action: 'deleteContest'
-			});
-		}
-
-		await prisma.$transaction([
-			prisma.vote.deleteMany({
-				where: {
-					contestId: contest.id
-				}
-			}),
-			prisma.song.deleteMany({
-				where: {
-					contestId: contest.id
-				}
-			}),
-			prisma.contestCompetitor.deleteMany({
-				where: {
-					contestId: contest.id
-				}
-			}),
-			prisma.contest.delete({
-				where: {
-					id: contest.id,
-					ownerId: user.id
-				}
-			})
-		]);
-
-		throw redirect(303, '/dashboard');
-	},
 	sendTestInvite: async ({ url }) => {
 		if (!env.RESEND_API_KEY) {
 			return fail(500, {

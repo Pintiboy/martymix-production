@@ -5,8 +5,10 @@
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import TestTube2 from '@lucide/svelte/icons/test-tube-2';
 	import { toast } from 'svelte-sonner';
+	import MixDangerZoneCard from '$lib/components/mixes/MixDangerZoneCard.svelte';
 	import EmailMarkdownPreview from '$lib/components/mixes/EmailMarkdownPreview.svelte';
 	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
+	import Modal from '$lib/components/ui/modal/Modal.svelte';
 	import { deadlineDateInputValue } from '$lib/deadlines';
 
 	let { data, form } = $props();
@@ -25,6 +27,8 @@
 	);
 	let targetStatus = $state('');
 	let confirmTheme = $state('');
+	let confirmTitle = $state('');
+	let isDeleteModalOpen = $state(false);
 
 	function getFormValue(key: string) {
 		if (!form || !('values' in form) || !form.values || typeof form.values !== 'object') {
@@ -409,4 +413,63 @@
 			</p>
 		{/if}
 	</div>
+
+	<MixDangerZoneCard
+		onDelete={() => {
+			confirmTitle = '';
+			isDeleteModalOpen = true;
+		}}
+	/>
 </section>
+
+<Modal
+	open={isDeleteModalOpen}
+	titleId="delete-mix-title"
+	onClose={() => (isDeleteModalOpen = false)}
+>
+	{#snippet children({ close })}
+		<div class="mb-6">
+			<p class="mb-2 text-xs tracking-[0.3em] text-red-300 uppercase">Danger zone</p>
+
+			<h2 id="delete-mix-title" class="text-2xl font-semibold text-white">Delete mix</h2>
+
+			<p class="mt-3 text-sm leading-6 text-zinc-400">
+				This will permanently delete the mix, all submitted songs, votes and its contributors. This
+				cannot be undone.
+			</p>
+		</div>
+
+		<form method="POST" action="?/deleteContest">
+			<label class="block">
+				<span class="mb-2 block text-sm font-medium text-zinc-300">
+					Type <span class="font-bold text-red-200">{data.contest.theme}</span> to confirm
+				</span>
+
+				<input
+					name="confirmTitle"
+					bind:value={confirmTitle}
+					autocomplete="off"
+					class="w-full rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none focus:border-red-300/60"
+				/>
+			</label>
+
+			<div class="mt-8 flex justify-end gap-3">
+				<button
+					type="button"
+					onclick={close}
+					class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
+				>
+					Cancel
+				</button>
+
+				<button
+					type="submit"
+					disabled={confirmTitle !== data.contest.theme}
+					class="rounded-full bg-red-500 px-6 py-3 font-bold text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-40"
+				>
+					Delete permanently
+				</button>
+			</div>
+		</form>
+	{/snippet}
+</Modal>

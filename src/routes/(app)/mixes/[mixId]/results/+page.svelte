@@ -241,84 +241,86 @@
 			</p>
 		</div>
 
-		<div class="max-h-[70vh] overflow-auto rounded-2xl border border-white/10">
-			<table class="min-w-max border-separate border-spacing-0 text-sm">
-				<thead>
-					<tr class="bg-white/5">
-						<th
-							style="text-align: left;"
-							class="sticky top-0 left-0 z-30 w-44 min-w-44 max-w-44 border-r border-white/10 bg-zinc-950 px-3 py-3 font-medium text-zinc-400 sm:w-64 sm:min-w-64 sm:max-w-64 sm:px-4 lg:w-90 lg:min-w-90 lg:max-w-90"
-						>
-							Song
-						</th>
-
-						{#each data.voters as voter (voter.id)}
+		<div class="overflow-hidden rounded-2xl border border-white/10">
+			<div class="voting-matrix-scrollbar max-h-[70vh] overflow-auto">
+				<table class="min-w-max border-separate border-spacing-0 text-sm">
+					<thead>
+						<tr class="bg-white/5">
 							<th
-								class="sticky top-0 z-20 w-10 border-r border-white/10 bg-zinc-950 px-1 py-3 text-zinc-400"
+								style="text-align: left;"
+								class="sticky top-0 left-0 z-30 w-44 min-w-44 max-w-44 border-r border-white/10 bg-zinc-950 px-3 py-3 font-medium text-zinc-400 sm:w-64 sm:min-w-64 sm:max-w-64 sm:px-4 lg:w-90 lg:min-w-90 lg:max-w-90"
 							>
-								<div class="flex items-end justify-center">
-									<span
-										class="truncate text-xs font-semibold tracking-wide whitespace-nowrap"
-										style="writing-mode: vertical-rl; transform: rotate(180deg);"
-									>
-										{voter.name}
-									</span>
-								</div>
+								Song
 							</th>
-						{/each}
-
-						<th
-							class="sticky top-0 z-20 w-20 bg-zinc-950 px-4 py-3 text-right font-medium text-zinc-400"
-						>
-							Total
-						</th>
-					</tr>
-				</thead>
-
-				<tbody>
-					{#each data.matrix as row (row.id)}
-						<tr class="group">
-							<td
-								class="sticky left-0 z-10 w-44 min-w-44 max-w-44 border-t border-r border-white/10 bg-zinc-950 px-3 py-3 sm:w-64 sm:min-w-64 sm:max-w-64 sm:px-4 lg:w-90 lg:min-w-90 lg:max-w-90"
-							>
-								<p
-									class="block truncate font-medium text-white"
-									title={`${row.artist} - ${row.title}`}
-								>
-									{row.artist} - {row.title}
-								</p>
-							</td>
 
 							{#each data.voters as voter (voter.id)}
-								<td
-									class={`border-t border-r border-white/10 px-2 py-3 text-center transition ${
-										row.competitor.id === voter.id
-											? 'bg-[repeating-linear-gradient(135deg,rgba(217,70,239,0.22)_0px,rgba(217,70,239,0.14)_5px,rgba(88,28,135,0.18)_5px,rgba(88,28,135,0.28)_10px)]'
-											: `border-white/10 ${getHeatmapClass(row.pointsByVoter[voter.id]) || 'bg-zinc-900/40'} group-hover:bg-zinc-900`
-									}`}
+								<th
+									class="sticky top-0 z-20 w-10 border-r border-white/10 bg-zinc-950 px-1 py-3 text-zinc-400"
 								>
-									{#if row.competitor.id === voter.id}
-										<span></span>
-									{:else if row.pointsByVoter[voter.id] !== null}
-										<span class="font-semibold">
-											{row.pointsByVoter[voter.id]}
+									<div class="flex items-end justify-center">
+										<span
+											class="truncate text-xs font-semibold tracking-wide whitespace-nowrap"
+											style="writing-mode: vertical-rl; transform: rotate(180deg);"
+										>
+											{voter.name}
 										</span>
-									{:else}
-										<span class="text-zinc-700">–</span>
-									{/if}
-								</td>
+									</div>
+								</th>
 							{/each}
 
-							<td
-								style="text-align: right;"
-								class="border-t border-white/10 bg-zinc-900/70 px-4 py-3 font-bold text-white"
+							<th
+								class="sticky top-0 z-20 w-20 bg-zinc-950 px-4 py-3 text-right font-medium text-zinc-400"
 							>
-								{row.totalPoints}
-							</td>
+								Total
+							</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
+					</thead>
+
+					<tbody>
+						{#each data.matrix as row (row.id)}
+							<tr class="group">
+								<td
+									class="sticky left-0 z-10 w-44 min-w-44 max-w-44 border-t border-r border-white/10 bg-zinc-950 px-3 py-3 sm:w-64 sm:min-w-64 sm:max-w-64 sm:px-4 lg:w-90 lg:min-w-90 lg:max-w-90"
+								>
+									<p
+										class="block truncate font-medium text-white"
+										title={`${row.artist} - ${row.title}`}
+									>
+										{row.artist} - {row.title}
+									</p>
+								</td>
+
+								{#each data.voters as voter (voter.id)}
+									<td
+										class={`border-t border-r border-white/10 px-2 py-3 text-center transition ${
+											row.competitor.id === voter.id
+												? 'bg-[repeating-linear-gradient(135deg,rgba(217,70,239,0.22)_0px,rgba(217,70,239,0.14)_5px,rgba(88,28,135,0.18)_5px,rgba(88,28,135,0.28)_10px)]'
+												: `border-white/10 ${getHeatmapClass(row.pointsByVoter[voter.id]) || 'bg-zinc-900/40'} group-hover:bg-zinc-900`
+										}`}
+									>
+										{#if row.competitor.id === voter.id}
+											<span></span>
+										{:else if row.pointsByVoter[voter.id] !== null}
+											<span class="font-semibold">
+												{row.pointsByVoter[voter.id]}
+											</span>
+										{:else}
+											<span class="text-zinc-700">–</span>
+										{/if}
+									</td>
+								{/each}
+
+								<td
+									style="text-align: right;"
+									class="border-t border-white/10 bg-zinc-900/70 px-4 py-3 font-bold text-white"
+								>
+									{row.totalPoints}
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
@@ -380,3 +382,30 @@
 		</section>
 	{/if}
 </section>
+
+<style>
+	.voting-matrix-scrollbar {
+		scrollbar-color: #3f3f46 #09090b;
+		scrollbar-width: thin;
+	}
+
+	.voting-matrix-scrollbar::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	}
+
+	.voting-matrix-scrollbar::-webkit-scrollbar-track,
+	.voting-matrix-scrollbar::-webkit-scrollbar-corner {
+		background: #09090b;
+	}
+
+	.voting-matrix-scrollbar::-webkit-scrollbar-thumb {
+		border: 2px solid #09090b;
+		border-radius: 999px;
+		background: #3f3f46;
+	}
+
+	.voting-matrix-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: #52525b;
+	}
+</style>
