@@ -2,6 +2,8 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
+	import { LogOut, Plus, UserRound } from '@lucide/svelte/icons';
+	import { slide } from 'svelte/transition';
 
 	let { data, children } = $props();
 	let isMobileMenuOpen = $state(false);
@@ -119,40 +121,48 @@
 			<nav
 				id="mobile-navigation"
 				aria-label="Main navigation"
-				class="border-t border-white/10 bg-zinc-950/95 px-4 py-4 md:hidden"
+				class="border-t border-white/10 bg-zinc-950/95 px-4 py-3 md:hidden"
+				transition:slide={{ duration: 180, axis: 'y' }}
 			>
-				<div class="mx-auto flex max-w-6xl flex-col gap-2">
+				<div class="mx-auto max-w-6xl">
 					{#if data.user?.role === 'ADMIN'}
-						<span class="mb-1 text-xs font-medium tracking-wider text-fuchsia-300 uppercase">
+						<span
+							class="mb-2 block px-3 text-[0.65rem] font-medium tracking-wider text-fuchsia-300 uppercase"
+						>
 							Admin
 						</span>
 					{/if}
 
-					<a
-						href={resolve('/contributors')}
-						onclick={closeMobileMenu}
-						class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/10 hover:text-white"
-					>
-						Contributors
-					</a>
-
-					{#if data.user?.role === 'ADMIN'}
+					<div class="divide-y divide-white/8">
 						<a
-							href={resolve('/mixes/new')}
+							href={resolve('/contributors')}
 							onclick={closeMobileMenu}
-							class="rounded-xl px-4 py-3 text-sm font-medium text-zinc-200 transition hover:bg-white/10 hover:text-white"
+							class="flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-zinc-200 transition hover:bg-white/8 hover:text-white"
 						>
-							New contest
+							<UserRound size={17} class="shrink-0 text-zinc-500" aria-hidden="true" />
+							Contributors
 						</a>
-					{/if}
 
-					<button
-						type="button"
-						onclick={logout}
-						class="cursor-pointer rounded-xl px-4 py-3 text-left text-sm text-zinc-400 transition hover:bg-white/10 hover:text-white"
-					>
-						Logout
-					</button>
+						{#if data.user?.role === 'ADMIN'}
+							<a
+								href={resolve('/mixes/new')}
+								onclick={closeMobileMenu}
+								class="flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-zinc-200 transition hover:bg-white/8 hover:text-white"
+							>
+								<Plus size={17} class="shrink-0 text-zinc-500" aria-hidden="true" />
+								New contest
+							</a>
+						{/if}
+
+						<button
+							type="button"
+							onclick={logout}
+							class="flex w-full cursor-pointer items-center gap-3 px-3.5 py-2.5 text-left text-sm text-zinc-400 transition hover:bg-white/8 hover:text-white"
+						>
+							<LogOut size={17} class="shrink-0 text-zinc-600" aria-hidden="true" />
+							Logout
+						</button>
+					</div>
 				</div>
 			</nav>
 		{/if}
