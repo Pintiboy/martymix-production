@@ -14,6 +14,7 @@
 
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
+	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
 
 	let { data, form } = $props();
 
@@ -153,12 +154,7 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <section>
-	<a
-		href={resolve(`/mixes/${data.contest.id}`)}
-		class="sticky top-20 z-40 inline-flex w-fit items-center rounded-full border border-white/10 bg-zinc-950/85 px-4 py-2 text-sm text-zinc-300 shadow-lg shadow-black/20 backdrop-blur transition hover:border-white/20 hover:bg-zinc-900 hover:text-white"
-	>
-		← Back to mix
-	</a>
+	<StickyActionBar backHref={`/mixes/${data.contest.id}`} backLabel="Back to mix" />
 
 	<header
 		class="mt-6 mb-8 flex flex-col gap-5 sm:mt-10 sm:mb-10 md:flex-row md:items-end md:justify-between"

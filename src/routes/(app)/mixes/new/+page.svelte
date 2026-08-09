@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
+	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
 	let { form, data } = $props();
 	let showParticipantSelection = $state(false);
 
@@ -39,9 +40,7 @@
 </svelte:head>
 
 <section class="mx-auto max-w-3xl">
-	<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white"
-		>← Back to dashboard</a
-	>
+	<StickyActionBar backHref="/dashboard" backLabel="Back to dashboard" />
 
 	<div class="mt-8 mb-8 sm:mt-10">
 		<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">New contest</p>

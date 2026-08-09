@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import { uploadPresigned } from '@vercel/blob/client';
 	import { getData } from 'country-list';
 	import { ImagePlus, LoaderCircle, Trash2 } from '@lucide/svelte/icons';
@@ -7,6 +6,7 @@
 	import { enhance } from '$app/forms';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
+	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
 	import { prepareCompetitorImage } from '$lib/client/prepare-competitor-image';
 
 	onMount(async () => {
@@ -217,9 +217,7 @@
 
 <div>
 	<section>
-		<a href={resolve('/dashboard')} class="text-sm text-zinc-400 hover:text-white">
-			← Back to dashboard
-		</a>
+		<StickyActionBar backHref="/dashboard" backLabel="Back to dashboard" />
 
 		<div class="mt-6 mb-6 flex items-end justify-between gap-6 sm:mt-10 sm:mb-10">
 			<div>

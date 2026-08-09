@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { resolve } from '$app/paths';
 	import CalendarDays from '@lucide/svelte/icons/calendar-days';
 	import Mail from '@lucide/svelte/icons/mail';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import TestTube2 from '@lucide/svelte/icons/test-tube-2';
 	import { toast } from 'svelte-sonner';
 	import EmailMarkdownPreview from '$lib/components/mixes/EmailMarkdownPreview.svelte';
+	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
 	import { deadlineDateInputValue } from '$lib/deadlines';
 
 	let { data, form } = $props();
@@ -52,12 +52,7 @@
 </svelte:head>
 
 <section>
-	<a
-		href={resolve(`/mixes/${data.contest.id}`)}
-		class="sticky top-20 z-40 inline-flex w-fit items-center rounded-full border border-white/10 bg-zinc-950/85 px-4 py-2 text-sm text-zinc-300 shadow-lg shadow-black/20 backdrop-blur transition hover:border-white/20 hover:bg-zinc-900 hover:text-white"
-	>
-		← Back to mix
-	</a>
+	<StickyActionBar backHref={`/mixes/${data.contest.id}`} backLabel="Back to mix" />
 
 	<div class="mt-8 mb-8">
 		<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Mix settings</p>

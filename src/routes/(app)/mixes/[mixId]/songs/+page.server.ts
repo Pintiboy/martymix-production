@@ -350,11 +350,23 @@ export const actions = {
 					ownerId: user.id
 				}
 			},
-			select: { id: true }
+			select: {
+				id: true,
+				contest: {
+					select: { status: true }
+				}
+			}
 		});
 
 		if (!song) {
 			error(404, 'Song not found');
+		}
+
+		if (
+			song.contest.status !== ContestStatus.NEW &&
+			song.contest.status !== ContestStatus.SUBMISSION_OPEN
+		) {
+			error(409, 'Songs can no longer be deleted once voting has opened.');
 		}
 
 		await prisma.song.delete({

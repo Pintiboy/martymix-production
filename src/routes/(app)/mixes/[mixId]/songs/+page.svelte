@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import { enhance } from '$app/forms';
 	import { toast } from 'svelte-sonner';
-	import { onMount } from 'svelte';
-	import { flip } from 'svelte/animate';
+	import { flushSync, onMount } from 'svelte';
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
+	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
 	import QRCode from 'qrcode';
 
 	import {
@@ -31,6 +30,9 @@
 	let youtubeQrCode = $state<string | null>(null);
 
 	let contest = $derived(data.contest);
+	const canManageSubmissions = $derived(
+		contest.status === 'NEW' || contest.status === 'SUBMISSION_OPEN'
+	);
 
 	type SubmittedSongRow = {
 		id: string;
@@ -70,8 +72,8 @@
 	let missingRows = $derived(data.submissionRows.filter((row) => !row.song));
 
 	let hasOrderChanged = $state(false);
-	const flipDurationMs = 100;
-	let draggedSongId = $state<string | null>(null);
+	let mobileSongList = $state<HTMLElement>();
+	let desktopSongList = $state<HTMLElement>();
 
 	function initialSongIds() {
 		return submittedRows.map((row) => row.song.id);
@@ -92,46 +94,32 @@
 		hasOrderChanged = submittedRows.some((row, index) => row.song.id !== savedSongIds[index]);
 	}
 
-	function startSongDrag(event: PointerEvent, songId: string) {
-		if (event.pointerType === 'mouse' && event.button !== 0) return;
+	function syncSongOrder(container: Element) {
+		const elementsById = new Map(
+			Array.from(container.children).map((element) => [
+				element.getAttribute('data-song-id') ?? '',
+				element
+			])
+		);
+		const rowsById = new Map(submittedRows.map((row) => [row.id, row]));
+		const reorderedRows = Array.from(container.children).flatMap((element) => {
+			const row = rowsById.get(element.getAttribute('data-song-id') ?? '');
+			return row ? [row] : [];
+		});
 
-		event.preventDefault();
-		(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-		draggedSongId = songId;
-	}
+		if (reorderedRows.length !== submittedRows.length) return;
 
-	function moveSongDrag(event: PointerEvent) {
-		if (!draggedSongId) return;
+		// SortableJS moves DOM nodes directly. Restore Svelte's current DOM order first,
+		// then let the keyed each-block apply the new data order in one synchronous update.
+		for (const row of submittedRows) {
+			const element = elementsById.get(row.id);
+			if (element) container.append(element);
+		}
 
-		event.preventDefault();
-
-		const target = document
-			.elementFromPoint(event.clientX, event.clientY)
-			?.closest<HTMLElement>('[data-sort-song-id]');
-		const targetSongId = target?.dataset.sortSongId;
-
-		if (!targetSongId || targetSongId === draggedSongId) return;
-
-		const fromIndex = submittedRows.findIndex((row) => row.id === draggedSongId);
-		const toIndex = submittedRows.findIndex((row) => row.id === targetSongId);
-
-		if (fromIndex === -1 || toIndex === -1) return;
-
-		const reorderedRows = [...submittedRows];
-		const [draggedRow] = reorderedRows.splice(fromIndex, 1);
-		reorderedRows.splice(toIndex, 0, draggedRow);
-		submittedRows = reorderedRows;
-		updateOrderChanged();
-
-		const edgeDistance = 72;
-		if (event.clientY < edgeDistance) window.scrollBy({ top: -12 });
-		if (event.clientY > window.innerHeight - edgeDistance) window.scrollBy({ top: 12 });
-	}
-
-	function finishSongDrag(event: PointerEvent) {
-		const handle = event.currentTarget as HTMLElement;
-		if (handle.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
-		draggedSongId = null;
+		flushSync(() => {
+			submittedRows = reorderedRows;
+			updateOrderChanged();
+		});
 	}
 
 	$effect(() => {
@@ -153,6 +141,41 @@
 	});
 
 	onMount(() => {
+		let destroyed = false;
+		const sortableLists: Array<{ destroy: () => void }> = [];
+
+		void import('sortablejs').then(({ default: Sortable }) => {
+			if (destroyed) return;
+
+			for (const container of [mobileSongList, desktopSongList]) {
+				if (!container) continue;
+
+				const sortable = Sortable.create(container, {
+					direction: 'vertical',
+					draggable: '[data-song-id]',
+					handle: '[data-drag-handle]',
+					animation: 150,
+					easing: 'cubic-bezier(0.2, 0, 0, 1)',
+					forceFallback: true,
+					fallbackOnBody: false,
+					fallbackTolerance: 3,
+					delay: 60,
+					delayOnTouchOnly: true,
+					touchStartThreshold: 4,
+					scroll: true,
+					scrollSensitivity: 80,
+					scrollSpeed: 12,
+					ghostClass: 'song-sort-ghost',
+					chosenClass: 'song-sort-chosen',
+					dragClass: 'song-sort-drag',
+					fallbackClass: 'song-sort-fallback',
+					onEnd: () => syncSongOrder(container)
+				});
+
+				sortableLists.push(sortable);
+			}
+		});
+
 		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 			if (!hasOrderChanged) return;
 
@@ -163,6 +186,8 @@
 		window.addEventListener('beforeunload', handleBeforeUnload);
 
 		return () => {
+			destroyed = true;
+			for (const sortable of sortableLists) sortable.destroy();
 			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
 	});
@@ -238,14 +263,9 @@
 	<title>Songs | {contest.theme}</title>
 </svelte:head>
 
-<div>
+<div class="select-none">
 	<section>
-		<a
-			href={resolve(`/mixes/${contest.id}`)}
-			class="sticky top-20 z-40 inline-flex w-fit items-center rounded-full border border-white/10 bg-zinc-950/85 px-4 py-2 text-sm text-zinc-300 shadow-lg shadow-black/20 backdrop-blur transition hover:border-white/20 hover:bg-zinc-900 hover:text-white"
-		>
-			← Back to mix overview
-		</a>
+		<StickyActionBar backHref={`/mixes/${contest.id}`} backLabel="Back to mix overview" />
 
 		<div
 			class="mt-6 mb-6 flex flex-col gap-4 sm:mt-10 sm:mb-10 sm:flex-row sm:items-end sm:justify-between"
@@ -258,23 +278,25 @@
 				<p class="mt-3 max-w-2xl text-zinc-400">Manage all submitted songs for this competition.</p>
 			</div>
 
-			<div class="flex flex-col gap-2 sm:flex-row">
-				<button
-					type="button"
-					onclick={() => (isAddContributorModalOpen = true)}
-					class="text-nowrap rounded-full border border-white/15 px-4 py-2.5 sm:px-5 sm:py-3 font-medium text-white transition hover:bg-white/10"
-				>
-					Add contributor
-				</button>
+			{#if canManageSubmissions}
+				<div class="flex flex-col gap-2 sm:flex-row">
+					<button
+						type="button"
+						onclick={() => (isAddContributorModalOpen = true)}
+						class="text-nowrap rounded-full border border-white/15 px-4 py-2.5 font-medium text-white transition hover:bg-white/10 sm:px-5 sm:py-3"
+					>
+						Add contributor
+					</button>
 
-				<button
-					type="button"
-					onclick={() => (isAddSongModalOpen = true)}
-					class="text-nowrap rounded-full cursor-pointer bg-white px-4 py-2.5 sm:px-5 sm:py-3 font-medium text-zinc-950 transition hover:scale-105"
-				>
-					Add song
-				</button>
-			</div>
+					<button
+						type="button"
+						onclick={() => (isAddSongModalOpen = true)}
+						class="cursor-pointer text-nowrap rounded-full bg-white px-4 py-2.5 font-medium text-zinc-950 transition hover:scale-105 sm:px-5 sm:py-3"
+					>
+						Add song
+					</button>
+				</div>
+			{/if}
 		</div>
 
 		<div class="mb-6 rounded-3xl border border-white/10 bg-white/3 p-4 sm:mb-8 sm:p-6">
@@ -310,10 +332,10 @@
 				</div>
 			{/if}
 
-			<div class="grid gap-4 lg:grid-cols-2">
-				<article class="rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-5">
+			<div class="grid min-w-0 gap-4 lg:grid-cols-2">
+				<article class="min-w-0 rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-5">
 					<div class="flex items-start justify-between gap-4">
-						<div class="flex min-w-0 items-center gap-3">
+						<div class="flex min-w-0 flex-1 items-center gap-3">
 							<div
 								class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300"
 							>
@@ -321,8 +343,11 @@
 							</div>
 							<div class="min-w-0">
 								<h3 class="font-semibold text-white">Spotify playlist</h3>
-								<p class="mt-1 truncate text-sm text-zinc-500">
-									{contest.spotifyPlaylistUrl ?? 'No link added yet'}
+								<p
+									class="mt-1 truncate text-sm text-zinc-500"
+									title={contest.spotifyPlaylistUrl ?? undefined}
+								>
+									{contest.spotifyPlaylistUrl ? 'Playlist link added' : 'No link added yet'}
 								</p>
 							</div>
 						</div>
@@ -360,10 +385,12 @@
 								<img
 									src={spotifyQrCode}
 									alt="QR code for the Spotify playlist"
-									class="h-44 w-44 sm:h-52 sm:w-52"
+									class="aspect-square h-auto w-full max-w-36 sm:max-w-52"
 								/>
 							{:else}
-								<div class="flex h-44 w-44 items-center justify-center text-zinc-500">
+								<div
+									class="flex aspect-square w-full max-w-36 items-center justify-center text-zinc-500 sm:max-w-52"
+								>
 									<QrCode size={40} />
 								</div>
 							{/if}
@@ -378,9 +405,9 @@
 					{/if}
 				</article>
 
-				<article class="rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-5">
+				<article class="min-w-0 rounded-2xl border border-white/10 bg-zinc-900/50 p-4 sm:p-5">
 					<div class="flex items-start justify-between gap-4">
-						<div class="flex min-w-0 items-center gap-3">
+						<div class="flex min-w-0 flex-1 items-center gap-3">
 							<div
 								class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-red-400/20 bg-red-500/10 text-red-300"
 							>
@@ -388,8 +415,11 @@
 							</div>
 							<div class="min-w-0">
 								<h3 class="font-semibold text-white">YouTube playlist</h3>
-								<p class="mt-1 truncate text-sm text-zinc-500">
-									{contest.youtubePlaylistUrl ?? 'No link added yet'}
+								<p
+									class="mt-1 truncate text-sm text-zinc-500"
+									title={contest.youtubePlaylistUrl ?? undefined}
+								>
+									{contest.youtubePlaylistUrl ? 'Playlist link added' : 'No link added yet'}
 								</p>
 							</div>
 						</div>
@@ -427,10 +457,12 @@
 								<img
 									src={youtubeQrCode}
 									alt="QR code for the YouTube playlist"
-									class="h-44 w-44 sm:h-52 sm:w-52"
+									class="aspect-square h-auto w-full max-w-36 sm:max-w-52"
 								/>
 							{:else}
-								<div class="flex h-44 w-44 items-center justify-center text-zinc-500">
+								<div
+									class="flex aspect-square w-full max-w-36 items-center justify-center text-zinc-500 sm:max-w-52"
+								>
 									<QrCode size={40} />
 								</div>
 							{/if}
@@ -497,19 +529,23 @@
 			{#if data.submissionRows.length > 0}
 				<!-- Mobile Ansicht -->
 				<div class="space-y-3 sm:hidden">
-					<div class="space-y-3">
+					<div
+						bind:this={mobileSongList}
+						class="relative space-y-3"
+						aria-label="Song listening order"
+					>
 						{#each submittedRows as row, index (row.id)}
 							<article
-								animate:flip={{ duration: flipDurationMs }}
-								data-sort-song-id={row.id}
-								class={[
-									'overflow-hidden rounded-2xl border bg-zinc-900/50 transition-colors',
-									draggedSongId === row.id
-										? 'border-fuchsia-300/60 bg-fuchsia-500/10'
-										: 'border-white/10'
-								]}
+								data-song-id={row.id}
+								aria-label={`${row.song.title} by ${row.song.artist}`}
+								class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 transition-colors"
 							>
-								<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
+								<div
+									class={[
+										'flex items-start justify-between gap-3 p-4',
+										canManageSubmissions && 'border-b border-white/10'
+									]}
+								>
 									<div class="flex min-w-0 items-start gap-3">
 										<div
 											class="flex h-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm font-medium text-zinc-300 tabular-nums"
@@ -525,15 +561,19 @@
 											<p class="mt-0.5 truncate text-sm text-zinc-400">
 												{row.song.artist}
 											</p>
+
+											{#if !canManageSubmissions}
+												<p class="mt-2 truncate text-xs text-zinc-500">
+													<span class="text-zinc-600">Contributor ·</span>
+													{row.competitor.name}
+												</p>
+											{/if}
 										</div>
 									</div>
 
 									<button
+										data-drag-handle
 										type="button"
-										onpointerdown={(event) => startSongDrag(event, row.id)}
-										onpointermove={moveSongDrag}
-										onpointerup={finishSongDrag}
-										onpointercancel={finishSongDrag}
 										aria-label={`Drag to reorder ${row.song.title}`}
 										class="mt-1 flex h-9 w-9 shrink-0 cursor-grab touch-none items-center justify-center rounded-xl text-zinc-500 transition hover:bg-white/5 hover:text-zinc-300 active:cursor-grabbing"
 									>
@@ -541,26 +581,121 @@
 									</button>
 								</div>
 
-								<div class="space-y-3 p-4">
-									<div class="flex items-center justify-between gap-4">
-										<span class="text-sm text-zinc-500">Contributor</span>
+								{#if canManageSubmissions}
+									<div class="space-y-3 p-4">
+										<div class="flex items-center justify-between gap-4">
+											<span class="text-sm text-zinc-500">Contributor</span>
 
-										<span class="text-right text-sm font-medium text-zinc-200">
-											{row.competitor.name}
-										</span>
+											<span class="text-right text-sm font-medium text-zinc-200">
+												{row.competitor.name}
+											</span>
+										</div>
+
+										<div class="flex items-center justify-between gap-4">
+											<span class="text-sm text-zinc-500">Status</span>
+
+											<span
+												class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
+											>
+												Submitted
+											</span>
+										</div>
 									</div>
+								{/if}
 
-									<div class="flex items-center justify-between gap-4">
-										<span class="text-sm text-zinc-500">Status</span>
-
-										<span
-											class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
+								{#if canManageSubmissions}
+									<div
+										class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3"
+									>
+										<button
+											type="button"
+											title="Copy submission link"
+											aria-label={`Copy submission link for ${row.competitor.name}`}
+											onclick={() => copySubmissionLink(row.contestCompetitorId)}
+											class={[
+												'relative flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300',
+												copiedContestCompetitorId === row.contestCompetitorId
+													? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
+													: 'border-fuchsia-300/20 text-fuchsia-300 hover:bg-fuchsia-500/10 hover:text-fuchsia-200'
+											]}
 										>
-											Submitted
-										</span>
+											<span
+												class={[
+													'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+													copiedContestCompetitorId === row.contestCompetitorId
+														? 'scale-50 rotate-45 opacity-0'
+														: 'scale-100 rotate-0 opacity-100'
+												]}
+											>
+												<Copy size={17} />
+											</span>
+
+											<span
+												class={[
+													'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
+													copiedContestCompetitorId === row.contestCompetitorId
+														? 'scale-100 rotate-0 opacity-100'
+														: 'scale-50 -rotate-45 opacity-0'
+												]}
+											>
+												<Check size={18} strokeWidth={2.5} />
+											</span>
+										</button>
+
+										<form method="POST" action="?/delete">
+											<input type="hidden" name="songId" value={row.song.id} />
+
+											<button
+												type="submit"
+												title="Delete song"
+												aria-label={`Delete ${row.song.title}`}
+												onclick={(event) => {
+													if (!confirm(`Delete "${row.song.title}" by ${row.song.artist}?`)) {
+														event.preventDefault();
+													}
+												}}
+												class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
+											>
+												<Trash2 size={17} />
+											</button>
+										</form>
 									</div>
+								{/if}
+							</article>
+						{/each}
+					</div>
+
+					{#each missingRows as row (row.competitor.id)}
+						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/20">
+							<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
+								<div class="min-w-0">
+									<p class="truncate font-semibold text-white">
+										{row.competitor.name}
+									</p>
+
+									<p class="mt-1 text-sm text-zinc-600">No song submitted yet</p>
 								</div>
 
+								<span
+									class="inline-flex h-6 shrink-0 items-center rounded-full border border-amber-400/20 bg-amber-500/10 px-3 text-xs leading-none text-amber-200"
+								>
+									Missing
+								</span>
+							</div>
+
+							<div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 text-sm">
+								<div>
+									<p class="text-zinc-600">Artist</p>
+									<p class="mt-1 text-zinc-500">–</p>
+								</div>
+
+								<div>
+									<p class="text-zinc-600">Title</p>
+									<p class="mt-1 text-zinc-500">–</p>
+								</div>
+							</div>
+
+							{#if canManageSubmissions}
 								<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
 									<button
 										type="button"
@@ -597,153 +732,84 @@
 										</span>
 									</button>
 
-									<form method="POST" action="?/delete">
-										<input type="hidden" name="songId" value={row.song.id} />
+									<form method="POST" action="?/removeParticipant">
+										<input
+											type="hidden"
+											name="contestCompetitorId"
+											value={row.contestCompetitorId}
+										/>
 
 										<button
 											type="submit"
-											title="Delete song"
-											aria-label={`Delete ${row.song.title}`}
+											title="Remove contributor"
+											aria-label={`Remove ${row.competitor.name} from the contest`}
 											onclick={(event) => {
-												if (!confirm(`Delete "${row.song.title}" by ${row.song.artist}?`)) {
+												if (!confirm(`Remove ${row.competitor.name} from this contest?`)) {
 													event.preventDefault();
 												}
 											}}
 											class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
 										>
-											<Trash2 size={17} />
+											<UserMinus size={17} />
 										</button>
 									</form>
 								</div>
-							</article>
-						{/each}
-					</div>
-
-					{#each missingRows as row (row.competitor.id)}
-						<article class="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/20">
-							<div class="flex items-start justify-between gap-3 border-b border-white/10 p-4">
-								<div class="min-w-0">
-									<p class="truncate font-semibold text-white">
-										{row.competitor.name}
-									</p>
-
-									<p class="mt-1 text-sm text-zinc-600">No song submitted yet</p>
-								</div>
-
-								<span
-									class="inline-flex h-6 shrink-0 items-center rounded-full border border-amber-400/20 bg-amber-500/10 px-3 text-xs leading-none text-amber-200"
-								>
-									Missing
-								</span>
-							</div>
-
-							<div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 text-sm">
-								<div>
-									<p class="text-zinc-600">Artist</p>
-									<p class="mt-1 text-zinc-500">–</p>
-								</div>
-
-								<div>
-									<p class="text-zinc-600">Title</p>
-									<p class="mt-1 text-zinc-500">–</p>
-								</div>
-							</div>
-
-							<div class="flex items-center justify-end gap-2 border-t border-white/10 px-4 py-3">
-								<button
-									type="button"
-									title="Copy submission link"
-									aria-label={`Copy submission link for ${row.competitor.name}`}
-									onclick={() => copySubmissionLink(row.contestCompetitorId)}
-									class={[
-										'relative flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300',
-										copiedContestCompetitorId === row.contestCompetitorId
-											? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
-											: 'border-fuchsia-300/20 text-fuchsia-300 hover:bg-fuchsia-500/10 hover:text-fuchsia-200'
-									]}
-								>
-									<span
-										class={[
-											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
-											copiedContestCompetitorId === row.contestCompetitorId
-												? 'scale-50 rotate-45 opacity-0'
-												: 'scale-100 rotate-0 opacity-100'
-										]}
-									>
-										<Copy size={17} />
-									</span>
-
-									<span
-										class={[
-											'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out',
-											copiedContestCompetitorId === row.contestCompetitorId
-												? 'scale-100 rotate-0 opacity-100'
-												: 'scale-50 -rotate-45 opacity-0'
-										]}
-									>
-										<Check size={18} strokeWidth={2.5} />
-									</span>
-								</button>
-
-								<form method="POST" action="?/removeParticipant">
-									<input type="hidden" name="contestCompetitorId" value={row.contestCompetitorId} />
-
-									<button
-										type="submit"
-										title="Remove contributor"
-										aria-label={`Remove ${row.competitor.name} from the contest`}
-										onclick={(event) => {
-											if (!confirm(`Remove ${row.competitor.name} from this contest?`)) {
-												event.preventDefault();
-											}
-										}}
-										class="flex h-10 w-10 items-center justify-center rounded-full border border-red-400/20 text-red-300 transition hover:bg-red-500/10"
-									>
-										<UserMinus size={17} />
-									</button>
-								</form>
-							</div>
+							{/if}
 						</article>
 					{/each}
 				</div>
 
 				<!-- Desktop Ansicht -->
 				<div class="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
-					<div class="min-w-225 text-sm" role="table" aria-label="Submitted songs">
+					<div
+						class={canManageSubmissions ? 'min-w-225 text-sm' : 'min-w-150 text-sm'}
+						role="table"
+						aria-label="Submitted songs"
+					>
 						<div
-							class="grid grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem] bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase"
+							class={[
+								'grid bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase',
+								canManageSubmissions
+									? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem]'
+									: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)]'
+							]}
 							role="row"
 						>
 							<div class="px-4 py-3 font-medium" role="columnheader">#</div>
 							<div class="px-4 py-3 font-medium" role="columnheader">Contributor</div>
 							<div class="px-4 py-3 font-medium" role="columnheader">Artist</div>
 							<div class="px-4 py-3 font-medium" role="columnheader">Title</div>
-							<div class="px-4 py-3 font-medium" role="columnheader">Status</div>
-							<div class="px-4 py-3 font-medium" role="columnheader">Link</div>
-							<div class="px-4 py-3 text-right font-medium" role="columnheader">Actions</div>
+							{#if canManageSubmissions}
+								<div class="px-4 py-3 font-medium" role="columnheader">Status</div>
+								<div class="px-4 py-3 font-medium" role="columnheader">Link</div>
+								<div class="px-4 py-3 text-right font-medium" role="columnheader">Actions</div>
+							{/if}
 						</div>
 
-						<div class="divide-y divide-white/10" role="rowgroup">
+						<div
+							bind:this={desktopSongList}
+							class="relative divide-y divide-white/10"
+							role="rowgroup"
+							aria-label="Song listening order"
+						>
 							{#each submittedRows as row, index (row.id)}
 								<div
-									animate:flip={{ duration: flipDurationMs }}
-									data-sort-song-id={row.id}
+									data-song-id={row.id}
+									aria-label={`${row.song.title} by ${row.song.artist}`}
 									class={[
-										'grid grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem] transition-colors',
-										draggedSongId === row.id
-											? 'bg-fuchsia-500/15'
-											: 'bg-zinc-900/40 hover:bg-zinc-900'
+										'grid transition-colors',
+										canManageSubmissions
+											? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem]'
+											: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)]',
+										'bg-zinc-900/40 hover:bg-zinc-900'
 									]}
 									role="row"
 								>
 									<div class="flex items-center px-4 py-2 text-zinc-500" role="cell">
 										<div class="flex items-center gap-2">
 											<button
+												data-drag-handle
 												type="button"
-												onpointerdown={(event) => startSongDrag(event, row.id)}
-												onpointermove={moveSongDrag}
-												onpointerup={finishSongDrag}
-												onpointercancel={finishSongDrag}
 												aria-label={`Drag to reorder ${row.song.title}`}
 												class="flex h-8 w-8 cursor-grab items-center justify-center rounded-lg text-zinc-500 transition hover:bg-white/5 hover:text-zinc-300 active:cursor-grabbing"
 											>
@@ -768,69 +834,71 @@
 										{row.song.title}
 									</div>
 
-									<div class="flex items-center px-4 py-2" role="cell">
-										<span
-											class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
-										>
-											Submitted
-										</span>
-									</div>
-
-									<div class="flex items-center px-4 py-2" role="cell">
-										<button
-											type="button"
-											onclick={() => copySubmissionLink(row.contestCompetitorId)}
-											class={[
-												'inline-flex min-w-20 items-center justify-start gap-1.5 text-xs transition-colors duration-300',
-												copiedContestCompetitorId === row.contestCompetitorId
-													? 'text-emerald-300'
-													: 'text-fuchsia-300 hover:text-fuchsia-200'
-											]}
-										>
-											<span class="relative inline-block h-4 min-w-16">
-												<span
-													class={[
-														'absolute left-0 top-0 transition-all duration-300 ease-out',
-														copiedContestCompetitorId === row.contestCompetitorId
-															? '-translate-y-1 opacity-0'
-															: 'translate-y-0 opacity-100'
-													]}
-												>
-													Copy link
-												</span>
-
-												<span
-													class={[
-														'absolute left-0 top-0 inline-flex items-center gap-1 transition-all duration-300 ease-out',
-														copiedContestCompetitorId === row.contestCompetitorId
-															? 'translate-y-0 opacity-100'
-															: 'translate-y-1 opacity-0'
-													]}
-												>
-													<Check size={13} strokeWidth={2.5} />
-													Copied
-												</span>
-											</span>
-										</button>
-									</div>
-
-									<div class="flex items-center justify-end px-4 py-2" role="cell">
-										<form method="POST" action="?/delete" class="inline-block">
-											<input type="hidden" name="songId" value={row.song.id} />
-
-											<button
-												type="submit"
-												class="rounded-full border border-red-400/20 px-3 py-0.5 text-xs text-red-300 transition hover:bg-red-500/10"
-												onclick={(event) => {
-													if (!confirm('Delete this song?')) {
-														event.preventDefault();
-													}
-												}}
+									{#if canManageSubmissions}
+										<div class="flex items-center px-4 py-2" role="cell">
+											<span
+												class="inline-flex h-6 items-center rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 text-xs leading-none text-emerald-200"
 											>
-												Delete
+												Submitted
+											</span>
+										</div>
+
+										<div class="flex items-center px-4 py-2" role="cell">
+											<button
+												type="button"
+												onclick={() => copySubmissionLink(row.contestCompetitorId)}
+												class={[
+													'inline-flex min-w-20 items-center justify-start gap-1.5 text-xs transition-colors duration-300',
+													copiedContestCompetitorId === row.contestCompetitorId
+														? 'text-emerald-300'
+														: 'text-fuchsia-300 hover:text-fuchsia-200'
+												]}
+											>
+												<span class="relative inline-block h-4 min-w-16">
+													<span
+														class={[
+															'absolute left-0 top-0 transition-all duration-300 ease-out',
+															copiedContestCompetitorId === row.contestCompetitorId
+																? '-translate-y-1 opacity-0'
+																: 'translate-y-0 opacity-100'
+														]}
+													>
+														Copy link
+													</span>
+
+													<span
+														class={[
+															'absolute left-0 top-0 inline-flex items-center gap-1 transition-all duration-300 ease-out',
+															copiedContestCompetitorId === row.contestCompetitorId
+																? 'translate-y-0 opacity-100'
+																: 'translate-y-1 opacity-0'
+														]}
+													>
+														<Check size={13} strokeWidth={2.5} />
+														Copied
+													</span>
+												</span>
 											</button>
-										</form>
-									</div>
+										</div>
+
+										<div class="flex items-center justify-end px-4 py-2" role="cell">
+											<form method="POST" action="?/delete" class="inline-block">
+												<input type="hidden" name="songId" value={row.song.id} />
+
+												<button
+													type="submit"
+													class="rounded-full border border-red-400/20 px-3 py-0.5 text-xs text-red-300 transition hover:bg-red-500/10"
+													onclick={(event) => {
+														if (!confirm('Delete this song?')) {
+															event.preventDefault();
+														}
+													}}
+												>
+													Delete
+												</button>
+											</form>
+										</div>
+									{/if}
 								</div>
 							{/each}
 						</div>
@@ -838,7 +906,12 @@
 						<div class="divide-y divide-white/10 border-t border-white/10" role="rowgroup">
 							{#each missingRows as row (row.competitor.id)}
 								<div
-									class="grid grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem] bg-zinc-900/15"
+									class={[
+										'grid bg-zinc-900/15',
+										canManageSubmissions
+											? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem]'
+											: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)]'
+									]}
 									role="row"
 								>
 									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
@@ -850,73 +923,75 @@
 									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 
-									<div class="flex items-center px-4 py-2" role="cell">
-										<span
-											class="inline-flex h-6 items-center rounded-full border border-amber-400/20 bg-amber-500/10 px-3 text-xs leading-none text-amber-200"
-										>
-											Missing
-										</span>
-									</div>
-
-									<div class="flex items-center px-4 py-2" role="cell">
-										<button
-											type="button"
-											onclick={() => copySubmissionLink(row.contestCompetitorId)}
-											class={[
-												'inline-flex min-w-20 items-center justify-start gap-1.5 text-xs transition-colors duration-300',
-												copiedContestCompetitorId === row.contestCompetitorId
-													? 'text-emerald-300'
-													: 'text-fuchsia-300 hover:text-fuchsia-200'
-											]}
-										>
-											<span class="relative inline-block h-4 min-w-16">
-												<span
-													class={[
-														'absolute left-0 top-0 transition-all duration-300 ease-out',
-														copiedContestCompetitorId === row.contestCompetitorId
-															? '-translate-y-1 opacity-0'
-															: 'translate-y-0 opacity-100'
-													]}
-												>
-													Copy link
-												</span>
-
-												<span
-													class={[
-														'absolute left-0 top-0 inline-flex items-center gap-1 transition-all duration-300 ease-out',
-														copiedContestCompetitorId === row.contestCompetitorId
-															? 'translate-y-0 opacity-100'
-															: 'translate-y-1 opacity-0'
-													]}
-												>
-													<Check size={13} strokeWidth={2.5} />
-													Copied
-												</span>
-											</span>
-										</button>
-									</div>
-
-									<div class="flex items-center justify-end px-4 py-2" role="cell">
-										<form method="POST" action="?/removeParticipant" class="inline-block">
-											<input
-												type="hidden"
-												name="contestCompetitorId"
-												value={row.contestCompetitorId}
-											/>
-
-											<button
-												type="submit"
-												class="rounded-full border border-red-400/20 px-3 py-0.5 text-xs text-red-300 transition hover:bg-red-500/10"
-												onclick={(event) => {
-													if (!confirm(`Remove ${row.competitor.name} from this contest?`)) {
-														event.preventDefault();
-													}
-												}}
+									{#if canManageSubmissions}
+										<div class="flex items-center px-4 py-2" role="cell">
+											<span
+												class="inline-flex h-6 items-center rounded-full border border-amber-400/20 bg-amber-500/10 px-3 text-xs leading-none text-amber-200"
 											>
-												Remove contributor
+												Missing
+											</span>
+										</div>
+
+										<div class="flex items-center px-4 py-2" role="cell">
+											<button
+												type="button"
+												onclick={() => copySubmissionLink(row.contestCompetitorId)}
+												class={[
+													'inline-flex min-w-20 items-center justify-start gap-1.5 text-xs transition-colors duration-300',
+													copiedContestCompetitorId === row.contestCompetitorId
+														? 'text-emerald-300'
+														: 'text-fuchsia-300 hover:text-fuchsia-200'
+												]}
+											>
+												<span class="relative inline-block h-4 min-w-16">
+													<span
+														class={[
+															'absolute left-0 top-0 transition-all duration-300 ease-out',
+															copiedContestCompetitorId === row.contestCompetitorId
+																? '-translate-y-1 opacity-0'
+																: 'translate-y-0 opacity-100'
+														]}
+													>
+														Copy link
+													</span>
+
+													<span
+														class={[
+															'absolute left-0 top-0 inline-flex items-center gap-1 transition-all duration-300 ease-out',
+															copiedContestCompetitorId === row.contestCompetitorId
+																? 'translate-y-0 opacity-100'
+																: 'translate-y-1 opacity-0'
+														]}
+													>
+														<Check size={13} strokeWidth={2.5} />
+														Copied
+													</span>
+												</span>
 											</button>
-										</form>
-									</div>
+										</div>
+
+										<div class="flex items-center justify-end px-4 py-2" role="cell">
+											<form method="POST" action="?/removeParticipant" class="inline-block">
+												<input
+													type="hidden"
+													name="contestCompetitorId"
+													value={row.contestCompetitorId}
+												/>
+
+												<button
+													type="submit"
+													class="rounded-full border border-red-400/20 px-3 py-0.5 text-xs text-red-300 transition hover:bg-red-500/10"
+													onclick={(event) => {
+														if (!confirm(`Remove ${row.competitor.name} from this contest?`)) {
+															event.preventDefault();
+														}
+													}}
+												>
+													Remove contributor
+												</button>
+											</form>
+										</div>
+									{/if}
 								</div>
 							{/each}
 						</div>
@@ -1188,3 +1263,20 @@
 		{/snippet}
 	</Modal>
 </div>
+
+<style>
+	:global(.song-sort-ghost) {
+		opacity: 0.18 !important;
+	}
+
+	:global(.song-sort-chosen) {
+		border-color: rgb(240 171 252 / 60%) !important;
+	}
+
+	:global(.song-sort-fallback) {
+		pointer-events: none !important;
+		opacity: 0.96 !important;
+		box-shadow: 0 18px 45px rgb(0 0 0 / 45%) !important;
+		cursor: grabbing !important;
+	}
+</style>

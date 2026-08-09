@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
+	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
 
 	let { data } = $props();
 
@@ -41,12 +41,7 @@
 </svelte:head>
 
 <section>
-	<a
-		href={resolve(`/mixes/${contest.id}`)}
-		class="sticky top-20 z-40 inline-flex w-fit items-center rounded-full border border-white/10 bg-zinc-950/85 px-4 py-2 text-sm text-zinc-300 shadow-lg shadow-black/20 backdrop-blur transition hover:border-white/20 hover:bg-zinc-900 hover:text-white"
-	>
-		← Back to mix
-	</a>
+	<StickyActionBar backHref={`/mixes/${contest.id}`} backLabel="Back to mix" />
 
 	<header class="mt-6 mb-8 sm:mt-10 sm:mb-10">
 		<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Results</p>
