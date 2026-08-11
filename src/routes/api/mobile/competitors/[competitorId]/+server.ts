@@ -1,6 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 
-import { auth } from '$lib/auth';
+import { requireOrganizerSession } from '$lib/server/auth-guard';
 import { prisma } from '$lib/prisma';
 
 type UpdateCompetitorBody = {
@@ -8,13 +8,7 @@ type UpdateCompetitorBody = {
 };
 
 export async function PATCH({ request, params }) {
-	const session = await auth.api.getSession({
-		headers: request.headers
-	});
-
-	if (!session) {
-		error(401, 'Not authenticated');
-	}
+	const session = await requireOrganizerSession(request);
 
 	let body: UpdateCompetitorBody;
 

@@ -1,19 +1,13 @@
-import { authClient } from './auth-client';
-
 const API_URL = 'https://martymix.co.uk';
 
 export async function authenticatedFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
-	const cookie = authClient.getCookie();
-
 	const response = await fetch(`${API_URL}${path}`, {
 		...options,
-
-		credentials: 'omit',
+		credentials: 'include',
 
 		headers: {
 			Accept: 'application/json',
-			...options.headers,
-			Cookie: cookie
+			...options.headers
 		}
 	});
 

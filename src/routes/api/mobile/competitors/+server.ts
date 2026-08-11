@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 
 import { prisma } from '$lib/prisma';
-import { auth } from '$lib/auth';
+import { requireOrganizerSession } from '$lib/server/auth-guard';
 
 type CreateCompetitorBody = {
 	name?: unknown;
@@ -12,13 +12,7 @@ type CreateCompetitorBody = {
 };
 
 export async function POST({ request }) {
-	const session = await auth.api.getSession({
-		headers: request.headers
-	});
-
-	if (!session) {
-		error(401, 'Not authenticated');
-	}
+	const session = await requireOrganizerSession(request);
 
 	let body: CreateCompetitorBody;
 
@@ -77,6 +71,7 @@ export async function POST({ request }) {
 			preferredName,
 			preferredLanguage,
 			email,
+			normalizedEmail: email,
 			country,
 			isActive: true,
 			ownerId: session.user.id

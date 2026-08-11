@@ -59,6 +59,8 @@ export const ModelName = {
   WorldCupParticipant: 'WorldCupParticipant',
   WorldCupBet: 'WorldCupBet',
   User: 'User',
+  OrganizerProfile: 'OrganizerProfile',
+  ParticipantProfile: 'ParticipantProfile',
   PushDevice: 'PushDevice',
   Session: 'Session',
   Account: 'Account',
@@ -116,8 +118,11 @@ export const CompetitorScalarFieldEnum = {
   greeting: 'greeting',
   isActive: 'isActive',
   email: 'email',
+  normalizedEmail: 'normalizedEmail',
   country: 'country',
   imageUrl: 'imageUrl',
+  participantProfileId: 'participantProfileId',
+  avatarHiddenAt: 'avatarHiddenAt',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -131,6 +136,7 @@ export const ContestCompetitorScalarFieldEnum = {
   contestId: 'contestId',
   competitorId: 'competitorId',
   votingOrder: 'votingOrder',
+  lastVotingReminderSentAt: 'lastVotingReminderSentAt',
   createdAt: 'createdAt'
 } as const
 
@@ -207,6 +213,29 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OrganizerProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  publicName: 'publicName',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizerProfileScalarFieldEnum = (typeof OrganizerProfileScalarFieldEnum)[keyof typeof OrganizerProfileScalarFieldEnum]
+
+
+export const ParticipantProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  displayName: 'displayName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ParticipantProfileScalarFieldEnum = (typeof ParticipantProfileScalarFieldEnum)[keyof typeof ParticipantProfileScalarFieldEnum]
 
 
 export const PushDeviceScalarFieldEnum = {

@@ -392,6 +392,8 @@ export const ModelName = {
   WorldCupParticipant: 'WorldCupParticipant',
   WorldCupBet: 'WorldCupBet',
   User: 'User',
+  OrganizerProfile: 'OrganizerProfile',
+  ParticipantProfile: 'ParticipantProfile',
   PushDevice: 'PushDevice',
   Session: 'Session',
   Account: 'Account',
@@ -411,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "contest" | "competitor" | "contestCompetitor" | "song" | "vote" | "worldCupParticipant" | "worldCupBet" | "user" | "pushDevice" | "session" | "account" | "verification"
+    modelProps: "contest" | "competitor" | "contestCompetitor" | "song" | "vote" | "worldCupParticipant" | "worldCupBet" | "user" | "organizerProfile" | "participantProfile" | "pushDevice" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1007,6 +1009,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    OrganizerProfile: {
+      payload: Prisma.$OrganizerProfilePayload<ExtArgs>
+      fields: Prisma.OrganizerProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OrganizerProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OrganizerProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.OrganizerProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OrganizerProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>
+        }
+        findMany: {
+          args: Prisma.OrganizerProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>[]
+        }
+        create: {
+          args: Prisma.OrganizerProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>
+        }
+        createMany: {
+          args: Prisma.OrganizerProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OrganizerProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>[]
+        }
+        delete: {
+          args: Prisma.OrganizerProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>
+        }
+        update: {
+          args: Prisma.OrganizerProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.OrganizerProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OrganizerProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OrganizerProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>[]
+        }
+        upsert: {
+          args: Prisma.OrganizerProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OrganizerProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.OrganizerProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOrganizerProfile>
+        }
+        groupBy: {
+          args: Prisma.OrganizerProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OrganizerProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OrganizerProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OrganizerProfileCountAggregateOutputType> | number
+        }
+      }
+    }
+    ParticipantProfile: {
+      payload: Prisma.$ParticipantProfilePayload<ExtArgs>
+      fields: Prisma.ParticipantProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ParticipantProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ParticipantProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.ParticipantProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ParticipantProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>
+        }
+        findMany: {
+          args: Prisma.ParticipantProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>[]
+        }
+        create: {
+          args: Prisma.ParticipantProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>
+        }
+        createMany: {
+          args: Prisma.ParticipantProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ParticipantProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>[]
+        }
+        delete: {
+          args: Prisma.ParticipantProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>
+        }
+        update: {
+          args: Prisma.ParticipantProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.ParticipantProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ParticipantProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ParticipantProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>[]
+        }
+        upsert: {
+          args: Prisma.ParticipantProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ParticipantProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.ParticipantProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateParticipantProfile>
+        }
+        groupBy: {
+          args: Prisma.ParticipantProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ParticipantProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ParticipantProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ParticipantProfileCountAggregateOutputType> | number
+        }
+      }
+    }
     PushDevice: {
       payload: Prisma.$PushDevicePayload<ExtArgs>
       fields: Prisma.PushDeviceFieldRefs
@@ -1377,8 +1527,11 @@ export const CompetitorScalarFieldEnum = {
   greeting: 'greeting',
   isActive: 'isActive',
   email: 'email',
+  normalizedEmail: 'normalizedEmail',
   country: 'country',
   imageUrl: 'imageUrl',
+  participantProfileId: 'participantProfileId',
+  avatarHiddenAt: 'avatarHiddenAt',
   ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1392,6 +1545,7 @@ export const ContestCompetitorScalarFieldEnum = {
   contestId: 'contestId',
   competitorId: 'competitorId',
   votingOrder: 'votingOrder',
+  lastVotingReminderSentAt: 'lastVotingReminderSentAt',
   createdAt: 'createdAt'
 } as const
 
@@ -1468,6 +1622,29 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const OrganizerProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  publicName: 'publicName',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrganizerProfileScalarFieldEnum = (typeof OrganizerProfileScalarFieldEnum)[keyof typeof OrganizerProfileScalarFieldEnum]
+
+
+export const ParticipantProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  displayName: 'displayName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ParticipantProfileScalarFieldEnum = (typeof ParticipantProfileScalarFieldEnum)[keyof typeof ParticipantProfileScalarFieldEnum]
 
 
 export const PushDeviceScalarFieldEnum = {
@@ -1823,6 +2000,8 @@ export type GlobalOmitConfig = {
   worldCupParticipant?: Prisma.WorldCupParticipantOmit
   worldCupBet?: Prisma.WorldCupBetOmit
   user?: Prisma.UserOmit
+  organizerProfile?: Prisma.OrganizerProfileOmit
+  participantProfile?: Prisma.ParticipantProfileOmit
   pushDevice?: Prisma.PushDeviceOmit
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit

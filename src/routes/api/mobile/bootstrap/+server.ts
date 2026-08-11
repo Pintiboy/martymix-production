@@ -1,16 +1,10 @@
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
-import { auth } from '$lib/auth';
 import { prisma } from '$lib/prisma';
+import { requireOrganizerSession } from '$lib/server/auth-guard';
 
 export async function GET({ request }) {
-	const session = await auth.api.getSession({
-		headers: request.headers
-	});
-
-	if (!session) {
-		error(401, 'Not authenticated');
-	}
+	const session = await requireOrganizerSession(request);
 
 	const userId = session.user.id;
 

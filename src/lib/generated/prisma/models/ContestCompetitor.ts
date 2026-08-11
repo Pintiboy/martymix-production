@@ -39,6 +39,7 @@ export type ContestCompetitorMinAggregateOutputType = {
   contestId: string | null
   competitorId: string | null
   votingOrder: number | null
+  lastVotingReminderSentAt: Date | null
   createdAt: Date | null
 }
 
@@ -47,6 +48,7 @@ export type ContestCompetitorMaxAggregateOutputType = {
   contestId: string | null
   competitorId: string | null
   votingOrder: number | null
+  lastVotingReminderSentAt: Date | null
   createdAt: Date | null
 }
 
@@ -55,6 +57,7 @@ export type ContestCompetitorCountAggregateOutputType = {
   contestId: number
   competitorId: number
   votingOrder: number
+  lastVotingReminderSentAt: number
   createdAt: number
   _all: number
 }
@@ -73,6 +76,7 @@ export type ContestCompetitorMinAggregateInputType = {
   contestId?: true
   competitorId?: true
   votingOrder?: true
+  lastVotingReminderSentAt?: true
   createdAt?: true
 }
 
@@ -81,6 +85,7 @@ export type ContestCompetitorMaxAggregateInputType = {
   contestId?: true
   competitorId?: true
   votingOrder?: true
+  lastVotingReminderSentAt?: true
   createdAt?: true
 }
 
@@ -89,6 +94,7 @@ export type ContestCompetitorCountAggregateInputType = {
   contestId?: true
   competitorId?: true
   votingOrder?: true
+  lastVotingReminderSentAt?: true
   createdAt?: true
   _all?: true
 }
@@ -184,6 +190,7 @@ export type ContestCompetitorGroupByOutputType = {
   contestId: string
   competitorId: string
   votingOrder: number
+  lastVotingReminderSentAt: Date | null
   createdAt: Date
   _count: ContestCompetitorCountAggregateOutputType | null
   _avg: ContestCompetitorAvgAggregateOutputType | null
@@ -215,6 +222,7 @@ export type ContestCompetitorWhereInput = {
   contestId?: Prisma.StringFilter<"ContestCompetitor"> | string
   competitorId?: Prisma.StringFilter<"ContestCompetitor"> | string
   votingOrder?: Prisma.IntFilter<"ContestCompetitor"> | number
+  lastVotingReminderSentAt?: Prisma.DateTimeNullableFilter<"ContestCompetitor"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ContestCompetitor"> | Date | string
   contest?: Prisma.XOR<Prisma.ContestScalarRelationFilter, Prisma.ContestWhereInput>
   competitor?: Prisma.XOR<Prisma.CompetitorScalarRelationFilter, Prisma.CompetitorWhereInput>
@@ -225,6 +233,7 @@ export type ContestCompetitorOrderByWithRelationInput = {
   contestId?: Prisma.SortOrder
   competitorId?: Prisma.SortOrder
   votingOrder?: Prisma.SortOrder
+  lastVotingReminderSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   contest?: Prisma.ContestOrderByWithRelationInput
   competitor?: Prisma.CompetitorOrderByWithRelationInput
@@ -240,6 +249,7 @@ export type ContestCompetitorWhereUniqueInput = Prisma.AtLeast<{
   contestId?: Prisma.StringFilter<"ContestCompetitor"> | string
   competitorId?: Prisma.StringFilter<"ContestCompetitor"> | string
   votingOrder?: Prisma.IntFilter<"ContestCompetitor"> | number
+  lastVotingReminderSentAt?: Prisma.DateTimeNullableFilter<"ContestCompetitor"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ContestCompetitor"> | Date | string
   contest?: Prisma.XOR<Prisma.ContestScalarRelationFilter, Prisma.ContestWhereInput>
   competitor?: Prisma.XOR<Prisma.CompetitorScalarRelationFilter, Prisma.CompetitorWhereInput>
@@ -250,6 +260,7 @@ export type ContestCompetitorOrderByWithAggregationInput = {
   contestId?: Prisma.SortOrder
   competitorId?: Prisma.SortOrder
   votingOrder?: Prisma.SortOrder
+  lastVotingReminderSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ContestCompetitorCountOrderByAggregateInput
   _avg?: Prisma.ContestCompetitorAvgOrderByAggregateInput
@@ -266,12 +277,14 @@ export type ContestCompetitorScalarWhereWithAggregatesInput = {
   contestId?: Prisma.StringWithAggregatesFilter<"ContestCompetitor"> | string
   competitorId?: Prisma.StringWithAggregatesFilter<"ContestCompetitor"> | string
   votingOrder?: Prisma.IntWithAggregatesFilter<"ContestCompetitor"> | number
+  lastVotingReminderSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ContestCompetitor"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ContestCompetitor"> | Date | string
 }
 
 export type ContestCompetitorCreateInput = {
   id?: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
   contest: Prisma.ContestCreateNestedOneWithoutCompetitorsInput
   competitor: Prisma.CompetitorCreateNestedOneWithoutContestsInput
@@ -282,12 +295,14 @@ export type ContestCompetitorUncheckedCreateInput = {
   contestId: string
   competitorId: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type ContestCompetitorUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contest?: Prisma.ContestUpdateOneRequiredWithoutCompetitorsNestedInput
   competitor?: Prisma.CompetitorUpdateOneRequiredWithoutContestsNestedInput
@@ -298,6 +313,7 @@ export type ContestCompetitorUncheckedUpdateInput = {
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   competitorId?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -306,12 +322,14 @@ export type ContestCompetitorCreateManyInput = {
   contestId: string
   competitorId: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type ContestCompetitorUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -320,6 +338,7 @@ export type ContestCompetitorUncheckedUpdateManyInput = {
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   competitorId?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -348,6 +367,7 @@ export type ContestCompetitorCountOrderByAggregateInput = {
   contestId?: Prisma.SortOrder
   competitorId?: Prisma.SortOrder
   votingOrder?: Prisma.SortOrder
+  lastVotingReminderSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -360,6 +380,7 @@ export type ContestCompetitorMaxOrderByAggregateInput = {
   contestId?: Prisma.SortOrder
   competitorId?: Prisma.SortOrder
   votingOrder?: Prisma.SortOrder
+  lastVotingReminderSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -368,6 +389,7 @@ export type ContestCompetitorMinOrderByAggregateInput = {
   contestId?: Prisma.SortOrder
   competitorId?: Prisma.SortOrder
   votingOrder?: Prisma.SortOrder
+  lastVotingReminderSentAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -470,6 +492,7 @@ export type IntFieldUpdateOperationsInput = {
 export type ContestCompetitorCreateWithoutContestInput = {
   id?: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
   competitor: Prisma.CompetitorCreateNestedOneWithoutContestsInput
 }
@@ -478,6 +501,7 @@ export type ContestCompetitorUncheckedCreateWithoutContestInput = {
   id?: string
   competitorId: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -515,12 +539,14 @@ export type ContestCompetitorScalarWhereInput = {
   contestId?: Prisma.StringFilter<"ContestCompetitor"> | string
   competitorId?: Prisma.StringFilter<"ContestCompetitor"> | string
   votingOrder?: Prisma.IntFilter<"ContestCompetitor"> | number
+  lastVotingReminderSentAt?: Prisma.DateTimeNullableFilter<"ContestCompetitor"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ContestCompetitor"> | Date | string
 }
 
 export type ContestCompetitorCreateWithoutCompetitorInput = {
   id?: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
   contest: Prisma.ContestCreateNestedOneWithoutCompetitorsInput
 }
@@ -529,6 +555,7 @@ export type ContestCompetitorUncheckedCreateWithoutCompetitorInput = {
   id?: string
   contestId: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -562,12 +589,14 @@ export type ContestCompetitorCreateManyContestInput = {
   id?: string
   competitorId: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type ContestCompetitorUpdateWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   competitor?: Prisma.CompetitorUpdateOneRequiredWithoutContestsNestedInput
 }
@@ -576,6 +605,7 @@ export type ContestCompetitorUncheckedUpdateWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   competitorId?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -583,6 +613,7 @@ export type ContestCompetitorUncheckedUpdateManyWithoutContestInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   competitorId?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -590,12 +621,14 @@ export type ContestCompetitorCreateManyCompetitorInput = {
   id?: string
   contestId: string
   votingOrder: number
+  lastVotingReminderSentAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type ContestCompetitorUpdateWithoutCompetitorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contest?: Prisma.ContestUpdateOneRequiredWithoutCompetitorsNestedInput
 }
@@ -604,6 +637,7 @@ export type ContestCompetitorUncheckedUpdateWithoutCompetitorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -611,6 +645,7 @@ export type ContestCompetitorUncheckedUpdateManyWithoutCompetitorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   contestId?: Prisma.StringFieldUpdateOperationsInput | string
   votingOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  lastVotingReminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -621,6 +656,7 @@ export type ContestCompetitorSelect<ExtArgs extends runtime.Types.Extensions.Int
   contestId?: boolean
   competitorId?: boolean
   votingOrder?: boolean
+  lastVotingReminderSentAt?: boolean
   createdAt?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   competitor?: boolean | Prisma.CompetitorDefaultArgs<ExtArgs>
@@ -631,6 +667,7 @@ export type ContestCompetitorSelectCreateManyAndReturn<ExtArgs extends runtime.T
   contestId?: boolean
   competitorId?: boolean
   votingOrder?: boolean
+  lastVotingReminderSentAt?: boolean
   createdAt?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   competitor?: boolean | Prisma.CompetitorDefaultArgs<ExtArgs>
@@ -641,6 +678,7 @@ export type ContestCompetitorSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   contestId?: boolean
   competitorId?: boolean
   votingOrder?: boolean
+  lastVotingReminderSentAt?: boolean
   createdAt?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   competitor?: boolean | Prisma.CompetitorDefaultArgs<ExtArgs>
@@ -651,10 +689,11 @@ export type ContestCompetitorSelectScalar = {
   contestId?: boolean
   competitorId?: boolean
   votingOrder?: boolean
+  lastVotingReminderSentAt?: boolean
   createdAt?: boolean
 }
 
-export type ContestCompetitorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contestId" | "competitorId" | "votingOrder" | "createdAt", ExtArgs["result"]["contestCompetitor"]>
+export type ContestCompetitorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contestId" | "competitorId" | "votingOrder" | "lastVotingReminderSentAt" | "createdAt", ExtArgs["result"]["contestCompetitor"]>
 export type ContestCompetitorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   competitor?: boolean | Prisma.CompetitorDefaultArgs<ExtArgs>
@@ -679,6 +718,7 @@ export type $ContestCompetitorPayload<ExtArgs extends runtime.Types.Extensions.I
     contestId: string
     competitorId: string
     votingOrder: number
+    lastVotingReminderSentAt: Date | null
     createdAt: Date
   }, ExtArgs["result"]["contestCompetitor"]>
   composites: {}
@@ -1109,6 +1149,7 @@ export interface ContestCompetitorFieldRefs {
   readonly contestId: Prisma.FieldRef<"ContestCompetitor", 'String'>
   readonly competitorId: Prisma.FieldRef<"ContestCompetitor", 'String'>
   readonly votingOrder: Prisma.FieldRef<"ContestCompetitor", 'Int'>
+  readonly lastVotingReminderSentAt: Prisma.FieldRef<"ContestCompetitor", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"ContestCompetitor", 'DateTime'>
 }
     

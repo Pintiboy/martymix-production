@@ -22,7 +22,9 @@ export const actions = {
 		const formData = await request.formData();
 
 		const name = String(formData.get('name') ?? '').trim();
-		const email = String(formData.get('email') ?? '').trim();
+		const email = String(formData.get('email') ?? '')
+			.trim()
+			.toLowerCase();
 		const country = String(formData.get('country') ?? '').trim();
 
 		const preferredName = String(formData.get('preferredName') ?? '').trim();
@@ -54,6 +56,7 @@ export const actions = {
 				preferredName: preferredName || null,
 				preferredLanguage,
 				email: email || null,
+				normalizedEmail: email || null,
 				country: country || null,
 				ownerId: user.id
 			}
@@ -170,7 +173,9 @@ export const actions = {
 
 		const participantId = String(formData.get('participantId') ?? '').trim();
 		const name = String(formData.get('name') ?? '').trim();
-		const email = String(formData.get('email') ?? '').trim();
+		const email = String(formData.get('email') ?? '')
+			.trim()
+			.toLowerCase();
 		const country = String(formData.get('country') ?? '').trim();
 
 		const preferredName = String(formData.get('preferredName') ?? '').trim();
@@ -198,6 +203,7 @@ export const actions = {
 				preferredName: preferredName || null,
 				preferredLanguage,
 				email: email || null,
+				normalizedEmail: email || null,
 				country: country || null
 			}
 		});

@@ -235,6 +235,8 @@ export type UserWhereInput = {
   contests?: Prisma.ContestListRelationFilter
   competitors?: Prisma.CompetitorListRelationFilter
   pushDevices?: Prisma.PushDeviceListRelationFilter
+  organizerProfile?: Prisma.XOR<Prisma.OrganizerProfileNullableScalarRelationFilter, Prisma.OrganizerProfileWhereInput> | null
+  participantProfile?: Prisma.XOR<Prisma.ParticipantProfileNullableScalarRelationFilter, Prisma.ParticipantProfileWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -254,6 +256,8 @@ export type UserOrderByWithRelationInput = {
   contests?: Prisma.ContestOrderByRelationAggregateInput
   competitors?: Prisma.CompetitorOrderByRelationAggregateInput
   pushDevices?: Prisma.PushDeviceOrderByRelationAggregateInput
+  organizerProfile?: Prisma.OrganizerProfileOrderByWithRelationInput
+  participantProfile?: Prisma.ParticipantProfileOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -276,6 +280,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   contests?: Prisma.ContestListRelationFilter
   competitors?: Prisma.CompetitorListRelationFilter
   pushDevices?: Prisma.PushDeviceListRelationFilter
+  organizerProfile?: Prisma.XOR<Prisma.OrganizerProfileNullableScalarRelationFilter, Prisma.OrganizerProfileWhereInput> | null
+  participantProfile?: Prisma.XOR<Prisma.ParticipantProfileNullableScalarRelationFilter, Prisma.ParticipantProfileWhereInput> | null
 }, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -329,6 +335,8 @@ export type UserCreateInput = {
   contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -348,6 +356,8 @@ export type UserUncheckedCreateInput = {
   contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -367,6 +377,8 @@ export type UserUpdateInput = {
   contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -386,6 +398,8 @@ export type UserUncheckedUpdateInput = {
   contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -518,6 +532,34 @@ export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
 }
 
+export type UserCreateNestedOneWithoutOrganizerProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizerProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOrganizerProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOrganizerProfileInput
+  upsert?: Prisma.UserUpsertWithoutOrganizerProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOrganizerProfileInput, Prisma.UserUpdateWithoutOrganizerProfileInput>, Prisma.UserUncheckedUpdateWithoutOrganizerProfileInput>
+}
+
+export type UserCreateNestedOneWithoutParticipantProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutParticipantProfileInput, Prisma.UserUncheckedCreateWithoutParticipantProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutParticipantProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutParticipantProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutParticipantProfileInput, Prisma.UserUncheckedCreateWithoutParticipantProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutParticipantProfileInput
+  upsert?: Prisma.UserUpsertWithoutParticipantProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutParticipantProfileInput, Prisma.UserUpdateWithoutParticipantProfileInput>, Prisma.UserUncheckedUpdateWithoutParticipantProfileInput>
+}
+
 export type UserCreateNestedOneWithoutPushDevicesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPushDevicesInput, Prisma.UserUncheckedCreateWithoutPushDevicesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushDevicesInput
@@ -576,6 +618,8 @@ export type UserCreateWithoutContestsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContestsInput = {
@@ -594,6 +638,8 @@ export type UserUncheckedCreateWithoutContestsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContestsInput = {
@@ -628,6 +674,8 @@ export type UserUpdateWithoutContestsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContestsInput = {
@@ -646,6 +694,8 @@ export type UserUncheckedUpdateWithoutContestsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCompetitorsInput = {
@@ -664,6 +714,8 @@ export type UserCreateWithoutCompetitorsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCompetitorsInput = {
@@ -682,6 +734,8 @@ export type UserUncheckedCreateWithoutCompetitorsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCompetitorsInput = {
@@ -716,6 +770,8 @@ export type UserUpdateWithoutCompetitorsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCompetitorsInput = {
@@ -734,6 +790,200 @@ export type UserUncheckedUpdateWithoutCompetitorsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutOrganizerProfileInput = {
+  id: string
+  name: string
+  username?: string | null
+  displayUsername?: string | null
+  email: string
+  language?: $Enums.Language
+  role?: $Enums.UserRole
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
+  competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
+  pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutOrganizerProfileInput = {
+  id: string
+  name: string
+  username?: string | null
+  displayUsername?: string | null
+  email: string
+  language?: $Enums.Language
+  role?: $Enums.UserRole
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
+  competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
+  pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutOrganizerProfileInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
+}
+
+export type UserUpsertWithoutOrganizerProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOrganizerProfileInput, Prisma.UserUncheckedUpdateWithoutOrganizerProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOrganizerProfileInput, Prisma.UserUncheckedCreateWithoutOrganizerProfileInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOrganizerProfileInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOrganizerProfileInput, Prisma.UserUncheckedUpdateWithoutOrganizerProfileInput>
+}
+
+export type UserUpdateWithoutOrganizerProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
+  competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
+  pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOrganizerProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
+  competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
+  pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutParticipantProfileInput = {
+  id: string
+  name: string
+  username?: string | null
+  displayUsername?: string | null
+  email: string
+  language?: $Enums.Language
+  role?: $Enums.UserRole
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
+  competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
+  pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutParticipantProfileInput = {
+  id: string
+  name: string
+  username?: string | null
+  displayUsername?: string | null
+  email: string
+  language?: $Enums.Language
+  role?: $Enums.UserRole
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
+  competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
+  pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutParticipantProfileInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutParticipantProfileInput, Prisma.UserUncheckedCreateWithoutParticipantProfileInput>
+}
+
+export type UserUpsertWithoutParticipantProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutParticipantProfileInput, Prisma.UserUncheckedUpdateWithoutParticipantProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutParticipantProfileInput, Prisma.UserUncheckedCreateWithoutParticipantProfileInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutParticipantProfileInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutParticipantProfileInput, Prisma.UserUncheckedUpdateWithoutParticipantProfileInput>
+}
+
+export type UserUpdateWithoutParticipantProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
+  competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
+  pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutParticipantProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.EnumLanguageFieldUpdateOperationsInput | $Enums.Language
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
+  competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
+  pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushDevicesInput = {
@@ -752,6 +1002,8 @@ export type UserCreateWithoutPushDevicesInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushDevicesInput = {
@@ -770,6 +1022,8 @@ export type UserUncheckedCreateWithoutPushDevicesInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPushDevicesInput = {
@@ -804,6 +1058,8 @@ export type UserUpdateWithoutPushDevicesInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushDevicesInput = {
@@ -822,6 +1078,8 @@ export type UserUncheckedUpdateWithoutPushDevicesInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -840,6 +1098,8 @@ export type UserCreateWithoutSessionsInput = {
   contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -858,6 +1118,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -892,6 +1154,8 @@ export type UserUpdateWithoutSessionsInput = {
   contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -910,6 +1174,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -928,6 +1194,8 @@ export type UserCreateWithoutAccountsInput = {
   contests?: Prisma.ContestCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -946,6 +1214,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   contests?: Prisma.ContestUncheckedCreateNestedManyWithoutOwnerInput
   competitors?: Prisma.CompetitorUncheckedCreateNestedManyWithoutOwnerInput
   pushDevices?: Prisma.PushDeviceUncheckedCreateNestedManyWithoutUserInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedCreateNestedOneWithoutUserInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -980,6 +1250,8 @@ export type UserUpdateWithoutAccountsInput = {
   contests?: Prisma.ContestUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -998,6 +1270,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   contests?: Prisma.ContestUncheckedUpdateManyWithoutOwnerNestedInput
   competitors?: Prisma.CompetitorUncheckedUpdateManyWithoutOwnerNestedInput
   pushDevices?: Prisma.PushDeviceUncheckedUpdateManyWithoutUserNestedInput
+  organizerProfile?: Prisma.OrganizerProfileUncheckedUpdateOneWithoutUserNestedInput
+  participantProfile?: Prisma.ParticipantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -1084,6 +1358,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   contests?: boolean | Prisma.User$contestsArgs<ExtArgs>
   competitors?: boolean | Prisma.User$competitorsArgs<ExtArgs>
   pushDevices?: boolean | Prisma.User$pushDevicesArgs<ExtArgs>
+  organizerProfile?: boolean | Prisma.User$organizerProfileArgs<ExtArgs>
+  participantProfile?: boolean | Prisma.User$participantProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1136,6 +1412,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   contests?: boolean | Prisma.User$contestsArgs<ExtArgs>
   competitors?: boolean | Prisma.User$competitorsArgs<ExtArgs>
   pushDevices?: boolean | Prisma.User$pushDevicesArgs<ExtArgs>
+  organizerProfile?: boolean | Prisma.User$organizerProfileArgs<ExtArgs>
+  participantProfile?: boolean | Prisma.User$participantProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1149,6 +1427,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     contests: Prisma.$ContestPayload<ExtArgs>[]
     competitors: Prisma.$CompetitorPayload<ExtArgs>[]
     pushDevices: Prisma.$PushDevicePayload<ExtArgs>[]
+    organizerProfile: Prisma.$OrganizerProfilePayload<ExtArgs> | null
+    participantProfile: Prisma.$ParticipantProfilePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1561,6 +1841,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   contests<T extends Prisma.User$contestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   competitors<T extends Prisma.User$competitorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$competitorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompetitorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pushDevices<T extends Prisma.User$pushDevicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushDevicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  organizerProfile<T extends Prisma.User$organizerProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$organizerProfileArgs<ExtArgs>>): Prisma.Prisma__OrganizerProfileClient<runtime.Types.Result.GetResult<Prisma.$OrganizerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  participantProfile<T extends Prisma.User$participantProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$participantProfileArgs<ExtArgs>>): Prisma.Prisma__ParticipantProfileClient<runtime.Types.Result.GetResult<Prisma.$ParticipantProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2111,6 +2393,44 @@ export type User$pushDevicesArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.PushDeviceScalarFieldEnum | Prisma.PushDeviceScalarFieldEnum[]
+}
+
+/**
+ * User.organizerProfile
+ */
+export type User$organizerProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrganizerProfile
+   */
+  select?: Prisma.OrganizerProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrganizerProfile
+   */
+  omit?: Prisma.OrganizerProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrganizerProfileInclude<ExtArgs> | null
+  where?: Prisma.OrganizerProfileWhereInput
+}
+
+/**
+ * User.participantProfile
+ */
+export type User$participantProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ParticipantProfile
+   */
+  select?: Prisma.ParticipantProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ParticipantProfile
+   */
+  omit?: Prisma.ParticipantProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ParticipantProfileInclude<ExtArgs> | null
+  where?: Prisma.ParticipantProfileWhereInput
 }
 
 /**

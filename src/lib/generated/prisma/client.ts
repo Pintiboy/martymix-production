@@ -82,6 +82,16 @@ export type WorldCupBet = Prisma.WorldCupBetModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model OrganizerProfile
+ * 
+ */
+export type OrganizerProfile = Prisma.OrganizerProfileModel
+/**
+ * Model ParticipantProfile
+ * 
+ */
+export type ParticipantProfile = Prisma.ParticipantProfileModel
+/**
  * Model PushDevice
  * 
  */
