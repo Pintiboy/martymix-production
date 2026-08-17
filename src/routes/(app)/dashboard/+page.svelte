@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import Plus from '@lucide/svelte/icons/plus';
 	let { data } = $props();
 </script>
 
@@ -8,11 +9,19 @@
 </svelte:head>
 
 <section class="mx-auto max-w-6xl">
-	<div class="mb-10 flex items-end justify-between gap-6">
+	<div class="mb-10 flex flex-col items-start gap-5 sm:flex-row sm:items-end sm:justify-between">
 		<div>
 			<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Contests</p>
 			<h1 class="text-4xl font-bold tracking-tight">All competitions</h1>
 		</div>
+
+		<a
+			href={resolve('/mixes/new')}
+			class="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:scale-[1.02]"
+		>
+			<Plus class="h-4 w-4" />
+			New competition
+		</a>
 	</div>
 
 	<div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -21,10 +30,22 @@
 				href={resolve(`/mixes/${contest.id}`)}
 				class="group rounded-3xl border border-white/10 bg-white/3 p-6 transition hover:-translate-y-1 hover:border-fuchsia-300/40 hover:bg-white/6"
 			>
-				<p class="mb-4 text-xs tracking-[0.25em] text-zinc-500 uppercase">
-					{contest._count.songs}
-					{contest._count.songs === 1 ? 'song' : 'songs'}
-				</p>
+				<div
+					class="mb-4 flex flex-wrap items-center gap-2 text-xs tracking-[0.25em] text-zinc-500 uppercase"
+				>
+					<span>
+						{contest._count.songs}
+						{contest._count.songs === 1 ? 'song' : 'songs'}
+					</span>
+
+					{#if contest.status === 'VOTING_OPEN'}
+						<span class="text-fuchsia-300/50">•</span>
+						<span class="text-fuchsia-200">
+							{contest.votedCount}
+							{contest.votedCount === 1 ? 'vote' : 'votes'}
+						</span>
+					{/if}
+				</div>
 
 				<h2 class="text-2xl font-semibold tracking-tight group-hover:text-fuchsia-200">
 					{contest.theme}

@@ -7,6 +7,7 @@ import { ContestStatus } from '$lib/generated/prisma/client';
 import { parseBritishDeadlineDate } from '$lib/deadlines';
 
 const VALID_RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+const REMINDER_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 function createFormValues(rankings: { rank: number; songId: string }[]) {
 	return Object.fromEntries(rankings.map(({ rank, songId }) => [`rank-${rank}`, songId]));
@@ -26,6 +27,8 @@ export const load = async ({ params, locals }) => {
 			status: true,
 			testMode: true,
 			testEmailRecipient: true,
+			votingInvitedAt: true,
+			votingClosesAt: true,
 
 			songs: {
 				select: {
@@ -53,6 +56,7 @@ export const load = async ({ params, locals }) => {
 					id: true,
 					competitorId: true,
 					votingOrder: true,
+					lastVotingReminderSentAt: true,
 					competitor: {
 						select: {
 							id: true,
@@ -108,6 +112,10 @@ export const load = async ({ params, locals }) => {
 
 		return {
 			contestCompetitorId: contestCompetitor.id,
+			reminderAvailableAt:
+				!contest.testMode && contestCompetitor.lastVotingReminderSentAt
+					? new Date(contestCompetitor.lastVotingReminderSentAt.getTime() + REMINDER_COOLDOWN_MS)
+					: null,
 
 			competitor: {
 				id: contestCompetitor.competitor.id,
@@ -136,7 +144,9 @@ export const load = async ({ params, locals }) => {
 			id: contest.id,
 			theme: contest.theme,
 			status: contest.status,
-			testMode: contest.testMode
+			testMode: contest.testMode,
+			votingInvitedAt: contest.votingInvitedAt,
+			votingClosesAt: contest.votingClosesAt
 		},
 		testRecipientEmail: contest.testEmailRecipient?.trim() || user.email,
 
@@ -376,7 +386,8 @@ export const actions = {
 				contest: {
 					select: {
 						id: true,
-						status: true
+						status: true,
+						testMode: true
 					}
 				},
 				competitor: {
@@ -405,7 +416,7 @@ export const actions = {
 			});
 		}
 
-		if (!contestCompetitor.competitor.email?.trim()) {
+		if (!contestCompetitor.contest.testMode && !contestCompetitor.competitor.email?.trim()) {
 			return fail(400, {
 				action: 'sendReminder',
 				error: 'This contributor does not have an email address.',
@@ -428,6 +439,32 @@ export const actions = {
 			});
 		}
 
+		const reminderSentAt = contestCompetitor.contest.testMode ? null : new Date();
+
+		if (reminderSentAt) {
+			const cooldownCutoff = new Date(reminderSentAt.getTime() - REMINDER_COOLDOWN_MS);
+			const reminderClaim = await prisma.contestCompetitor.updateMany({
+				where: {
+					id: contestCompetitor.id,
+					OR: [
+						{ lastVotingReminderSentAt: null },
+						{ lastVotingReminderSentAt: { lte: cooldownCutoff } }
+					]
+				},
+				data: {
+					lastVotingReminderSentAt: reminderSentAt
+				}
+			});
+
+			if (reminderClaim.count !== 1) {
+				return fail(429, {
+					action: 'sendReminder',
+					error: 'A reminder for this contributor can only be sent once every 24 hours.',
+					contestCompetitorId
+				});
+			}
+		}
+
 		try {
 			const delivery = await sendVotingReminder({
 				contestId: contestCompetitor.contest.id,
@@ -447,6 +484,22 @@ export const actions = {
 					contestCompetitor.competitor.preferredName || contestCompetitor.competitor.name
 			};
 		} catch (caughtError) {
+			if (reminderSentAt) {
+				try {
+					await prisma.contestCompetitor.updateMany({
+						where: {
+							id: contestCompetitor.id,
+							lastVotingReminderSentAt: reminderSentAt
+						},
+						data: {
+							lastVotingReminderSentAt: null
+						}
+					});
+				} catch (releaseError) {
+					console.error('Could not release voting reminder cooldown:', releaseError);
+				}
+			}
+
 			console.error('Could not send voting reminder:', caughtError);
 
 			return fail(500, {

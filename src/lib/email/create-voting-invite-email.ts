@@ -11,6 +11,7 @@ type Args = {
 	competitorName: string;
 	mixTheme: string;
 	contestType: ContestType;
+	isReminder?: boolean;
 
 	voteUrl: string;
 	logoUrl: string;
@@ -45,6 +46,19 @@ const copy = {
 	EN: {
 		subject: (brandName: string, theme: string) =>
 			`${brandName}: Voting is now open for "${theme}"`,
+		reminderSubject: (brandName: string, theme: string) =>
+			`${brandName} Reminder: Cast your votes for "${theme}"`,
+		reminderDays: (days: number) => {
+			const timeLeft = days === 1 ? 'Only 1 day' : `Only ${days} days`;
+
+			if (days <= 3) return `${timeLeft} left to vote — now's the time! ⏰`;
+			if (days <= 10)
+				return `There are ${days} days left to vote — plenty of time, but don't leave it too late. 🙂`;
+			if (days <= 20)
+				return `You still have ${days} days to vote — enjoy the playlist and take your time. 🎶`;
+
+			return `You still have ${days} days to vote — lots of time to discover your favourites. 🎧`;
+		},
 
 		defaultGreeting: 'Hello',
 		intro: 'The songs are in, the playlist is ready and voting has officially started! 🎉',
@@ -100,6 +114,19 @@ const copy = {
 	DE: {
 		subject: (brandName: string, theme: string) =>
 			`${brandName}: Die Abstimmung für „${theme}“ ist eröffnet`,
+		reminderSubject: (brandName: string, theme: string) =>
+			`${brandName} Erinnerung: Jetzt für „${theme}“ abstimmen`,
+		reminderDays: (days: number) => {
+			const timeLeft = days === 1 ? 'Nur noch 1 Tag' : `Nur noch ${days} Tage`;
+
+			if (days <= 3) return `${timeLeft} zum Abstimmen — jetzt wird es Zeit! ⏰`;
+			if (days <= 10)
+				return `Noch ${days} Tage bis zum Ende der Abstimmung — genug Zeit, aber schieb es nicht zu lange auf. 🙂`;
+			if (days <= 20)
+				return `Du hast noch ${days} Tage zum Abstimmen — genieß die Playlist und nimm dir Zeit. 🎶`;
+
+			return `Du hast noch ${days} Tage zum Abstimmen — viel Zeit, um deine Favoriten zu entdecken. 🎧`;
+		},
 
 		defaultGreeting: 'Hallo',
 		intro: 'Alle Songs sind da, die Playlist steht und die Abstimmung ist offiziell eröffnet! 🎉',
@@ -210,6 +237,10 @@ function formatDeadline(date: Date, language: Language, timeZone: string) {
 	}).format(date);
 }
 
+function daysUntil(date: Date) {
+	return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 86_400_000));
+}
+
 function createPlaylistCard({
 	name,
 	url,
@@ -301,6 +332,7 @@ export function createVotingInviteEmail({
 	customText,
 	mixTheme,
 	contestType,
+	isReminder = false,
 	voteUrl,
 	logoUrl,
 	votingClosesAt,
@@ -323,7 +355,12 @@ export function createVotingInviteEmail({
 	const customTextHtml = customText?.trim() ? renderEmailMarkdown(customText) : '';
 
 	const deadline = escapeHtml(formatDeadline(votingClosesAt, language, timeZone));
-	const subject = t.subject(brandName, mixTheme);
+	const subject = isReminder
+		? t.reminderSubject(brandName, mixTheme)
+		: t.subject(brandName, mixTheme);
+	const reminderHtml = isReminder
+		? `<p style="margin:16px 0 0;font-size:17px;line-height:1.6;font-weight:700;color:#f0abfc;">${escapeHtml(t.reminderDays(daysUntil(votingClosesAt)))}</p>`
+		: '';
 
 	const songsHtml = songs
 		.map(
@@ -485,6 +522,8 @@ export function createVotingInviteEmail({
 							>
 								${safeGreeting} ${safeName} 👋
 							</h1>
+
+							${reminderHtml}
 							
 							<p
 								style="

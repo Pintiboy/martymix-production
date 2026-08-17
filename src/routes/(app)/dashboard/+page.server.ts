@@ -19,12 +19,20 @@ export const load = async ({ locals }) => {
 				select: {
 					songs: true
 				}
+			},
+			votes: {
+				select: {
+					voterId: true
+				}
 			}
 		}
 	});
 
 	return {
 		user,
-		contests
+		contests: contests.map(({ votes, ...contest }) => ({
+			...contest,
+			votedCount: new Set(votes.map((vote) => vote.voterId)).size
+		}))
 	};
 };

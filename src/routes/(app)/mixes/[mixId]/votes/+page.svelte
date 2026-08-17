@@ -16,8 +16,11 @@
 	import Modal from '$lib/components/ui/modal/Modal.svelte';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
+	import { formatBritishDate } from '$lib/helpers';
 
 	let { data, form } = $props();
+
+	const REMINDER_TOAST_DURATION_MS = 8_000;
 
 	let isOpenVotingModalOpen = $state(false);
 
@@ -29,6 +32,7 @@
 	let isSaving = $state(false);
 	let isDeleting = $state(false);
 	let sendingReminderFor = $state<string | null>(null);
+	let reminderClock = $state(Date.now());
 	let votingDeadline = $state('');
 
 	function dateInWeeks(weeks: number) {
@@ -74,6 +78,23 @@
 		return `${window.location.origin}${resolve(`/vote/${contestCompetitorId}`)}`;
 	}
 
+	function isReminderOnCooldown(row: (typeof data.rows)[number]) {
+		return Boolean(
+			row.reminderAvailableAt && new Date(row.reminderAvailableAt).getTime() > reminderClock
+		);
+	}
+
+	function reminderButtonTitle(row: (typeof data.rows)[number]) {
+		if (!isReminderOnCooldown(row) || !row.reminderAvailableAt) return 'Send reminder';
+
+		const availableAt = new Intl.DateTimeFormat('en-GB', {
+			dateStyle: 'medium',
+			timeStyle: 'short'
+		}).format(new Date(row.reminderAvailableAt));
+
+		return `Reminder available again ${availableAt}.`;
+	}
+
 	async function copyVotingLink(contestCompetitorId: string) {
 		try {
 			await navigator.clipboard.writeText(getVotingLink(contestCompetitorId));
@@ -103,18 +124,20 @@
 
 			return async ({ result, update }) => {
 				try {
-					await update({ reset: false, invalidateAll: false });
+					await update({ reset: false });
 
 					if (result.type === 'success') {
 						const name = row.competitor.preferredName || row.competitor.name;
-						toast.success(`Reminder email sent to ${name}.`);
+						toast.success(`Reminder email sent to ${name}.`, {
+							duration: REMINDER_TOAST_DURATION_MS
+						});
 					} else {
 						const message =
 							result.type === 'failure' && result.data && 'error' in result.data
 								? String(result.data.error)
 								: 'The reminder email could not be sent.';
 
-						toast.error(message);
+						toast.error(message, { duration: REMINDER_TOAST_DURATION_MS });
 					}
 				} finally {
 					sendingReminderFor = null;
@@ -165,6 +188,14 @@
 	}
 
 	$effect(() => {
+		const interval = window.setInterval(() => {
+			reminderClock = Date.now();
+		}, 60_000);
+
+		return () => window.clearInterval(interval);
+	});
+
+	$effect(() => {
 		if (
 			form?.action === 'save' &&
 			form?.error &&
@@ -190,7 +221,10 @@
 	<StickyActionBar backHref={`/mixes/${data.contest.id}`} backLabel="Back to mix" />
 
 	<header
-		class="mt-6 mb-8 flex flex-col gap-5 sm:mt-10 sm:mb-10 md:flex-row md:items-end md:justify-between"
+		class={[
+			'mt-6 flex flex-col gap-5 sm:mt-10 md:flex-row md:items-end md:justify-between',
+			data.contest.status === 'VOTING_OPEN' ? 'mb-4 sm:mb-5' : 'mb-8 sm:mb-10'
+		]}
 	>
 		<div>
 			<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Votes</p>
@@ -215,21 +249,43 @@
 				voted
 			</div>
 
-			<button
-				type="button"
-				onclick={openVotingInvitesModal}
-				class="
-			inline-flex cursor-pointer items-center justify-center gap-2
-			rounded-full bg-white px-5 py-3
-			text-sm font-semibold text-zinc-950
-			transition hover:scale-[1.02]
-		"
-			>
-				<Send class="h-4 w-4" />
-				Open voting
-			</button>
+			{#if data.contest.status !== 'VOTING_OPEN'}
+				<button
+					type="button"
+					onclick={openVotingInvitesModal}
+					class="
+				inline-flex cursor-pointer items-center justify-center gap-2
+				rounded-full bg-white px-5 py-3
+				text-sm font-semibold text-zinc-950
+				transition hover:scale-[1.02]
+			"
+				>
+					<Send class="h-4 w-4" />
+					Open voting
+				</button>
+			{/if}
 		</div>
 	</header>
+
+	{#if data.contest.status === 'VOTING_OPEN'}
+		<dl
+			class="mb-8 grid gap-3 rounded-2xl border border-fuchsia-300/15 bg-fuchsia-500/5 px-5 py-4 text-sm sm:mb-10 sm:grid-cols-2 sm:gap-x-8"
+		>
+			<div>
+				<dt class="text-xs tracking-wide text-zinc-500 uppercase">Voting opened</dt>
+				<dd class="mt-1 font-medium text-zinc-200">
+					{formatBritishDate(data.contest.votingInvitedAt)}
+				</dd>
+			</div>
+
+			<div>
+				<dt class="text-xs tracking-wide text-zinc-500 uppercase">Voting deadline</dt>
+				<dd class="mt-1 font-medium text-zinc-200">
+					{formatBritishDate(data.contest.votingClosesAt)}
+				</dd>
+			</div>
+		</dl>
+	{/if}
 
 	<div class="rounded-3xl border border-white/10 bg-white/3 p-3 sm:p-6">
 		<div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -315,22 +371,28 @@
 					<div
 						class={[
 							'mt-4 grid gap-2',
-							!row.hasVoted && row.competitor.hasEmail && data.contest.status === 'VOTING_OPEN'
+							!row.hasVoted &&
+							(data.contest.testMode || row.competitor.hasEmail) &&
+							data.contest.status === 'VOTING_OPEN'
 								? 'grid-cols-2'
 								: 'grid-cols-1'
 						]}
 					>
-						{#if !row.hasVoted && row.competitor.hasEmail && data.contest.status === 'VOTING_OPEN'}
+						{#if !row.hasVoted && (data.contest.testMode || row.competitor.hasEmail) && data.contest.status === 'VOTING_OPEN'}
 							<form method="POST" action="?/sendReminder" use:enhance={enhanceReminder(row)}>
 								<input type="hidden" name="contestCompetitorId" value={row.contestCompetitorId} />
 								<button
 									type="submit"
-									disabled={sendingReminderFor !== null}
+									disabled={sendingReminderFor !== null || isReminderOnCooldown(row)}
+									title={reminderButtonTitle(row)}
 									class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-fuchsia-300/25 bg-fuchsia-500/10 px-3 py-2.5 text-sm font-medium text-fuchsia-200 transition hover:bg-fuchsia-500/20 disabled:cursor-wait disabled:opacity-50"
 								>
 									{#if sendingReminderFor === row.contestCompetitorId}
 										<LoaderCircle class="h-4 w-4 animate-spin" />
 										Sending…
+									{:else if isReminderOnCooldown(row)}
+										<Mail class="h-4 w-4" />
+										Reminder sent
 									{:else}
 										<Mail class="h-4 w-4" />
 										Reminder
@@ -435,7 +497,7 @@
 
 							<td class="px-5 py-4 text-right">
 								<div class="flex items-center justify-end gap-2">
-									{#if !row.hasVoted && row.competitor.hasEmail && data.contest.status === 'VOTING_OPEN'}
+									{#if !row.hasVoted && (data.contest.testMode || row.competitor.hasEmail) && data.contest.status === 'VOTING_OPEN'}
 										<form method="POST" action="?/sendReminder" use:enhance={enhanceReminder(row)}>
 											<input
 												type="hidden"
@@ -444,12 +506,16 @@
 											/>
 											<button
 												type="submit"
-												disabled={sendingReminderFor !== null}
+												disabled={sendingReminderFor !== null || isReminderOnCooldown(row)}
+												title={reminderButtonTitle(row)}
 												class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-fuchsia-300/25 bg-fuchsia-500/10 px-3.5 py-2 text-xs font-medium text-fuchsia-200 transition hover:bg-fuchsia-500/20 disabled:cursor-wait disabled:opacity-50"
 											>
 												{#if sendingReminderFor === row.contestCompetitorId}
 													<LoaderCircle class="h-4 w-4 animate-spin" />
 													Sending…
+												{:else if isReminderOnCooldown(row)}
+													<Mail class="h-4 w-4" />
+													Reminder sent
 												{:else}
 													<Mail class="h-4 w-4" />
 													Send reminder

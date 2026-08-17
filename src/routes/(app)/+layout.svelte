@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
-	import { LogOut, Plus, UserRound } from '@lucide/svelte/icons';
+	import { LogOut, UserRound } from '@lucide/svelte/icons';
 	import { slide } from 'svelte/transition';
 
 	let { data, children } = $props();
@@ -48,15 +48,6 @@
 				>
 					Contributors
 				</a>
-				{#if data.user?.role === 'ADMIN'}
-					<a
-						href={resolve('/mixes/new')}
-						class="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-950 transition hover:scale-105"
-					>
-						New contest
-					</a>
-				{/if}
-
 				<button
 					type="button"
 					onclick={logout}
@@ -142,17 +133,6 @@
 							<UserRound size={17} class="shrink-0 text-zinc-500" aria-hidden="true" />
 							Contributors
 						</a>
-
-						{#if data.user?.role === 'ADMIN'}
-							<a
-								href={resolve('/mixes/new')}
-								onclick={closeMobileMenu}
-								class="flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-zinc-200 transition hover:bg-white/8 hover:text-white"
-							>
-								<Plus size={17} class="shrink-0 text-zinc-500" aria-hidden="true" />
-								New contest
-							</a>
-						{/if}
 
 						<button
 							type="button"

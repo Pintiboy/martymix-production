@@ -45,8 +45,9 @@ async function createQrAttachment(url: string, filename: string, contentId: stri
 async function sendVotingEmails({
 	contestId,
 	ownerId,
-	contestCompetitorId
-}: InviteArgs & { contestCompetitorId?: string }) {
+	contestCompetitorId,
+	isReminder = false
+}: InviteArgs & { contestCompetitorId?: string; isReminder?: boolean }) {
 	const contest = await prisma.contest.findFirst({
 		where: {
 			id: contestId,
@@ -199,6 +200,7 @@ async function sendVotingEmails({
 			competitorName: competitor.preferredName || competitor.name,
 			mixTheme: contest.theme,
 			contestType: contest.type,
+			isReminder,
 			voteUrl,
 			logoUrl,
 			votingClosesAt: contest.votingClosesAt,
@@ -250,5 +252,5 @@ export function sendVotingInvites(args: InviteArgs) {
 }
 
 export function sendVotingReminder(args: ReminderArgs) {
-	return sendVotingEmails(args);
+	return sendVotingEmails({ ...args, isReminder: true });
 }
