@@ -7,6 +7,26 @@ import {
 	participantAuthEnabled
 } from '$lib/server/participant-identity';
 
+function formatPublicParticipantName(name: string) {
+	const [firstName, lastName] = name.trim().split(/\s+/);
+	return lastName ? `${firstName} ${lastName.charAt(0).toUpperCase()}.` : firstName;
+}
+
+function compareSongsByArtistAndTitle(
+	left: { artist: string; title: string },
+	right: { artist: string; title: string }
+) {
+	const artistComparison = left.artist.localeCompare(right.artist, undefined, {
+		sensitivity: 'base',
+		numeric: true
+	});
+
+	return (
+		artistComparison ||
+		left.title.localeCompare(right.title, undefined, { sensitivity: 'base', numeric: true })
+	);
+}
+
 export async function GET({ request }) {
 	const session = await auth.api.getSession({ headers: request.headers });
 	if (!session) error(401, 'Not authenticated');
@@ -28,7 +48,6 @@ export async function GET({ request }) {
 			competitor: {
 				select: {
 					name: true,
-					preferredName: true,
 					preferredLanguage: true,
 					country: true,
 					imageUrl: true,
@@ -64,7 +83,6 @@ export async function GET({ request }) {
 							competitor: {
 								select: {
 									name: true,
-									preferredName: true,
 									country: true,
 									imageUrl: true,
 									avatarHiddenAt: true
@@ -80,7 +98,7 @@ export async function GET({ request }) {
 							artist: true,
 							title: true,
 							listeningOrder: true,
-							competitor: { select: { name: true, preferredName: true } }
+							competitor: { select: { name: true } }
 						}
 					},
 					votes: {
@@ -91,7 +109,7 @@ export async function GET({ request }) {
 							songId: true,
 							rank: true,
 							updatedAt: true,
-							voter: { select: { name: true, preferredName: true } }
+							voter: { select: { name: true } }
 						}
 					}
 				}
@@ -128,7 +146,7 @@ export async function GET({ request }) {
 			participation: {
 				id: participation.id,
 				competitorId: participation.competitorId,
-				name: participation.competitor.preferredName ?? participation.competitor.name,
+				name: formatPublicParticipantName(participation.competitor.name),
 				preferredLanguage: participation.competitor.preferredLanguage,
 				country: participation.competitor.country,
 				imageUrl: participation.competitor.avatarHiddenAt
@@ -146,16 +164,18 @@ export async function GET({ request }) {
 					spotify: contest.spotifyPlaylistUrl,
 					youtube: contest.youtubePlaylistUrl
 				},
-				songs: contest.songs.map(({ id, artist, title, listeningOrder }) => ({
-					id,
-					artist,
-					title,
-					listeningOrder
-				})),
+				songs: [...contest.songs]
+					.sort(compareSongsByArtistAndTitle)
+					.map(({ id, artist, title, listeningOrder }) => ({
+						id,
+						artist,
+						title,
+						listeningOrder
+					})),
 				participants: contest.competitors.map((entry) => ({
 					participationId: entry.id,
 					competitorId: entry.competitorId,
-					name: entry.competitor.preferredName ?? entry.competitor.name,
+					name: formatPublicParticipantName(entry.competitor.name),
 					country: entry.competitor.country,
 					imageUrl: entry.competitor.avatarHiddenAt ? null : entry.competitor.imageUrl,
 					votingOrder: entry.votingOrder
@@ -174,7 +194,7 @@ export async function GET({ request }) {
 				participants: contest.competitors.map((entry) => ({
 					participationId: entry.id,
 					competitorId: entry.competitorId,
-					name: entry.competitor.preferredName ?? entry.competitor.name,
+					name: formatPublicParticipantName(entry.competitor.name),
 					country: entry.competitor.country,
 					imageUrl: entry.competitor.avatarHiddenAt ? null : entry.competitor.imageUrl,
 					votingOrder: entry.votingOrder
@@ -186,7 +206,7 @@ export async function GET({ request }) {
 					listeningOrder: song.listeningOrder,
 					submittedBy: {
 						competitorId: song.competitorId,
-						name: song.competitor.preferredName ?? song.competitor.name
+						name: formatPublicParticipantName(song.competitor.name)
 					}
 				})),
 				votes: contest.votes.map((vote) => ({
@@ -196,7 +216,7 @@ export async function GET({ request }) {
 					updatedAt: vote.updatedAt,
 					voter: {
 						competitorId: vote.voterId,
-						name: vote.voter.preferredName ?? vote.voter.name
+						name: formatPublicParticipantName(vote.voter.name)
 					}
 				}))
 			};
