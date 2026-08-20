@@ -58,3 +58,27 @@ export async function PUT({ request, params }) {
 
 	return json({ song });
 }
+
+export async function DELETE({ request, params }) {
+	const { participation } = await requireParticipantForContest(request, params.contestId);
+	if (participation.contest.status !== 'SUBMISSION_OPEN') error(403, 'Song submissions are closed');
+	const song = await prisma.song.findUnique({
+		where: {
+			contestId_competitorId: {
+				contestId: participation.contest.id,
+				competitorId: participation.competitorId
+			}
+		},
+		select: { _count: { select: { votes: true } } }
+	});
+	if (song?._count.votes) error(409, 'A song with existing votes cannot be deleted');
+
+	await prisma.song.deleteMany({
+		where: {
+			contestId: participation.contest.id,
+			competitorId: participation.competitorId
+		}
+	});
+
+	return new Response(null, { status: 204 });
+}
