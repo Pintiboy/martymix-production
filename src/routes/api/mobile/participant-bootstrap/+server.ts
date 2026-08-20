@@ -16,7 +16,10 @@ export async function GET({ request }) {
 	if (!profile) error(403, 'No participant profile is linked to this account');
 
 	const participations = await prisma.contestCompetitor.findMany({
-		where: { competitor: { participantProfileId: profile.id } },
+		where: {
+			competitor: { participantProfileId: profile.id },
+			contest: { status: { not: 'NEW' } }
+		},
 		orderBy: { contest: { createdAt: 'desc' } },
 		select: {
 			id: true,
@@ -148,6 +151,14 @@ export async function GET({ request }) {
 					artist,
 					title,
 					listeningOrder
+				})),
+				participants: contest.competitors.map((entry) => ({
+					participationId: entry.id,
+					competitorId: entry.competitorId,
+					name: entry.competitor.preferredName ?? entry.competitor.name,
+					country: entry.competitor.country,
+					imageUrl: entry.competitor.avatarHiddenAt ? null : entry.competitor.imageUrl,
+					votingOrder: entry.votingOrder
 				})),
 				ownVotes
 			};
