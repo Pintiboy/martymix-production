@@ -1,11 +1,23 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import FileDown from '@lucide/svelte/icons/file-down';
 	import CompetitorAvatar from '$lib/components/CompetitorAvatar.svelte';
 	import StickyActionBar from '$lib/components/StickyActionBar.svelte';
+	import Modal from '$lib/components/ui/modal/Modal.svelte';
 
 	let { data } = $props();
 
 	const contest = $derived(data.contest);
 	const podium = $derived(data.ranking.slice(0, 3));
+	let isPdfModalOpen = $state(false);
+	let pdfSortMode = $state<'points' | 'number'>('points');
+	let pdfTieMarker = $state<'blank' | 'equals'>('blank');
+	let pdfSongDetail = $state<'submitter' | 'artist'>('submitter');
+	const pdfHref = $derived(
+		resolve(
+			`/api/contests/${contest.id}/results/pdf?sort=${pdfSortMode}&ties=${pdfTieMarker}&songDetail=${pdfSongDetail}`
+		)
+	);
 
 	function changeScoringSystem(event: Event) {
 		const select = event.currentTarget as HTMLSelectElement;
@@ -44,11 +56,26 @@
 	<StickyActionBar backHref={`/mixes/${contest.id}`} backLabel="Back to mix" />
 
 	<header class="mt-6 mb-8 sm:mt-10 sm:mb-10">
-		<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Results</p>
-		<h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{contest.theme}</h1>
-		<p class="mt-3 max-w-2xl text-zinc-400">
-			Ranking and voting matrix based on the current scoring system.
-		</p>
+		<div class="flex flex-wrap items-start justify-between gap-5">
+			<div>
+				<p class="mb-3 text-sm tracking-[0.35em] text-fuchsia-300 uppercase">Results</p>
+				<h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{contest.theme}</h1>
+				<p class="mt-3 max-w-2xl text-zinc-400">
+					Ranking and voting matrix based on the current scoring system.
+				</p>
+			</div>
+
+			{#if data.actualVotes > 0}
+				<button
+					type="button"
+					onclick={() => (isPdfModalOpen = true)}
+					class="inline-flex items-center gap-2 rounded-full border border-fuchsia-300/25 bg-fuchsia-500/10 px-5 py-3 text-sm font-semibold text-fuchsia-100 transition hover:border-fuchsia-300/45 hover:bg-fuchsia-500/20"
+				>
+					<FileDown size={18} />
+					Create PDF
+				</button>
+			{/if}
+		</div>
 		{#if data.votingComplete}
 			<div
 				class="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-200"
@@ -382,6 +409,100 @@
 		</section>
 	{/if}
 </section>
+
+<Modal
+	open={isPdfModalOpen}
+	titleId="create-results-pdf-title"
+	onClose={() => (isPdfModalOpen = false)}
+>
+	{#snippet children({ close })}
+		<p class="mb-2 text-xs tracking-[0.3em] text-fuchsia-300 uppercase">Results export</p>
+		<h2 id="create-results-pdf-title" class="text-2xl font-semibold text-white">Create PDF</h2>
+		<p class="mt-3 text-sm leading-6 text-zinc-400">
+			Choose how the voting grid should be arranged. The PDF uses the current contest data.
+		</p>
+
+		<div class="mt-6 space-y-6">
+			<fieldset>
+				<legend class="mb-3 text-sm font-medium text-zinc-300">Song sorting</legend>
+				<div class="grid grid-cols-2 gap-2">
+					<button
+						type="button"
+						onclick={() => (pdfSortMode = 'points')}
+						class={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${pdfSortMode === 'points' ? 'border-fuchsia-300/50 bg-fuchsia-500/15 text-white' : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'}`}
+					>
+						Total points
+					</button>
+					<button
+						type="button"
+						onclick={() => (pdfSortMode = 'number')}
+						class={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${pdfSortMode === 'number' ? 'border-fuchsia-300/50 bg-fuchsia-500/15 text-white' : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'}`}
+					>
+						Voting order
+					</button>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend class="mb-3 text-sm font-medium text-zinc-300">Repeated ranks</legend>
+				<div class="grid grid-cols-2 gap-2">
+					<button
+						type="button"
+						onclick={() => (pdfTieMarker = 'blank')}
+						class={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${pdfTieMarker === 'blank' ? 'border-fuchsia-300/50 bg-fuchsia-500/15 text-white' : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'}`}
+					>
+						Leave blank
+					</button>
+					<button
+						type="button"
+						onclick={() => (pdfTieMarker = 'equals')}
+						class={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${pdfTieMarker === 'equals' ? 'border-fuchsia-300/50 bg-fuchsia-500/15 text-white' : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'}`}
+					>
+						Show =
+					</button>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend class="mb-3 text-sm font-medium text-zinc-300">Left column credit</legend>
+				<div class="grid grid-cols-2 gap-2">
+					<button
+						type="button"
+						onclick={() => (pdfSongDetail = 'submitter')}
+						class={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${pdfSongDetail === 'submitter' ? 'border-fuchsia-300/50 bg-fuchsia-500/15 text-white' : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'}`}
+					>
+						Submitter
+					</button>
+					<button
+						type="button"
+						onclick={() => (pdfSongDetail = 'artist')}
+						class={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${pdfSongDetail === 'artist' ? 'border-fuchsia-300/50 bg-fuchsia-500/15 text-white' : 'border-white/10 bg-white/5 text-zinc-400 hover:text-white'}`}
+					>
+						Artist
+					</button>
+				</div>
+			</fieldset>
+		</div>
+
+		<div class="mt-8 flex justify-end gap-3">
+			<button
+				type="button"
+				onclick={close}
+				class="rounded-full border border-white/15 px-5 py-3 font-medium text-white transition hover:bg-white/10"
+			>
+				Cancel
+			</button>
+			<a
+				href={pdfHref}
+				onclick={close}
+				class="inline-flex items-center gap-2 rounded-full bg-fuchsia-500 px-6 py-3 font-bold text-white transition hover:bg-fuchsia-400"
+			>
+				<FileDown size={18} />
+				Create PDF
+			</a>
+		</div>
+	{/snippet}
+</Modal>
 
 <style>
 	.voting-matrix-scrollbar {
