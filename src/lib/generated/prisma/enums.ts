@@ -42,3 +42,10 @@ export const ContestType = {
 } as const
 
 export type ContestType = (typeof ContestType)[keyof typeof ContestType]
+
+
+export const SongSampleProvider = {
+  APPLE_MUSIC: 'APPLE_MUSIC'
+} as const
+
+export type SongSampleProvider = (typeof SongSampleProvider)[keyof typeof SongSampleProvider]

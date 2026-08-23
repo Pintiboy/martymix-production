@@ -16,7 +16,8 @@
 		Music2,
 		CirclePlay,
 		QrCode,
-		Pencil
+		Pencil,
+		Search
 	} from '@lucide/svelte/icons';
 
 	let { data, form } = $props();
@@ -28,6 +29,11 @@
 	let copiedPlaylist = $state<'spotify' | 'youtube' | null>(null);
 	let spotifyQrCode = $state<string | null>(null);
 	let youtubeQrCode = $state<string | null>(null);
+	let sampleSong = $state<SubmittedSongRow | null>(null);
+	let sampleQuery = $state('');
+	let sampleResults = $state<AppleSongSearchResult[]>([]);
+	let isSampleSearching = $state(false);
+	let sampleSearchError = $state('');
 
 	let contest = $derived(data.contest);
 	const canManageSubmissions = $derived(
@@ -46,7 +52,24 @@
 			artist: string;
 			title: string;
 			listeningOrder: number;
+			sampleProvider: 'APPLE_MUSIC' | null;
+			sampleTrackId: string | null;
+			sampleStorefront: string | null;
+			samplePreviewUrl: string | null;
+			sampleExternalUrl: string | null;
+			sampleResolvedAt: Date | string | null;
 		};
+	};
+
+	type AppleSongSearchResult = {
+		trackId: string;
+		storefront: string;
+		artist: string;
+		title: string;
+		album: string | null;
+		previewUrl: string;
+		externalUrl: string;
+		durationMillis: number | null;
 	};
 
 	function getInitialSubmittedRows(): SubmittedSongRow[] {
@@ -88,6 +111,62 @@
 
 		const value = (form.values as Record<string, unknown>)[key];
 		return typeof value === 'string' ? value : '';
+	}
+
+	function openSampleSearch(row: SubmittedSongRow) {
+		sampleSong = row;
+		sampleQuery = `${row.song.artist} ${row.song.title}`;
+		sampleResults = [];
+		sampleSearchError = '';
+		void searchAppleSamples();
+	}
+
+	function closeSampleSearch() {
+		sampleSong = null;
+		sampleResults = [];
+		sampleSearchError = '';
+	}
+
+	async function searchAppleSamples() {
+		const query = sampleQuery.trim();
+		if (query.length < 2) return;
+
+		isSampleSearching = true;
+		sampleSearchError = '';
+
+		try {
+			const params = new URLSearchParams({ q: query, storefront: 'DE' });
+			const response = await fetch(`/api/apple-music/search?${params}`);
+
+			if (!response.ok) throw new Error('Search failed');
+
+			const payload = (await response.json()) as { results?: AppleSongSearchResult[] };
+			sampleResults = payload.results ?? [];
+		} catch {
+			sampleResults = [];
+			sampleSearchError = 'Apple Music search is temporarily unavailable.';
+		} finally {
+			isSampleSearching = false;
+		}
+	}
+
+	function updateSongSample(songId: string, sample: AppleSongSearchResult | null) {
+		submittedRows = submittedRows.map((row) =>
+			row.song.id === songId
+				? {
+						...row,
+						song: {
+							...row.song,
+							sampleProvider: sample ? 'APPLE_MUSIC' : null,
+							sampleTrackId: sample?.trackId ?? null,
+							sampleStorefront: sample?.storefront ?? null,
+							samplePreviewUrl: sample?.previewUrl ?? null,
+							sampleExternalUrl: sample?.externalUrl ?? null,
+							sampleResolvedAt: sample ? new Date().toISOString() : null
+						}
+					}
+				: row
+		);
 	}
 
 	function updateOrderChanged() {
@@ -562,6 +641,20 @@
 												{row.song.artist}
 											</p>
 
+											<button
+												type="button"
+												onclick={() => openSampleSearch(row)}
+												class={[
+													'mt-2 inline-flex items-center gap-1.5 text-xs font-medium transition-colors',
+													row.song.samplePreviewUrl
+														? 'text-emerald-300 hover:text-emerald-200'
+														: 'text-fuchsia-300 hover:text-fuchsia-200'
+												]}
+											>
+												<CirclePlay size={14} />
+												{row.song.samplePreviewUrl ? 'Sample linked' : 'Find sample'}
+											</button>
+
 											{#if !canManageSubmissions}
 												<p class="mt-2 truncate text-xs text-zinc-500">
 													<span class="text-zinc-600">Contributor ·</span>
@@ -830,8 +923,24 @@
 										{row.song.artist}
 									</div>
 
-									<div class="flex items-center px-4 py-2 text-zinc-300" role="cell">
-										{row.song.title}
+									<div
+										class="flex flex-col items-start justify-center px-4 py-2 text-zinc-300"
+										role="cell"
+									>
+										<span>{row.song.title}</span>
+										<button
+											type="button"
+											onclick={() => openSampleSearch(row)}
+											class={[
+												'mt-1 inline-flex items-center gap-1 text-xs transition-colors',
+												row.song.samplePreviewUrl
+													? 'text-emerald-300 hover:text-emerald-200'
+													: 'text-fuchsia-300 hover:text-fuchsia-200'
+											]}
+										>
+											<CirclePlay size={13} />
+											{row.song.samplePreviewUrl ? 'Sample linked' : 'Find sample'}
+										</button>
 									</div>
 
 									{#if canManageSubmissions}
@@ -1205,6 +1314,177 @@
 					</form>
 				</div>
 			</div>
+		{/snippet}
+	</Modal>
+
+	<Modal open={sampleSong !== null} titleId="song-sample-title" onClose={closeSampleSearch}>
+		{#snippet children({ close })}
+			{#if sampleSong}
+				<div class="max-h-[80vh] overflow-y-auto pr-1">
+					<div class="flex items-start justify-between gap-4">
+						<div class="min-w-0">
+							<p class="mb-2 text-xs tracking-[0.3em] text-fuchsia-300 uppercase">Song sample</p>
+							<h2 id="song-sample-title" class="truncate text-2xl font-semibold">
+								{sampleSong.song.title}
+							</h2>
+							<p class="mt-1 truncate text-sm text-zinc-400">{sampleSong.song.artist}</p>
+						</div>
+
+						<button
+							type="button"
+							onclick={close}
+							class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition hover:bg-white/10 hover:text-white"
+							aria-label="Close song sample search"
+						>
+							×
+						</button>
+					</div>
+
+					{#if sampleSong.song.samplePreviewUrl && sampleSong.song.sampleExternalUrl}
+						<div class="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-500/8 p-4">
+							<div class="flex items-center justify-between gap-3">
+								<p class="text-sm font-medium text-emerald-200">Sample currently linked</p>
+								<a
+									href={sampleSong.song.sampleExternalUrl}
+									target="_blank"
+									rel="noreferrer"
+									class="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white"
+								>
+									Apple Music <ExternalLink size={12} />
+								</a>
+							</div>
+							<audio
+								controls
+								preload="none"
+								src={sampleSong.song.samplePreviewUrl}
+								class="mt-3 h-10 w-full"
+							></audio>
+							<form
+								method="POST"
+								action="?/removeSongSample"
+								class="mt-3 flex justify-end"
+								use:enhance={() => {
+									const songId = sampleSong?.song.id ?? '';
+									return async ({ result, update }) => {
+										await update();
+										if (result.type === 'success') {
+											updateSongSample(songId, null);
+											close();
+											toast.success('Song sample removed.');
+										} else if (result.type === 'failure') {
+											toast.error('Could not remove the song sample.');
+										}
+									};
+								}}
+							>
+								<input type="hidden" name="songId" value={sampleSong.song.id} />
+								<button
+									type="submit"
+									class="text-xs font-medium text-red-300 transition hover:text-red-200"
+								>
+									Remove sample
+								</button>
+							</form>
+						</div>
+					{/if}
+
+					<form
+						class="mt-6 flex gap-2"
+						onsubmit={(event) => {
+							event.preventDefault();
+							void searchAppleSamples();
+						}}
+					>
+						<input
+							bind:value={sampleQuery}
+							aria-label="Search Apple Music"
+							placeholder="Artist and song title"
+							class="min-w-0 flex-1 rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-fuchsia-300/60"
+						/>
+						<button
+							type="submit"
+							disabled={isSampleSearching || sampleQuery.trim().length < 2}
+							class="inline-flex items-center gap-2 rounded-2xl bg-white px-4 font-medium text-zinc-950 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							<Search size={17} />
+							Search
+						</button>
+					</form>
+
+					{#if sampleSearchError}
+						<p
+							class="mt-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200"
+						>
+							{sampleSearchError}
+						</p>
+					{:else if isSampleSearching}
+						<p class="mt-6 text-center text-sm text-zinc-500">Searching Apple Music…</p>
+					{:else if sampleResults.length === 0}
+						<p class="mt-6 text-center text-sm text-zinc-500">No playable samples found.</p>
+					{:else}
+						<div class="mt-5 space-y-3">
+							{#each sampleResults as result (result.trackId)}
+								<article class="rounded-2xl border border-white/10 bg-zinc-900/70 p-4">
+									<div class="flex items-start justify-between gap-4">
+										<div class="min-w-0">
+											<p class="truncate font-semibold text-white">{result.title}</p>
+											<p class="mt-1 truncate text-sm text-zinc-400">{result.artist}</p>
+											{#if result.album}
+												<p class="mt-1 truncate text-xs text-zinc-600">{result.album}</p>
+											{/if}
+										</div>
+										<a
+											href={result.externalUrl}
+											target="_blank"
+											rel="noreferrer"
+											aria-label={`Open ${result.title} in Apple Music`}
+											class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-zinc-500 transition hover:text-white"
+										>
+											<ExternalLink size={14} />
+										</a>
+									</div>
+
+									<audio controls preload="none" src={result.previewUrl} class="mt-3 h-10 w-full"
+									></audio>
+
+									<form
+										method="POST"
+										action="?/saveSongSample"
+										class="mt-3 flex justify-end"
+										use:enhance={() => {
+											const songId = sampleSong?.song.id ?? '';
+											return async ({ result: actionResult, update }) => {
+												await update();
+												if (actionResult.type === 'success') {
+													updateSongSample(songId, result);
+													close();
+													toast.success('Song sample linked.');
+												} else if (actionResult.type === 'failure') {
+													toast.error('Could not link the song sample.');
+												}
+											};
+										}}
+									>
+										<input type="hidden" name="songId" value={sampleSong.song.id} />
+										<input type="hidden" name="trackId" value={result.trackId} />
+										<input type="hidden" name="storefront" value={result.storefront} />
+										<button
+											type="submit"
+											class="rounded-full border border-fuchsia-300/25 bg-fuchsia-500/10 px-4 py-2 text-sm font-medium text-fuchsia-100 transition hover:bg-fuchsia-500/20"
+										>
+											Use this sample
+										</button>
+									</form>
+								</article>
+							{/each}
+						</div>
+					{/if}
+
+					<p class="mt-5 text-center text-[11px] text-zinc-600">
+						Previews provided courtesy of iTunes. Audio is streamed and not stored by Martymix.
+					</p>
+				</div>
+			{/if}
 		{/snippet}
 	</Modal>
 

@@ -98,6 +98,12 @@ export async function GET({ request }) {
 							artist: true,
 							title: true,
 							listeningOrder: true,
+							sampleProvider: true,
+							sampleTrackId: true,
+							sampleStorefront: true,
+							samplePreviewUrl: true,
+							sampleExternalUrl: true,
+							sampleResolvedAt: true,
 							competitor: { select: { name: true } }
 						}
 					},
@@ -166,12 +172,31 @@ export async function GET({ request }) {
 				},
 				songs: [...contest.songs]
 					.sort(compareSongsByArtistAndTitle)
-					.map(({ id, artist, title, listeningOrder }) => ({
-						id,
-						artist,
-						title,
-						listeningOrder
-					})),
+					.map(
+						({
+							id,
+							artist,
+							title,
+							listeningOrder,
+							sampleProvider,
+							sampleTrackId,
+							sampleStorefront,
+							samplePreviewUrl,
+							sampleExternalUrl,
+							sampleResolvedAt
+						}) => ({
+							id,
+							artist,
+							title,
+							listeningOrder,
+							sampleProvider,
+							sampleTrackId,
+							sampleStorefront,
+							samplePreviewUrl,
+							sampleExternalUrl,
+							sampleResolvedAt
+						})
+					),
 				participants: contest.competitors.map((entry) => ({
 					participationId: entry.id,
 					competitorId: entry.competitorId,
@@ -204,6 +229,12 @@ export async function GET({ request }) {
 					artist: song.artist,
 					title: song.title,
 					listeningOrder: song.listeningOrder,
+					sampleProvider: song.sampleProvider,
+					sampleTrackId: song.sampleTrackId,
+					sampleStorefront: song.sampleStorefront,
+					samplePreviewUrl: song.samplePreviewUrl,
+					sampleExternalUrl: song.sampleExternalUrl,
+					sampleResolvedAt: song.sampleResolvedAt,
 					submittedBy: {
 						competitorId: song.competitorId,
 						name: formatPublicParticipantName(song.competitor.name)

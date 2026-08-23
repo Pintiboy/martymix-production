@@ -41,6 +41,12 @@ export type SongMinAggregateOutputType = {
   artist: string | null
   title: string | null
   listeningOrder: number | null
+  sampleProvider: $Enums.SongSampleProvider | null
+  sampleTrackId: string | null
+  sampleStorefront: string | null
+  samplePreviewUrl: string | null
+  sampleExternalUrl: string | null
+  sampleResolvedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +58,12 @@ export type SongMaxAggregateOutputType = {
   artist: string | null
   title: string | null
   listeningOrder: number | null
+  sampleProvider: $Enums.SongSampleProvider | null
+  sampleTrackId: string | null
+  sampleStorefront: string | null
+  samplePreviewUrl: string | null
+  sampleExternalUrl: string | null
+  sampleResolvedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +75,12 @@ export type SongCountAggregateOutputType = {
   artist: number
   title: number
   listeningOrder: number
+  sampleProvider: number
+  sampleTrackId: number
+  sampleStorefront: number
+  samplePreviewUrl: number
+  sampleExternalUrl: number
+  sampleResolvedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +102,12 @@ export type SongMinAggregateInputType = {
   artist?: true
   title?: true
   listeningOrder?: true
+  sampleProvider?: true
+  sampleTrackId?: true
+  sampleStorefront?: true
+  samplePreviewUrl?: true
+  sampleExternalUrl?: true
+  sampleResolvedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -95,6 +119,12 @@ export type SongMaxAggregateInputType = {
   artist?: true
   title?: true
   listeningOrder?: true
+  sampleProvider?: true
+  sampleTrackId?: true
+  sampleStorefront?: true
+  samplePreviewUrl?: true
+  sampleExternalUrl?: true
+  sampleResolvedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +136,12 @@ export type SongCountAggregateInputType = {
   artist?: true
   title?: true
   listeningOrder?: true
+  sampleProvider?: true
+  sampleTrackId?: true
+  sampleStorefront?: true
+  samplePreviewUrl?: true
+  sampleExternalUrl?: true
+  sampleResolvedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -204,6 +240,12 @@ export type SongGroupByOutputType = {
   artist: string
   title: string
   listeningOrder: number
+  sampleProvider: $Enums.SongSampleProvider | null
+  sampleTrackId: string | null
+  sampleStorefront: string | null
+  samplePreviewUrl: string | null
+  sampleExternalUrl: string | null
+  sampleResolvedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: SongCountAggregateOutputType | null
@@ -238,6 +280,12 @@ export type SongWhereInput = {
   artist?: Prisma.StringFilter<"Song"> | string
   title?: Prisma.StringFilter<"Song"> | string
   listeningOrder?: Prisma.IntFilter<"Song"> | number
+  sampleProvider?: Prisma.EnumSongSampleProviderNullableFilter<"Song"> | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleStorefront?: Prisma.StringNullableFilter<"Song"> | string | null
+  samplePreviewUrl?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleExternalUrl?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleResolvedAt?: Prisma.DateTimeNullableFilter<"Song"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Song"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Song"> | Date | string
   contest?: Prisma.XOR<Prisma.ContestScalarRelationFilter, Prisma.ContestWhereInput>
@@ -252,6 +300,12 @@ export type SongOrderByWithRelationInput = {
   artist?: Prisma.SortOrder
   title?: Prisma.SortOrder
   listeningOrder?: Prisma.SortOrder
+  sampleProvider?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleTrackId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleStorefront?: Prisma.SortOrderInput | Prisma.SortOrder
+  samplePreviewUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleExternalUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleResolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   contest?: Prisma.ContestOrderByWithRelationInput
@@ -270,6 +324,12 @@ export type SongWhereUniqueInput = Prisma.AtLeast<{
   artist?: Prisma.StringFilter<"Song"> | string
   title?: Prisma.StringFilter<"Song"> | string
   listeningOrder?: Prisma.IntFilter<"Song"> | number
+  sampleProvider?: Prisma.EnumSongSampleProviderNullableFilter<"Song"> | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleStorefront?: Prisma.StringNullableFilter<"Song"> | string | null
+  samplePreviewUrl?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleExternalUrl?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleResolvedAt?: Prisma.DateTimeNullableFilter<"Song"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Song"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Song"> | Date | string
   contest?: Prisma.XOR<Prisma.ContestScalarRelationFilter, Prisma.ContestWhereInput>
@@ -284,6 +344,12 @@ export type SongOrderByWithAggregationInput = {
   artist?: Prisma.SortOrder
   title?: Prisma.SortOrder
   listeningOrder?: Prisma.SortOrder
+  sampleProvider?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleTrackId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleStorefront?: Prisma.SortOrderInput | Prisma.SortOrder
+  samplePreviewUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleExternalUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  sampleResolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SongCountOrderByAggregateInput
@@ -303,6 +369,12 @@ export type SongScalarWhereWithAggregatesInput = {
   artist?: Prisma.StringWithAggregatesFilter<"Song"> | string
   title?: Prisma.StringWithAggregatesFilter<"Song"> | string
   listeningOrder?: Prisma.IntWithAggregatesFilter<"Song"> | number
+  sampleProvider?: Prisma.EnumSongSampleProviderNullableWithAggregatesFilter<"Song"> | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.StringNullableWithAggregatesFilter<"Song"> | string | null
+  sampleStorefront?: Prisma.StringNullableWithAggregatesFilter<"Song"> | string | null
+  samplePreviewUrl?: Prisma.StringNullableWithAggregatesFilter<"Song"> | string | null
+  sampleExternalUrl?: Prisma.StringNullableWithAggregatesFilter<"Song"> | string | null
+  sampleResolvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Song"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Song"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Song"> | Date | string
 }
@@ -312,6 +384,12 @@ export type SongCreateInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   contest: Prisma.ContestCreateNestedOneWithoutSongsInput
@@ -326,6 +404,12 @@ export type SongUncheckedCreateInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   votes?: Prisma.VoteUncheckedCreateNestedManyWithoutSongInput
@@ -336,6 +420,12 @@ export type SongUpdateInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contest?: Prisma.ContestUpdateOneRequiredWithoutSongsNestedInput
@@ -350,6 +440,12 @@ export type SongUncheckedUpdateInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   votes?: Prisma.VoteUncheckedUpdateManyWithoutSongNestedInput
@@ -362,6 +458,12 @@ export type SongCreateManyInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -371,6 +473,12 @@ export type SongUpdateManyMutationInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -382,6 +490,12 @@ export type SongUncheckedUpdateManyInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -408,6 +522,12 @@ export type SongCountOrderByAggregateInput = {
   artist?: Prisma.SortOrder
   title?: Prisma.SortOrder
   listeningOrder?: Prisma.SortOrder
+  sampleProvider?: Prisma.SortOrder
+  sampleTrackId?: Prisma.SortOrder
+  sampleStorefront?: Prisma.SortOrder
+  samplePreviewUrl?: Prisma.SortOrder
+  sampleExternalUrl?: Prisma.SortOrder
+  sampleResolvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -423,6 +543,12 @@ export type SongMaxOrderByAggregateInput = {
   artist?: Prisma.SortOrder
   title?: Prisma.SortOrder
   listeningOrder?: Prisma.SortOrder
+  sampleProvider?: Prisma.SortOrder
+  sampleTrackId?: Prisma.SortOrder
+  sampleStorefront?: Prisma.SortOrder
+  samplePreviewUrl?: Prisma.SortOrder
+  sampleExternalUrl?: Prisma.SortOrder
+  sampleResolvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -434,6 +560,12 @@ export type SongMinOrderByAggregateInput = {
   artist?: Prisma.SortOrder
   title?: Prisma.SortOrder
   listeningOrder?: Prisma.SortOrder
+  sampleProvider?: Prisma.SortOrder
+  sampleTrackId?: Prisma.SortOrder
+  sampleStorefront?: Prisma.SortOrder
+  samplePreviewUrl?: Prisma.SortOrder
+  sampleExternalUrl?: Prisma.SortOrder
+  sampleResolvedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -531,6 +663,10 @@ export type SongUncheckedUpdateManyWithoutCompetitorNestedInput = {
   deleteMany?: Prisma.SongScalarWhereInput | Prisma.SongScalarWhereInput[]
 }
 
+export type NullableEnumSongSampleProviderFieldUpdateOperationsInput = {
+  set?: $Enums.SongSampleProvider | null
+}
+
 export type SongCreateNestedOneWithoutVotesInput = {
   create?: Prisma.XOR<Prisma.SongCreateWithoutVotesInput, Prisma.SongUncheckedCreateWithoutVotesInput>
   connectOrCreate?: Prisma.SongCreateOrConnectWithoutVotesInput
@@ -550,6 +686,12 @@ export type SongCreateWithoutContestInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   competitor: Prisma.CompetitorCreateNestedOneWithoutSongsInput
@@ -562,6 +704,12 @@ export type SongUncheckedCreateWithoutContestInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   votes?: Prisma.VoteUncheckedCreateNestedManyWithoutSongInput
@@ -603,6 +751,12 @@ export type SongScalarWhereInput = {
   artist?: Prisma.StringFilter<"Song"> | string
   title?: Prisma.StringFilter<"Song"> | string
   listeningOrder?: Prisma.IntFilter<"Song"> | number
+  sampleProvider?: Prisma.EnumSongSampleProviderNullableFilter<"Song"> | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleStorefront?: Prisma.StringNullableFilter<"Song"> | string | null
+  samplePreviewUrl?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleExternalUrl?: Prisma.StringNullableFilter<"Song"> | string | null
+  sampleResolvedAt?: Prisma.DateTimeNullableFilter<"Song"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Song"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Song"> | Date | string
 }
@@ -612,6 +766,12 @@ export type SongCreateWithoutCompetitorInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   contest: Prisma.ContestCreateNestedOneWithoutSongsInput
@@ -624,6 +784,12 @@ export type SongUncheckedCreateWithoutCompetitorInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   votes?: Prisma.VoteUncheckedCreateNestedManyWithoutSongInput
@@ -660,6 +826,12 @@ export type SongCreateWithoutVotesInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   contest: Prisma.ContestCreateNestedOneWithoutSongsInput
@@ -673,6 +845,12 @@ export type SongUncheckedCreateWithoutVotesInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -698,6 +876,12 @@ export type SongUpdateWithoutVotesInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contest?: Prisma.ContestUpdateOneRequiredWithoutSongsNestedInput
@@ -711,6 +895,12 @@ export type SongUncheckedUpdateWithoutVotesInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -721,6 +911,12 @@ export type SongCreateManyContestInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -730,6 +926,12 @@ export type SongUpdateWithoutContestInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   competitor?: Prisma.CompetitorUpdateOneRequiredWithoutSongsNestedInput
@@ -742,6 +944,12 @@ export type SongUncheckedUpdateWithoutContestInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   votes?: Prisma.VoteUncheckedUpdateManyWithoutSongNestedInput
@@ -753,6 +961,12 @@ export type SongUncheckedUpdateManyWithoutContestInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -763,6 +977,12 @@ export type SongCreateManyCompetitorInput = {
   artist: string
   title: string
   listeningOrder?: number
+  sampleProvider?: $Enums.SongSampleProvider | null
+  sampleTrackId?: string | null
+  sampleStorefront?: string | null
+  samplePreviewUrl?: string | null
+  sampleExternalUrl?: string | null
+  sampleResolvedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -772,6 +992,12 @@ export type SongUpdateWithoutCompetitorInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contest?: Prisma.ContestUpdateOneRequiredWithoutSongsNestedInput
@@ -784,6 +1010,12 @@ export type SongUncheckedUpdateWithoutCompetitorInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   votes?: Prisma.VoteUncheckedUpdateManyWithoutSongNestedInput
@@ -795,6 +1027,12 @@ export type SongUncheckedUpdateManyWithoutCompetitorInput = {
   artist?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   listeningOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  sampleProvider?: Prisma.NullableEnumSongSampleProviderFieldUpdateOperationsInput | $Enums.SongSampleProvider | null
+  sampleTrackId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleStorefront?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  samplePreviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleExternalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sampleResolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -837,6 +1075,12 @@ export type SongSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   artist?: boolean
   title?: boolean
   listeningOrder?: boolean
+  sampleProvider?: boolean
+  sampleTrackId?: boolean
+  sampleStorefront?: boolean
+  samplePreviewUrl?: boolean
+  sampleExternalUrl?: boolean
+  sampleResolvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
@@ -852,6 +1096,12 @@ export type SongSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   artist?: boolean
   title?: boolean
   listeningOrder?: boolean
+  sampleProvider?: boolean
+  sampleTrackId?: boolean
+  sampleStorefront?: boolean
+  samplePreviewUrl?: boolean
+  sampleExternalUrl?: boolean
+  sampleResolvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
@@ -865,6 +1115,12 @@ export type SongSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   artist?: boolean
   title?: boolean
   listeningOrder?: boolean
+  sampleProvider?: boolean
+  sampleTrackId?: boolean
+  sampleStorefront?: boolean
+  samplePreviewUrl?: boolean
+  sampleExternalUrl?: boolean
+  sampleResolvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
@@ -878,11 +1134,17 @@ export type SongSelectScalar = {
   artist?: boolean
   title?: boolean
   listeningOrder?: boolean
+  sampleProvider?: boolean
+  sampleTrackId?: boolean
+  sampleStorefront?: boolean
+  samplePreviewUrl?: boolean
+  sampleExternalUrl?: boolean
+  sampleResolvedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SongOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contestId" | "competitorId" | "artist" | "title" | "listeningOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["song"]>
+export type SongOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contestId" | "competitorId" | "artist" | "title" | "listeningOrder" | "sampleProvider" | "sampleTrackId" | "sampleStorefront" | "samplePreviewUrl" | "sampleExternalUrl" | "sampleResolvedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["song"]>
 export type SongInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contest?: boolean | Prisma.ContestDefaultArgs<ExtArgs>
   competitor?: boolean | Prisma.CompetitorDefaultArgs<ExtArgs>
@@ -912,6 +1174,12 @@ export type $SongPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     artist: string
     title: string
     listeningOrder: number
+    sampleProvider: $Enums.SongSampleProvider | null
+    sampleTrackId: string | null
+    sampleStorefront: string | null
+    samplePreviewUrl: string | null
+    sampleExternalUrl: string | null
+    sampleResolvedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["song"]>
@@ -1346,6 +1614,12 @@ export interface SongFieldRefs {
   readonly artist: Prisma.FieldRef<"Song", 'String'>
   readonly title: Prisma.FieldRef<"Song", 'String'>
   readonly listeningOrder: Prisma.FieldRef<"Song", 'Int'>
+  readonly sampleProvider: Prisma.FieldRef<"Song", 'SongSampleProvider'>
+  readonly sampleTrackId: Prisma.FieldRef<"Song", 'String'>
+  readonly sampleStorefront: Prisma.FieldRef<"Song", 'String'>
+  readonly samplePreviewUrl: Prisma.FieldRef<"Song", 'String'>
+  readonly sampleExternalUrl: Prisma.FieldRef<"Song", 'String'>
+  readonly sampleResolvedAt: Prisma.FieldRef<"Song", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Song", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Song", 'DateTime'>
 }

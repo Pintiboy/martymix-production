@@ -6,6 +6,7 @@
 	import Eye from '@lucide/svelte/icons/eye';
 	import Pencil from '@lucide/svelte/icons/pencil';
 	import Plus from '@lucide/svelte/icons/plus';
+	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import X from '@lucide/svelte/icons/x';
 	import { toast } from 'svelte-sonner';
@@ -266,6 +267,25 @@
 			{/if}
 		</div>
 	</header>
+
+	{#if data.contest.testMode}
+		<div
+			class="mb-8 flex items-start gap-3 rounded-2xl border border-amber-400/25 bg-amber-500/10 px-4 py-3 text-sm leading-6 text-amber-100"
+		>
+			<TriangleAlert size={19} class="mt-0.5 shrink-0" />
+			<p>
+				<strong class="font-semibold">Test mode is active.</strong>
+				One invitation per participant language and email phase is sent only to
+				<strong class="font-semibold">{data.testRecipientEmail}</strong>. You can disable test mode
+				in
+				<a
+					href={resolve(`/mixes/${data.contest.id}/settings`)}
+					class="font-semibold underline decoration-amber-300/50 underline-offset-2 hover:text-white"
+					>Settings</a
+				>.
+			</p>
+		</div>
+	{/if}
 
 	{#if data.contest.status === 'VOTING_OPEN'}
 		<dl

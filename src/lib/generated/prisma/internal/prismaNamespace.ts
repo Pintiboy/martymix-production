@@ -1559,6 +1559,12 @@ export const SongScalarFieldEnum = {
   artist: 'artist',
   title: 'title',
   listeningOrder: 'listeningOrder',
+  sampleProvider: 'sampleProvider',
+  sampleTrackId: 'sampleTrackId',
+  sampleStorefront: 'sampleStorefront',
+  samplePreviewUrl: 'samplePreviewUrl',
+  sampleExternalUrl: 'sampleExternalUrl',
+  sampleResolvedAt: 'sampleResolvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1842,6 +1848,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'SongSampleProvider'
+ */
+export type EnumSongSampleProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SongSampleProvider'>
+
+
+
+/**
+ * Reference to a field of type 'SongSampleProvider[]'
+ */
+export type ListEnumSongSampleProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SongSampleProvider[]'>
+
+
+
+/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -2068,4 +2088,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

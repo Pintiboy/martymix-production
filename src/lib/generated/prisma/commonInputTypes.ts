@@ -226,6 +226,23 @@ export type IntWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
+export type EnumSongSampleProviderNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SongSampleProvider | Prisma.EnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSongSampleProviderNullableFilter<$PrismaModel> | $Enums.SongSampleProvider | null
+}
+
+export type EnumSongSampleProviderNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SongSampleProvider | Prisma.EnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSongSampleProviderNullableWithAggregatesFilter<$PrismaModel> | $Enums.SongSampleProvider | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSongSampleProviderNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSongSampleProviderNullableFilter<$PrismaModel>
+}
+
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -517,6 +534,23 @@ export type NestedFloatFilter<$PrismaModel = never> = {
   gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number
+}
+
+export type NestedEnumSongSampleProviderNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SongSampleProvider | Prisma.EnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSongSampleProviderNullableFilter<$PrismaModel> | $Enums.SongSampleProvider | null
+}
+
+export type NestedEnumSongSampleProviderNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SongSampleProvider | Prisma.EnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SongSampleProvider[] | Prisma.ListEnumSongSampleProviderFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSongSampleProviderNullableWithAggregatesFilter<$PrismaModel> | $Enums.SongSampleProvider | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSongSampleProviderNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSongSampleProviderNullableFilter<$PrismaModel>
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =

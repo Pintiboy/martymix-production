@@ -100,6 +100,12 @@ export async function GET({ request }) {
 				artist: true,
 				title: true,
 				listeningOrder: true,
+				sampleProvider: true,
+				sampleTrackId: true,
+				sampleStorefront: true,
+				samplePreviewUrl: true,
+				sampleExternalUrl: true,
+				sampleResolvedAt: true,
 				createdAt: true,
 				updatedAt: true
 			}

@@ -35,6 +35,10 @@ enum ContestType {
   PINTYMIX
 }
 
+enum SongSampleProvider {
+  APPLE_MUSIC
+}
+
 model Contest {
   id String @id @default(cuid())
 
@@ -141,6 +145,13 @@ model Song {
   artist         String
   title          String
   listeningOrder Int    @default(0)
+
+  sampleProvider    SongSampleProvider?
+  sampleTrackId     String?
+  sampleStorefront  String?
+  samplePreviewUrl  String?
+  sampleExternalUrl String?
+  sampleResolvedAt  DateTime?
 
   votes Vote[]
 

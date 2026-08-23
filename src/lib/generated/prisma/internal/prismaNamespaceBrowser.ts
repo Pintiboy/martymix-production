@@ -150,6 +150,12 @@ export const SongScalarFieldEnum = {
   artist: 'artist',
   title: 'title',
   listeningOrder: 'listeningOrder',
+  sampleProvider: 'sampleProvider',
+  sampleTrackId: 'sampleTrackId',
+  sampleStorefront: 'sampleStorefront',
+  samplePreviewUrl: 'samplePreviewUrl',
+  sampleExternalUrl: 'sampleExternalUrl',
+  sampleResolvedAt: 'sampleResolvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

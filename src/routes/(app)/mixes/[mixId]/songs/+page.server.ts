@@ -1,6 +1,7 @@
 import { fail, error } from '@sveltejs/kit';
 import { requireUser } from '$lib/server/auth-guard';
 import { prisma } from '$lib/prisma';
+import { lookupAppleSongSample } from '$lib/server/apple-song-samples';
 import { ContestStatus, Prisma } from '$lib/generated/prisma/client';
 
 const PLAYLIST_EDITABLE_STATUSES = new Set<ContestStatus>([
@@ -423,6 +424,89 @@ export const actions = {
 			success: true,
 			message: 'Listening order saved.'
 		};
+	},
+
+	saveSongSample: async ({ params, request, locals }) => {
+		const user = requireUser(locals);
+		const formData = await request.formData();
+		const songId = String(formData.get('songId') ?? '').trim();
+		const trackId = String(formData.get('trackId') ?? '').trim();
+		const storefront = String(formData.get('storefront') ?? 'DE').trim();
+
+		const song = await prisma.song.findFirst({
+			where: {
+				id: songId,
+				contestId: params.mixId,
+				contest: { ownerId: user.id }
+			},
+			select: { id: true }
+		});
+
+		if (!song) error(404, 'Song not found');
+
+		let sample;
+
+		try {
+			sample = await lookupAppleSongSample(trackId, storefront);
+		} catch (cause) {
+			console.error('Apple song lookup failed while saving a sample', cause);
+			return fail(502, {
+				action: 'saveSongSample',
+				error: 'Apple Music is temporarily unavailable.'
+			});
+		}
+
+		if (!sample) {
+			return fail(400, {
+				action: 'saveSongSample',
+				error: 'The selected Apple Music preview is no longer available.'
+			});
+		}
+
+		await prisma.song.update({
+			where: { id: song.id },
+			data: {
+				sampleProvider: 'APPLE_MUSIC',
+				sampleTrackId: sample.trackId,
+				sampleStorefront: sample.storefront,
+				samplePreviewUrl: sample.previewUrl,
+				sampleExternalUrl: sample.externalUrl,
+				sampleResolvedAt: new Date()
+			}
+		});
+
+		return { success: true, action: 'saveSongSample' };
+	},
+
+	removeSongSample: async ({ params, request, locals }) => {
+		const user = requireUser(locals);
+		const formData = await request.formData();
+		const songId = String(formData.get('songId') ?? '').trim();
+
+		const song = await prisma.song.findFirst({
+			where: {
+				id: songId,
+				contestId: params.mixId,
+				contest: { ownerId: user.id }
+			},
+			select: { id: true }
+		});
+
+		if (!song) error(404, 'Song not found');
+
+		await prisma.song.update({
+			where: { id: song.id },
+			data: {
+				sampleProvider: null,
+				sampleTrackId: null,
+				sampleStorefront: null,
+				samplePreviewUrl: null,
+				sampleExternalUrl: null,
+				sampleResolvedAt: null
+			}
+		});
+
+		return { success: true, action: 'removeSongSample' };
 	},
 
 	removeParticipant: async ({ request, params, locals }) => {
