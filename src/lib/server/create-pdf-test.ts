@@ -202,18 +202,20 @@ function drawDocumentHeader(
 	const titleWidth = PAGE_WIDTH - MARGIN - GRID_RIGHT_GUTTER - titleX;
 	const voteSummary =
 		data.rows.length === data.participants.length
-			? `${data.rows.length} songs / ${data.participants.length} voters`
-			: `${data.rows.length} songs / ${data.participants.length} votes so far`;
+			? null
+			: `Preliminary Results! ${data.rows.length} songs / ${data.participants.length} votes so far`;
 
 	drawTitle(document, data.theme, titleX, MARGIN + 10 * layout.scale, titleWidth, layout.scale);
 
-	document
-		.font('Helvetica')
-		.fontSize(7 * layout.scale)
-		.fillColor('#555555')
-		.text(voteSummary, titleX, MARGIN + 31 * layout.scale, {
-			width: titleWidth
-		});
+	if (voteSummary) {
+		document
+			.font('Helvetica')
+			.fontSize(7 * layout.scale)
+			.fillColor('#555555')
+			.text(voteSummary, titleX, MARGIN + 31 * layout.scale, {
+				width: titleWidth
+			});
+	}
 }
 
 function drawGridHeader(
