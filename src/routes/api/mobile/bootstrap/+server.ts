@@ -48,6 +48,7 @@ export async function GET({ request }) {
 				preferredLanguage: true,
 				email: true,
 				country: true,
+				imageUrl: true,
 				isActive: true,
 				ownerId: true,
 				createdAt: true,
