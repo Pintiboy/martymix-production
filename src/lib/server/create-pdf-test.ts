@@ -1,6 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-
 import PDFDocument from 'pdfkit';
 
 import { PDF_TEST_MATRIX, PDF_TEST_PARTICIPANTS } from '$lib/server/pdf-test-data';
@@ -26,8 +23,6 @@ const FIXED_ROW_HEIGHT = 4.6 * MM;
 const REFERENCE_PARTICIPANT_COUNT = 52;
 const FIXED_VOTER_COLUMN_WIDTH =
 	(PAGE_WIDTH - MARGIN * 2 - SONG_COLUMN_WIDTH - TOTAL_COLUMN_WIDTH) / REFERENCE_PARTICIPANT_COUNT;
-const LOGO = readFileSync(resolve(process.cwd(), 'static/images/martymix-logo-farbe-small.png'));
-
 export type PdfTestSort = 'number' | 'points';
 export type PdfTieMarker = 'blank' | 'equals';
 export type PdfSongRowDetail = 'artist' | 'submitter';
@@ -157,11 +152,7 @@ function drawHeader(
 	sortMode: PdfTestSort,
 	layout: PdfLayout
 ) {
-	document.image(LOGO, MARGIN, MARGIN + 1, {
-		fit: [18 * MM, 18 * MM],
-		align: 'center',
-		valign: 'center'
-	});
+	drawBrandMark(document, MARGIN, MARGIN + 1);
 
 	const titleX = MARGIN + 22 * MM;
 	const titleWidth = PAGE_WIDTH - MARGIN - titleX;
@@ -225,6 +216,19 @@ function drawHeader(
 		10,
 		layout
 	);
+}
+
+function drawBrandMark(document: PDFKit.PDFDocument, x: number, y: number) {
+	const size = 18 * MM;
+
+	document.save();
+	document.roundedRect(x, y, size, size, 4 * MM).fill('#d946ef');
+	document
+		.font('Helvetica-Bold')
+		.fontSize(22)
+		.fillColor('#ffffff')
+		.text('M', x, y + size * 0.26, { width: size, align: 'center' });
+	document.restore();
 }
 
 function drawTitle(
