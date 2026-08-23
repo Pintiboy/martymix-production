@@ -5,6 +5,7 @@ import { getScoringSystem } from '$lib/scoring';
 import {
 	createVotingGridPdf,
 	loadPdfBrandLogo,
+	type PdfGridSize,
 	type PdfSongRowDetail,
 	type PdfTestSort,
 	type PdfTieMarker
@@ -87,12 +88,14 @@ export async function GET({ fetch, params, request, url }) {
 	const tieMarker: PdfTieMarker = url.searchParams.get('ties') === 'equals' ? 'equals' : 'blank';
 	const songRowDetail: PdfSongRowDetail =
 		url.searchParams.get('songDetail') === 'artist' ? 'artist' : 'submitter';
+	const gridSize: PdfGridSize = url.searchParams.get('grid') === 'fit' ? 'fit' : 'standard';
 	const logo = await loadPdfBrandLogo(fetch);
 	const pdf = await createVotingGridPdf(
 		{ theme: contest.theme, participants, rows },
 		sortMode,
 		tieMarker,
 		songRowDetail,
+		gridSize,
 		logo
 	);
 	const safeTheme = contest.theme

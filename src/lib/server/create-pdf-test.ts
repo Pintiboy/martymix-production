@@ -7,6 +7,7 @@ const PAGE_WIDTH = 420 * MM;
 const PAGE_HEIGHT = 297 * MM;
 const MARGIN = 8 * MM;
 const HEADER_HEIGHT = 41.8 * MM;
+const GRID_RIGHT_GUTTER = 10 * MM;
 const SONG_COLUMN_WIDTH = 72 * MM;
 const SONG_NUMBER_WIDTH = 14;
 const SONG_NUMBER_GAP = 5;
@@ -22,10 +23,12 @@ const TITLE_STAR_COLOR = '#f2b705';
 const FIXED_ROW_HEIGHT = 4.6 * MM;
 const REFERENCE_PARTICIPANT_COUNT = 52;
 const FIXED_VOTER_COLUMN_WIDTH =
-	(PAGE_WIDTH - MARGIN * 2 - SONG_COLUMN_WIDTH - TOTAL_COLUMN_WIDTH) / REFERENCE_PARTICIPANT_COUNT;
+	(PAGE_WIDTH - MARGIN * 2 - GRID_RIGHT_GUTTER - SONG_COLUMN_WIDTH - TOTAL_COLUMN_WIDTH) /
+	REFERENCE_PARTICIPANT_COUNT;
 export type PdfTestSort = 'number' | 'points';
 export type PdfTieMarker = 'blank' | 'equals';
 export type PdfSongRowDetail = 'artist' | 'submitter';
+export type PdfGridSize = 'standard' | 'fit';
 
 export type VotingGridPdfParticipant = {
 	id: string;
@@ -59,6 +62,7 @@ export async function loadPdfBrandLogo(fetcher: (input: string) => Promise<Respo
 }
 
 type PdfLayout = {
+	scale: number;
 	gridTop: number;
 	gridHeight: number;
 	rowHeight: number;
@@ -70,7 +74,8 @@ type PdfLayout = {
 export async function createPdfTest(
 	sortMode: PdfTestSort = 'number',
 	tieMarker: PdfTieMarker = 'blank',
-	songRowDetail: PdfSongRowDetail = 'artist'
+	songRowDetail: PdfSongRowDetail = 'artist',
+	gridSize: PdfGridSize = 'standard'
 ) {
 	const participants = PDF_TEST_PARTICIPANTS.map((name, index) => ({
 		id: `participant-${index}`,
@@ -93,7 +98,8 @@ export async function createPdfTest(
 		},
 		sortMode,
 		tieMarker,
-		songRowDetail
+		songRowDetail,
+		gridSize
 	);
 }
 
@@ -102,9 +108,10 @@ export async function createVotingGridPdf(
 	sortMode: PdfTestSort = 'points',
 	tieMarker: PdfTieMarker = 'blank',
 	songRowDetail: PdfSongRowDetail = 'submitter',
+	gridSize: PdfGridSize = 'standard',
 	logo?: Buffer
 ) {
-	const layout = createLayout(data.rows.length, data.participants.length);
+	const layout = createLayout(data.rows.length, data.participants.length, gridSize);
 	const rows = [...data.rows].sort((first, second) => {
 		if (sortMode === 'number') return first.songNumber - second.songNumber;
 
@@ -131,24 +138,42 @@ export async function createVotingGridPdf(
 	document.addPage({ size: [PAGE_WIDTH, PAGE_HEIGHT], margin: 0 });
 	document.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT).fill('#ffffff');
 
-	drawHeader(document, data, sortMode, layout, logo);
+	drawDocumentHeader(document, data, layout, logo);
+	drawGridHeader(document, data.participants, layout);
 	drawMatrix(document, rows, data.participants, sortMode, tieMarker, songRowDetail, layout);
-	drawFooter(document, layout);
 
 	document.end();
 	return completed;
 }
 
-function createLayout(songCount: number, participantCount: number): PdfLayout {
-	const gridTop = MARGIN + HEADER_HEIGHT;
-	const rowHeight = FIXED_ROW_HEIGHT;
+function getGridScale(songCount: number, participantCount: number, gridSize: PdfGridSize) {
+	if (gridSize === 'standard') return 1;
+
+	const gridWidth =
+		SONG_COLUMN_WIDTH + FIXED_VOTER_COLUMN_WIDTH * participantCount + TOTAL_COLUMN_WIDTH;
+	const gridHeight = FIXED_ROW_HEIGHT * songCount;
+	const horizontalScale = (PAGE_WIDTH - MARGIN * 2 - GRID_RIGHT_GUTTER) / gridWidth;
+	const verticalScale = (PAGE_HEIGHT - MARGIN * 2) / (HEADER_HEIGHT + gridHeight);
+
+	return Math.max(1, Math.min(horizontalScale, verticalScale));
+}
+
+function createLayout(
+	songCount: number,
+	participantCount: number,
+	gridSize: PdfGridSize
+): PdfLayout {
+	const scale = getGridScale(songCount, participantCount, gridSize);
+	const rowHeight = FIXED_ROW_HEIGHT * scale;
 	const gridHeight = rowHeight * songCount;
-	const voterGridLeft = MARGIN + SONG_COLUMN_WIDTH;
-	const voterColumnWidth = FIXED_VOTER_COLUMN_WIDTH;
+	const voterGridLeft = MARGIN + SONG_COLUMN_WIDTH * scale;
+	const voterColumnWidth = FIXED_VOTER_COLUMN_WIDTH * scale;
 	const totalColumnLeft = voterGridLeft + voterColumnWidth * participantCount;
 
 	return {
-		gridTop,
+		scale,
+		// Keep the scaled header and matrix anchored at the page's top-left margin.
+		gridTop: MARGIN + HEADER_HEIGHT * scale,
 		gridHeight,
 		rowHeight,
 		voterColumnWidth,
@@ -157,73 +182,56 @@ function createLayout(songCount: number, participantCount: number): PdfLayout {
 	};
 }
 
-function drawHeader(
+function drawDocumentHeader(
 	document: PDFKit.PDFDocument,
 	data: VotingGridPdfData,
-	sortMode: PdfTestSort,
 	layout: PdfLayout,
 	logo?: Buffer
 ) {
 	if (logo) {
-		document.image(logo, MARGIN, MARGIN + 1, {
-			fit: [18 * MM, 18 * MM],
+		document.image(logo, MARGIN, MARGIN + layout.scale, {
+			fit: [18 * MM * layout.scale, 18 * MM * layout.scale],
 			align: 'center',
 			valign: 'center'
 		});
 	} else {
-		drawBrandMark(document, MARGIN, MARGIN + 1);
+		drawBrandMark(document, MARGIN, MARGIN + layout.scale, layout.scale);
 	}
 
-	const titleX = MARGIN + 22 * MM;
-	const titleWidth = PAGE_WIDTH - MARGIN - titleX;
+	const titleX = MARGIN + 22 * MM * layout.scale;
+	const titleWidth = PAGE_WIDTH - MARGIN - GRID_RIGHT_GUTTER - titleX;
 	const voteSummary =
 		data.rows.length === data.participants.length
 			? `${data.rows.length} songs / ${data.participants.length} voters`
 			: `${data.rows.length} songs / ${data.participants.length} votes so far`;
 
-	drawTitle(document, data.theme, titleX, MARGIN + 10, titleWidth);
+	drawTitle(document, data.theme, titleX, MARGIN + 10 * layout.scale, titleWidth, layout.scale);
 
 	document
 		.font('Helvetica')
-		.fontSize(7)
+		.fontSize(7 * layout.scale)
 		.fillColor('#555555')
-		.text(voteSummary, titleX, MARGIN + 31, {
+		.text(voteSummary, titleX, MARGIN + 31 * layout.scale, {
 			width: titleWidth
 		});
+}
 
-	document
-		.font('Helvetica-Bold')
-		.fontSize(6.5)
-		.fillColor('#111111')
-		.text(
-			sortMode === 'points' ? 'Sorted by total points' : 'Sorted by voting order',
-			MARGIN,
-			layout.gridTop - 40,
-			{ width: SONG_COLUMN_WIDTH - 12 }
-		);
+function drawGridHeader(
+	document: PDFKit.PDFDocument,
+	participants: VotingGridPdfParticipant[],
+	layout: PdfLayout
+) {
+	drawAngledHeaderDividers(document, participants.length, layout);
 
-	document
-		.font('Helvetica')
-		.fontSize(6.5)
-		.fillColor('#111111')
-		.text('Black: own song', MARGIN, layout.gridTop - 30, {
-			width: SONG_COLUMN_WIDTH - 12
-		})
-		.text('Gold: 12 points', MARGIN, layout.gridTop - 20, {
-			width: SONG_COLUMN_WIDTH - 12
-		});
-
-	drawAngledHeaderDividers(document, data.participants.length, layout);
-
-	for (let index = 0; index < data.participants.length; index += 1) {
+	for (let index = 0; index < participants.length; index += 1) {
 		const x = layout.voterGridLeft + index * layout.voterColumnWidth;
 
 		drawAngledHeaderLabel(
 			document,
-			data.participants[index].name,
-			x + layout.voterColumnWidth * 0.22 + HEADER_LABEL_RIGHT_SHIFT,
+			participants[index].name,
+			x + layout.voterColumnWidth * 0.22 + HEADER_LABEL_RIGHT_SHIFT * layout.scale,
 			'Helvetica',
-			7.6,
+			7.6 * layout.scale,
 			layout
 		);
 	}
@@ -231,21 +239,23 @@ function drawHeader(
 	drawAngledHeaderLabel(
 		document,
 		'TOTAL',
-		layout.totalColumnLeft + TOTAL_COLUMN_WIDTH * 0.2 + HEADER_LABEL_RIGHT_SHIFT,
+		layout.totalColumnLeft +
+			TOTAL_COLUMN_WIDTH * layout.scale * 0.2 +
+			HEADER_LABEL_RIGHT_SHIFT * layout.scale,
 		'Helvetica-Bold',
-		10,
+		10 * layout.scale,
 		layout
 	);
 }
 
-function drawBrandMark(document: PDFKit.PDFDocument, x: number, y: number) {
-	const size = 18 * MM;
+function drawBrandMark(document: PDFKit.PDFDocument, x: number, y: number, scale: number) {
+	const size = 18 * MM * scale;
 
 	document.save();
-	document.roundedRect(x, y, size, size, 4 * MM).fill('#d946ef');
+	document.roundedRect(x, y, size, size, 4 * MM * scale).fill('#d946ef');
 	document
 		.font('Helvetica-Bold')
-		.fontSize(22)
+		.fontSize(22 * scale)
 		.fillColor('#ffffff')
 		.text('M', x, y + size * 0.26, { width: size, align: 'center' });
 	document.restore();
@@ -256,16 +266,17 @@ function drawTitle(
 	title: string,
 	x: number,
 	y: number,
-	width: number
+	width: number,
+	scale: number
 ) {
-	document.font('Helvetica-Bold').fontSize(TITLE_FONT_SIZE);
+	document.font('Helvetica-Bold').fontSize(TITLE_FONT_SIZE * scale);
 
 	let cursorX = x;
 	for (const segment of title.split(/(⭐\uFE0F?)/u).filter(Boolean)) {
 		if (/^⭐\uFE0F?$/u.test(segment)) {
-			const outerRadius = 5.7;
-			drawStar(document, cursorX + outerRadius, y + 8.6, outerRadius, outerRadius * 0.45);
-			cursorX += outerRadius * 2 + 1.5;
+			const outerRadius = 5.7 * scale;
+			drawStar(document, cursorX + outerRadius, y + 8.6 * scale, outerRadius, outerRadius * 0.45);
+			cursorX += outerRadius * 2 + 1.5 * scale;
 			continue;
 		}
 
@@ -306,11 +317,14 @@ function drawAngledHeaderDividers(
 ) {
 	const pageRight = PAGE_WIDTH - MARGIN;
 
-	document.save().lineWidth(0.35).lineCap('butt');
+	document
+		.save()
+		.lineWidth(0.35 * layout.scale)
+		.lineCap('butt');
 
 	for (let column = 0; column <= participantCount; column += 1) {
 		const bottomX = layout.voterGridLeft + column * layout.voterColumnWidth;
-		const lineLength = Math.min(HEADER_DIVIDER_LENGTH, pageRight - bottomX);
+		const lineLength = Math.min(HEADER_DIVIDER_LENGTH * layout.scale, pageRight - bottomX);
 
 		if (lineLength <= 0) continue;
 
@@ -338,14 +352,14 @@ function drawAngledHeaderLabel(
 	layout: PdfLayout
 ) {
 	document.save();
-	document.translate(x, layout.gridTop - HEADER_LABEL_BOTTOM_GAP);
+	document.translate(x, layout.gridTop - HEADER_LABEL_BOTTOM_GAP * layout.scale);
 	document.rotate(HEADER_LABEL_ANGLE);
 	document
 		.font(font)
 		.fontSize(fontSize)
 		.fillColor('#111111')
 		.text(label, 0, 0, {
-			width: HEADER_HEIGHT - 10,
+			width: (HEADER_HEIGHT - 10) * layout.scale,
 			lineBreak: false
 		});
 	document.restore();
@@ -367,25 +381,32 @@ function drawMatrix(
 		const previousTotal = rowIndex > 0 ? getTotalPoints(rows[rowIndex - 1].points) : null;
 		const rowFill = rowIndex % 2 === 1 ? '#f5f5f5' : '#ffffff';
 
-		document.rect(MARGIN, y, SONG_COLUMN_WIDTH, layout.rowHeight).fill(rowFill);
-		const songTextX = MARGIN + 3;
-		const songTextY = y + 3.5;
+		document.rect(MARGIN, y, layout.voterGridLeft - MARGIN, layout.rowHeight).fill(rowFill);
+		const songTextX = MARGIN + 3 * layout.scale;
+		const songTextY = y + 3.5 * layout.scale;
 		const isTiedWithPrevious = sortMode === 'points' && previousTotal === total;
 		const numberText = isTiedWithPrevious
 			? tieMarker === 'equals'
 				? '='
 				: ''
 			: String(sortMode === 'points' ? rowIndex + 1 : row.songNumber);
-		const titleTextX = songTextX + SONG_NUMBER_WIDTH + SONG_NUMBER_GAP;
+		const titleTextX = songTextX + (SONG_NUMBER_WIDTH + SONG_NUMBER_GAP) * layout.scale;
 
 		document.save();
-		document.rect(MARGIN + 1, y, SONG_COLUMN_WIDTH - 2, layout.rowHeight).clip();
+		document
+			.rect(
+				MARGIN + layout.scale,
+				y,
+				layout.voterGridLeft - MARGIN - 2 * layout.scale,
+				layout.rowHeight
+			)
+			.clip();
 		document
 			.font('Helvetica')
-			.fontSize(7.4)
+			.fontSize(7.4 * layout.scale)
 			.fillColor('#111111')
 			.text(numberText, songTextX, songTextY, {
-				width: SONG_NUMBER_WIDTH,
+				width: SONG_NUMBER_WIDTH * layout.scale,
 				align: 'right',
 				lineBreak: false
 			});
@@ -398,7 +419,7 @@ function drawMatrix(
 			});
 			const titleTextWidth = document.widthOfString(row.title);
 			const artistTextX = titleTextX + titleTextWidth;
-			const artistTextWidth = MARGIN + SONG_COLUMN_WIDTH - 3 - artistTextX;
+			const artistTextWidth = layout.voterGridLeft - 3 * layout.scale - artistTextX;
 			const truncatedArtistText = truncateText(
 				document.font('Helvetica'),
 				artistText,
@@ -412,10 +433,10 @@ function drawMatrix(
 				});
 			}
 		} else {
-			const songColumnRight = MARGIN + SONG_COLUMN_WIDTH - 3;
+			const songColumnRight = layout.voterGridLeft - 3 * layout.scale;
 			const submitterWidth = document.font('Helvetica').widthOfString(row.submitter);
 			const submitterX = songColumnRight - submitterWidth;
-			const titleWidth = submitterX - SONG_CREDIT_GAP - titleTextX;
+			const titleWidth = submitterX - SONG_CREDIT_GAP * layout.scale - titleTextX;
 			const truncatedTitle = truncateText(document.font('Helvetica-Bold'), row.title, titleWidth);
 
 			if (truncatedTitle) {
@@ -459,11 +480,11 @@ function drawMatrix(
 			if (points !== null && row.ownerId !== participants[voterIndex].id) {
 				document
 					.font(points === 12 ? 'Helvetica-Bold' : 'Helvetica')
-					.fontSize(points === 12 ? 7.6 : 7.1)
+					.fontSize((points === 12 ? 7.6 : 7.1) * layout.scale)
 					.fillColor('#111111')
 					.text(String(points), x, songTextY + 0.5, {
 						width: layout.voterColumnWidth,
-						height: layout.rowHeight - 2,
+						height: layout.rowHeight - 2 * layout.scale,
 						align: 'center',
 						lineBreak: false
 					});
@@ -471,15 +492,15 @@ function drawMatrix(
 		}
 
 		document
-			.rect(layout.totalColumnLeft, y, TOTAL_COLUMN_WIDTH, layout.rowHeight)
+			.rect(layout.totalColumnLeft, y, TOTAL_COLUMN_WIDTH * layout.scale, layout.rowHeight)
 			.fill(rowIndex % 2 === 1 ? '#ebebeb' : '#f3f3f3');
 		document
 			.font('Helvetica-Bold')
-			.fontSize(7.3)
+			.fontSize(7.3 * layout.scale)
 			.fillColor('#111111')
 			.text(String(total), layout.totalColumnLeft, songTextY + 0.5, {
-				width: TOTAL_COLUMN_WIDTH,
-				height: layout.rowHeight - 2,
+				width: TOTAL_COLUMN_WIDTH * layout.scale,
+				height: layout.rowHeight - 2 * layout.scale,
 				align: 'center',
 				lineBreak: false
 			});
@@ -522,18 +543,23 @@ function drawGridLines(
 	participantCount: number,
 	layout: PdfLayout
 ) {
-	document.save().lineWidth(0.25).strokeColor('#aaaaaa');
+	document
+		.save()
+		.lineWidth(0.25 * layout.scale)
+		.strokeColor('#aaaaaa');
 
 	for (let row = 0; row <= rowCount; row += 1) {
 		const y = layout.gridTop + row * layout.rowHeight;
-		document.moveTo(MARGIN, y).lineTo(layout.totalColumnLeft + TOTAL_COLUMN_WIDTH, y);
+		document
+			.moveTo(MARGIN, y)
+			.lineTo(layout.totalColumnLeft + TOTAL_COLUMN_WIDTH * layout.scale, y);
 	}
 
 	const verticalLines = [MARGIN, layout.voterGridLeft];
 	for (let column = 1; column <= participantCount; column += 1) {
 		verticalLines.push(layout.voterGridLeft + column * layout.voterColumnWidth);
 	}
-	verticalLines.push(layout.totalColumnLeft + TOTAL_COLUMN_WIDTH);
+	verticalLines.push(layout.totalColumnLeft + TOTAL_COLUMN_WIDTH * layout.scale);
 
 	for (const x of verticalLines) {
 		document.moveTo(x, layout.gridTop).lineTo(x, layout.gridTop + layout.gridHeight);
@@ -543,30 +569,14 @@ function drawGridLines(
 
 	document
 		.save()
-		.lineWidth(0.5)
+		.lineWidth(0.5 * layout.scale)
 		.strokeColor('#777777')
 		.rect(
 			MARGIN,
 			layout.gridTop,
-			layout.totalColumnLeft + TOTAL_COLUMN_WIDTH - MARGIN,
+			layout.totalColumnLeft + TOTAL_COLUMN_WIDTH * layout.scale - MARGIN,
 			layout.gridHeight
 		)
 		.stroke()
 		.restore();
-}
-
-function drawFooter(document: PDFKit.PDFDocument, layout: PdfLayout) {
-	document
-		.font('Helvetica')
-		.fontSize(4.8)
-		.fillColor('#777777')
-		.text(
-			`Row height: ${(layout.rowHeight / MM).toFixed(2)} mm`,
-			MARGIN,
-			PAGE_HEIGHT - MARGIN + 4,
-			{
-				width: PAGE_WIDTH - MARGIN * 2,
-				align: 'right'
-			}
-		);
 }
