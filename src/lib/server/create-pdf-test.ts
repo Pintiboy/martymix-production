@@ -48,6 +48,16 @@ export type VotingGridPdfData = {
 	rows: VotingGridPdfRow[];
 };
 
+export async function loadPdfBrandLogo(fetcher: (input: string) => Promise<Response>) {
+	const response = await fetcher('/images/martymix-logo-farbe-small.png');
+
+	if (!response.ok) {
+		throw new Error(`Could not load PDF logo (${response.status})`);
+	}
+
+	return Buffer.from(await response.arrayBuffer());
+}
+
 type PdfLayout = {
 	gridTop: number;
 	gridHeight: number;
@@ -91,7 +101,8 @@ export async function createVotingGridPdf(
 	data: VotingGridPdfData,
 	sortMode: PdfTestSort = 'points',
 	tieMarker: PdfTieMarker = 'blank',
-	songRowDetail: PdfSongRowDetail = 'submitter'
+	songRowDetail: PdfSongRowDetail = 'submitter',
+	logo?: Buffer
 ) {
 	const layout = createLayout(data.rows.length, data.participants.length);
 	const rows = [...data.rows].sort((first, second) => {
@@ -120,7 +131,7 @@ export async function createVotingGridPdf(
 	document.addPage({ size: [PAGE_WIDTH, PAGE_HEIGHT], margin: 0 });
 	document.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT).fill('#ffffff');
 
-	drawHeader(document, data, sortMode, layout);
+	drawHeader(document, data, sortMode, layout, logo);
 	drawMatrix(document, rows, data.participants, sortMode, tieMarker, songRowDetail, layout);
 	drawFooter(document, layout);
 
@@ -150,9 +161,18 @@ function drawHeader(
 	document: PDFKit.PDFDocument,
 	data: VotingGridPdfData,
 	sortMode: PdfTestSort,
-	layout: PdfLayout
+	layout: PdfLayout,
+	logo?: Buffer
 ) {
-	drawBrandMark(document, MARGIN, MARGIN + 1);
+	if (logo) {
+		document.image(logo, MARGIN, MARGIN + 1, {
+			fit: [18 * MM, 18 * MM],
+			align: 'center',
+			valign: 'center'
+		});
+	} else {
+		drawBrandMark(document, MARGIN, MARGIN + 1);
+	}
 
 	const titleX = MARGIN + 22 * MM;
 	const titleWidth = PAGE_WIDTH - MARGIN - titleX;

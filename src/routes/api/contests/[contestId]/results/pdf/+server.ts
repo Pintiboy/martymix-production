@@ -4,13 +4,14 @@ import { prisma } from '$lib/prisma';
 import { getScoringSystem } from '$lib/scoring';
 import {
 	createVotingGridPdf,
+	loadPdfBrandLogo,
 	type PdfSongRowDetail,
 	type PdfTestSort,
 	type PdfTieMarker
 } from '$lib/server/create-pdf-test';
 import { requireOrganizerSession } from '$lib/server/auth-guard';
 
-export async function GET({ params, request, url }) {
+export async function GET({ fetch, params, request, url }) {
 	const session = await requireOrganizerSession(request);
 	const contest = await prisma.contest.findFirst({
 		where: {
@@ -86,11 +87,13 @@ export async function GET({ params, request, url }) {
 	const tieMarker: PdfTieMarker = url.searchParams.get('ties') === 'equals' ? 'equals' : 'blank';
 	const songRowDetail: PdfSongRowDetail =
 		url.searchParams.get('songDetail') === 'artist' ? 'artist' : 'submitter';
+	const logo = await loadPdfBrandLogo(fetch);
 	const pdf = await createVotingGridPdf(
 		{ theme: contest.theme, participants, rows },
 		sortMode,
 		tieMarker,
-		songRowDetail
+		songRowDetail,
+		logo
 	);
 	const safeTheme = contest.theme
 		.normalize('NFKD')
