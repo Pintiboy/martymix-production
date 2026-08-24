@@ -855,7 +855,7 @@
 				<!-- Desktop Ansicht -->
 				<div class="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
 					<div
-						class={canManageSubmissions ? 'min-w-225 text-sm' : 'min-w-150 text-sm'}
+						class={canManageSubmissions ? 'min-w-240 text-sm' : 'min-w-175 text-sm'}
 						role="table"
 						aria-label="Submitted songs"
 					>
@@ -863,8 +863,8 @@
 							class={[
 								'grid bg-white/4 text-xs tracking-[0.2em] text-zinc-500 uppercase',
 								canManageSubmissions
-									? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem]'
-									: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)]'
+									? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_8rem_7rem_6rem_6rem]'
+									: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_8rem]'
 							]}
 							role="row"
 						>
@@ -872,6 +872,7 @@
 							<div class="px-4 py-3 font-medium" role="columnheader">Contributor</div>
 							<div class="px-4 py-3 font-medium" role="columnheader">Artist</div>
 							<div class="px-4 py-3 font-medium" role="columnheader">Title</div>
+							<div class="px-4 py-3 font-medium" role="columnheader">Sample</div>
 							{#if canManageSubmissions}
 								<div class="px-4 py-3 font-medium" role="columnheader">Status</div>
 								<div class="px-4 py-3 font-medium" role="columnheader">Link</div>
@@ -892,8 +893,8 @@
 									class={[
 										'grid transition-colors',
 										canManageSubmissions
-											? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem]'
-											: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)]',
+											? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_8rem_7rem_6rem_6rem]'
+											: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_8rem]',
 										'bg-zinc-900/40 hover:bg-zinc-900'
 									]}
 									role="row"
@@ -923,16 +924,16 @@
 										{row.song.artist}
 									</div>
 
-									<div
-										class="flex flex-col items-start justify-center px-4 py-2 text-zinc-300"
-										role="cell"
-									>
-										<span>{row.song.title}</span>
+									<div class="flex items-center px-4 py-2 text-zinc-300" role="cell">
+										{row.song.title}
+									</div>
+
+									<div class="flex items-center px-4 py-2" role="cell">
 										<button
 											type="button"
 											onclick={() => openSampleSearch(row)}
 											class={[
-												'mt-1 inline-flex items-center gap-1 text-xs transition-colors',
+												'inline-flex items-center gap-1 text-xs transition-colors',
 												row.song.samplePreviewUrl
 													? 'text-emerald-300 hover:text-emerald-200'
 													: 'text-fuchsia-300 hover:text-fuchsia-200'
@@ -1018,8 +1019,8 @@
 									class={[
 										'grid bg-zinc-900/15',
 										canManageSubmissions
-											? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_7rem_6rem_6rem]'
-											: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)]'
+											? 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_8rem_7rem_6rem_6rem]'
+											: 'grid-cols-[5rem_minmax(8rem,1.1fr)_minmax(8rem,1fr)_minmax(8rem,1.3fr)_8rem]'
 									]}
 									role="row"
 								>
@@ -1029,6 +1030,7 @@
 										{row.competitor.name}
 									</div>
 
+									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 									<div class="flex items-center px-4 py-2 text-zinc-700" role="cell">–</div>
 
