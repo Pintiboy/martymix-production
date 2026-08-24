@@ -3,6 +3,8 @@ import { json } from '@sveltejs/kit';
 import { prisma } from '$lib/prisma';
 import { requireOrganizerSession } from '$lib/server/auth-guard';
 
+const REQUIRED_VOTE_RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+
 export async function GET({ request }) {
 	const session = await requireOrganizerSession(request);
 
@@ -129,17 +131,21 @@ export async function GET({ request }) {
 		})
 	]);
 
-	const votersByContest = new Map<string, Set<string>>();
+	const voteRanksByContestAndVoter = new Map<string, Map<string, Set<number>>>();
 
 	for (const vote of votes) {
-		const voters = votersByContest.get(vote.contestId) ?? new Set<string>();
-		voters.add(vote.voterId);
-		votersByContest.set(vote.contestId, voters);
+		const voters = voteRanksByContestAndVoter.get(vote.contestId) ?? new Map<string, Set<number>>();
+		const ranks = voters.get(vote.voterId) ?? new Set<number>();
+		ranks.add(vote.rank);
+		voters.set(vote.voterId, ranks);
+		voteRanksByContestAndVoter.set(vote.contestId, voters);
 	}
 
 	const contestVoteCounts = contests.map((contest) => ({
 		contestId: contest.id,
-		submittedVotes: votersByContest.get(contest.id)?.size ?? 0
+		submittedVotes: [
+			...(voteRanksByContestAndVoter.get(contest.id)?.values() ?? [])
+		].filter((ranks) => REQUIRED_VOTE_RANKS.every((rank) => ranks.has(rank))).length
 	}));
 
 	return json({

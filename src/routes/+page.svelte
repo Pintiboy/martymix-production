@@ -77,7 +77,7 @@
 		<div class="grain"></div>
 	</div>
 
-	<div class="edge-label edge-label-left" aria-hidden="true">EST. FOR MARTYN · 2026</div>
+	<div class="edge-label edge-label-left" aria-hidden="true">EST. BY MARTYN · 1986</div>
 	<div class="edge-label edge-label-right" aria-hidden="true">PLAY · VOTE · CROWN</div>
 
 	<section class="hero" aria-labelledby="landing-title">
@@ -90,8 +90,9 @@
 			<img class="logo" src="/images/martymix-logo-farbe.png" alt="Martymix" />
 
 			<h1 id="landing-title">
-				Every round.<br />
-				Every vote. <span>One winner.</span>
+				Bring a song.<br />
+				Cast your vote.<br />
+				<span>Crown the winner.</span>
 			</h1>
 
 			<p class="intro">The headquarters for all of Martyn's legendary music competitions.</p>
@@ -106,16 +107,35 @@
 
 		<div class="competition-mark" aria-hidden="true">
 			<div class="orbit orbit-outer">
-				<span class="orbit-word word-round">ROUND</span>
+				<span class="orbit-word word-round">SUBMIT</span>
 				<span class="orbit-word word-vote">VOTE</span>
 				<span class="orbit-word word-win">WIN</span>
 			</div>
 			<div class="orbit orbit-middle"></div>
-			<div class="orbit orbit-inner"></div>
+			<div class="orbit orbit-inner">
+				<svg class="record-engraving" viewBox="0 0 100 100">
+					<defs>
+						<path id="record-engraving-path" d="M 4 50 A 46 46 0 0 0 96 50" />
+					</defs>
+					<text class="engraving-shadow" dy="2">
+						<textPath href="#record-engraving-path" startOffset="50%" text-anchor="middle">
+							EST. 1986
+						</textPath>
+					</text>
+					<text class="engraving-base" dy="2">
+						<textPath href="#record-engraving-path" startOffset="50%" text-anchor="middle">
+							EST. 1986
+						</textPath>
+					</text>
+					<text class="engraving-highlight" dy="2">
+						<textPath href="#record-engraving-path" startOffset="50%" text-anchor="middle">
+							EST. 1986
+						</textPath>
+					</text>
+				</svg>
+			</div>
 			<div class="record-label">
-				<span class="record-kicker">THE HOME OF</span>
-				<strong>MM</strong>
-				<span class="record-year">EST. 2026</span>
+				<img class="record-logo" src="/images/og-image.png" alt="" />
 			</div>
 			<span class="spark spark-one">✦</span>
 			<span class="spark spark-two">✦</span>
@@ -401,23 +421,61 @@
 		border: 1px solid rgba(255, 255, 255, 0.14);
 		background:
 			radial-gradient(
-				circle at 45% 42%,
+				circle at center,
 				transparent 0 52%,
 				rgba(255, 255, 255, 0.05) 52.3% 52.7%,
 				transparent 53%
 			),
 			repeating-radial-gradient(circle, rgba(255, 255, 255, 0.065) 0 1px, transparent 1px 8px),
-			linear-gradient(
-				135deg,
-				rgba(237, 78, 230, 0.13),
-				rgba(6, 6, 9, 0.75) 45%,
-				rgba(53, 215, 238, 0.1)
+			conic-gradient(
+				from 205deg,
+				rgba(6, 6, 9, 0.82) 0deg,
+				rgba(237, 78, 230, 0.17) 48deg,
+				rgba(6, 6, 9, 0.78) 118deg,
+				rgba(53, 215, 238, 0.14) 188deg,
+				rgba(6, 6, 9, 0.8) 258deg,
+				rgba(237, 78, 230, 0.1) 320deg,
+				rgba(6, 6, 9, 0.82) 360deg
 			);
 		box-shadow:
 			inset 0 0 80px rgba(0, 0, 0, 0.45),
 			0 0 0 1.5rem rgba(255, 255, 255, 0.018),
 			0 0 80px rgba(219, 39, 205, 0.15);
 		animation: rotate 28s linear infinite;
+	}
+
+	.record-engraving {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+
+	.record-engraving path {
+		fill: none;
+	}
+
+	.record-engraving text {
+		font-size: 6.8px;
+		font-weight: 950;
+		letter-spacing: 0.2em;
+	}
+
+	.engraving-base {
+		fill: rgba(8, 8, 12, 0.78);
+	}
+
+	.engraving-shadow {
+		fill: black;
+		opacity: 0.6;
+		filter: blur(0.35px);
+	}
+
+	.engraving-highlight {
+		fill: white;
+		opacity: 0.55;
+		transform: translateY(-1px);
 	}
 
 	.orbit-middle {
@@ -436,6 +494,7 @@
 			rgba(29, 179, 203, 0.92)
 		);
 		box-shadow: 0 0 50px rgba(237, 78, 230, 0.2);
+		animation: rotate 28s linear infinite;
 	}
 
 	.record-label {
@@ -445,33 +504,19 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		overflow: hidden;
 		border: 1px solid rgba(255, 255, 255, 0.28);
 		border-radius: 50%;
 		background: rgba(7, 7, 10, 0.92);
 		box-shadow: inset 0 0 25px rgba(237, 78, 230, 0.12);
 	}
 
-	.record-label strong {
-		font-size: clamp(2rem, 5vw, 4rem);
-		font-weight: 850;
-		line-height: 0.95;
-		letter-spacing: -0.09em;
-	}
-
-	.record-kicker,
-	.record-year {
-		font-size: clamp(0.36rem, 0.6vw, 0.54rem);
-		font-weight: 750;
-		letter-spacing: 0.16em;
-	}
-
-	.record-kicker {
-		color: #f0abfc;
-	}
-
-	.record-year {
-		margin-top: 0.3rem;
-		color: #a1a1aa;
+	.record-logo {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		animation: rotate 28s linear infinite;
 	}
 
 	.orbit-word {
@@ -829,6 +874,8 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		.orbit-outer,
+		.orbit-inner,
+		.record-logo,
 		.spark {
 			animation: none;
 		}

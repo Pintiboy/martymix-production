@@ -34,6 +34,7 @@
 	let sampleResults = $state<AppleSongSearchResult[]>([]);
 	let isSampleSearching = $state(false);
 	let sampleSearchError = $state('');
+	let hasSampleSearchRun = $state(false);
 
 	let contest = $derived(data.contest);
 	const canManageSubmissions = $derived(
@@ -118,19 +119,25 @@
 		sampleQuery = `${row.song.artist} ${row.song.title}`;
 		sampleResults = [];
 		sampleSearchError = '';
-		void searchAppleSamples();
+		hasSampleSearchRun = false;
+
+		if (!row.song.sampleTrackId && !row.song.samplePreviewUrl) {
+			void searchAppleSamples();
+		}
 	}
 
 	function closeSampleSearch() {
 		sampleSong = null;
 		sampleResults = [];
 		sampleSearchError = '';
+		hasSampleSearchRun = false;
 	}
 
 	async function searchAppleSamples() {
 		const query = sampleQuery.trim();
 		if (query.length < 2) return;
 
+		hasSampleSearchRun = true;
 		isSampleSearching = true;
 		sampleSearchError = '';
 
@@ -1322,7 +1329,7 @@
 	<Modal open={sampleSong !== null} titleId="song-sample-title" onClose={closeSampleSearch}>
 		{#snippet children({ close })}
 			{#if sampleSong}
-				<div class="max-h-[80vh] overflow-y-auto pr-1">
+				<div class="sample-search-scrollbar max-h-[80vh] overflow-y-auto pr-1">
 					<div class="flex items-start justify-between gap-4">
 						<div class="min-w-0">
 							<p class="mb-2 text-xs tracking-[0.3em] text-fuchsia-300 uppercase">Song sample</p>
@@ -1421,6 +1428,10 @@
 						</p>
 					{:else if isSampleSearching}
 						<p class="mt-6 text-center text-sm text-zinc-500">Searching Apple Music…</p>
+					{:else if !hasSampleSearchRun}
+						<p class="mt-6 text-center text-sm text-zinc-500">
+							Use the search above to find a replacement sample.
+						</p>
 					{:else if sampleResults.length === 0}
 						<p class="mt-6 text-center text-sm text-zinc-500">No playable samples found.</p>
 					{:else}
@@ -1547,6 +1558,31 @@
 </div>
 
 <style>
+	.sample-search-scrollbar {
+		scrollbar-color: #3f3f46 #09090b;
+		scrollbar-width: thin;
+	}
+
+	.sample-search-scrollbar::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	.sample-search-scrollbar::-webkit-scrollbar-track,
+	.sample-search-scrollbar::-webkit-scrollbar-corner {
+		background: #09090b;
+	}
+
+	.sample-search-scrollbar::-webkit-scrollbar-thumb {
+		border: 2px solid #09090b;
+		border-radius: 999px;
+		background: #3f3f46;
+	}
+
+	.sample-search-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: #52525b;
+	}
+
 	:global(.song-sort-ghost) {
 		opacity: 0.18 !important;
 	}

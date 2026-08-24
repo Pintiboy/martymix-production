@@ -10,6 +10,7 @@ import type { ContestType } from '$lib/generated/prisma/client';
 import { parseBritishDeadlineDate } from '$lib/deadlines';
 const resend = new Resend(env.RESEND_API_KEY);
 type ResultStatus = 'Locked' | 'Preliminary' | 'Final';
+const REQUIRED_VOTE_RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
 function getLogoUrl(type: ContestType) {
 	switch (type) {
@@ -50,7 +51,8 @@ export const load = async ({ params, locals }) => {
 			},
 			votes: {
 				select: {
-					voterId: true
+					voterId: true,
+					rank: true
 				}
 			}
 		}
@@ -60,12 +62,32 @@ export const load = async ({ params, locals }) => {
 		error(404, 'Contest not found');
 	}
 
-	const expectedSongs = contest.competitors.length;
+	const voteRanksByVoter = new Map<string, Set<number>>();
+	for (const vote of contest.votes) {
+		const ranks = voteRanksByVoter.get(vote.voterId) ?? new Set<number>();
+		ranks.add(vote.rank);
+		voteRanksByVoter.set(vote.voterId, ranks);
+	}
+
+	const completedVoterIds = new Set(
+		[...voteRanksByVoter.entries()]
+			.filter(([, ranks]) => REQUIRED_VOTE_RANKS.every((rank) => ranks.has(rank)))
+			.map(([voterId]) => voterId)
+	);
+	const submittedCompetitorIds = new Set(contest.songs.map((song) => song.competitorId));
+
+	const competitors = contest.competitors.map((entry) => ({
+		...entry,
+		hasSubmittedSong: submittedCompetitorIds.has(entry.competitorId),
+		hasVoted: completedVoterIds.has(entry.competitorId)
+	}));
+
+	const expectedSongs = competitors.length;
 	const submittedSongs = contest.songs.length;
 	const songsComplete = expectedSongs > 0 && submittedSongs === expectedSongs;
 
 	const expectedVotes = expectedSongs;
-	const actualVotes = new Set(contest.votes.map((vote) => vote.voterId)).size;
+	const actualVotes = completedVoterIds.size;
 	const votingComplete = expectedVotes > 0 && actualVotes === expectedVotes;
 
 	const votingStarted = actualVotes > 0;
@@ -77,7 +99,10 @@ export const load = async ({ params, locals }) => {
 			: 'Preliminary';
 
 	return {
-		contest,
+		contest: {
+			...contest,
+			competitors
+		},
 		expectedSongs,
 		submittedSongs,
 		songsComplete,
