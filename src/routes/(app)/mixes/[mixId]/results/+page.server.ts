@@ -49,9 +49,7 @@ export const load = async ({ params, url, locals }) => {
 						}
 					}
 				},
-				orderBy: {
-					artist: 'asc'
-				}
+				orderBy: [{ artist: 'asc' }, { title: 'asc' }]
 			},
 			votes: {
 				where: {
