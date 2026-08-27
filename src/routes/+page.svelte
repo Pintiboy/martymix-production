@@ -69,7 +69,7 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </svelte:head>
 
-<main class="landing-page">
+<main class="landing-page" ondragstart={(event) => event.preventDefault()}>
 	<div class="backdrop" aria-hidden="true">
 		<div class="glow glow-magenta"></div>
 		<div class="glow glow-cyan"></div>
@@ -87,7 +87,7 @@
 				Martyn's music competitions
 			</div>
 
-			<img class="logo" src="/images/martymix-logo-farbe.png" alt="Martymix" />
+			<img class="logo" src="/images/martymix-logo-farbe.png" alt="Martymix" draggable="false" />
 
 			<h1 id="landing-title">
 				Bring a song.<br />
@@ -135,7 +135,7 @@
 				</svg>
 			</div>
 			<div class="record-label">
-				<img class="record-logo" src="/images/og-image.png" alt="" />
+				<img class="record-logo" src="/images/og-image.png" alt="" draggable="false" />
 			</div>
 			<span class="spark spark-one">✦</span>
 			<span class="spark spark-two">✦</span>
@@ -224,6 +224,8 @@
 		min-height: 100vh;
 		min-height: 100svh;
 		overflow: hidden;
+		-webkit-user-select: none;
+		user-select: none;
 		background: #08080b;
 		color: white;
 		font-family:

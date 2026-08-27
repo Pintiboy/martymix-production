@@ -211,11 +211,12 @@
 
 					<div class="min-w-0 flex-1">
 						<h2 class="truncate text-base font-bold text-white md:mt-2 md:text-2xl">
-							{entry.artist}
+							{entry.title}
 						</h2>
 
 						<p class="mt-0.5 truncate text-sm text-zinc-300 md:mt-1 md:text-base">
-							{entry.title}
+							<span class="text-xs font-light md:text-sm">by</span>
+							<span class="font-medium">{entry.artist}</span>
 						</p>
 
 						<div
